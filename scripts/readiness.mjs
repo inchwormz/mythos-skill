@@ -12,6 +12,7 @@ function run(command, args, options = {}) {
     cwd: options.cwd ?? root,
     encoding: "utf8",
     shell: process.platform === "win32",
+    env: options.env ? { ...process.env, ...options.env } : process.env,
   });
 
   if (result.status !== 0) {
@@ -98,15 +99,25 @@ function assertPacketDeterminism(packet) {
       /^[0-9a-f]{16}$/.test(String(source.hash ?? "")),
       `packet source ${source.source_id} hash "${source.hash}" is not a valid fnv1a-64 digest`,
     );
+    // G6: forward-slash and absolute-path hygiene now applies to every source
+    // kind, not just raw. File/command/test/log refs that leak a machine-
+    // specific absolute path make the packet non-portable, and backslashes
+    // break determinism across platforms. The ingest normalizer (G1+G10)
+    // rewrites absolute-inside-repo file refs to repo-relative up front, so
+    // any remaining absolute path here is either an un-normalized agent input
+    // or points OUTSIDE the repo — neither is tolerable in a deterministic
+    // packet.
+    const sourcePath = String(source.path ?? "");
+    assert(
+      !sourcePath.includes("\\"),
+      `packet source ${source.source_id} path must use forward slashes; got "${sourcePath}"`,
+    );
+    // Absolute-path check — drive-letter (C:\, C:/) OR POSIX-absolute (/...).
+    assert(
+      !/^[A-Za-z]:[\\/]/.test(sourcePath) && !sourcePath.startsWith("/"),
+      `packet source ${source.source_id} path must be run-dir- or repo-relative; got machine-specific "${sourcePath}"`,
+    );
     if (source.kind === "raw") {
-      assert(
-        !/^[A-Za-z]:[\\/]/.test(String(source.path ?? "")),
-        `packet raw source ${source.source_id} path must be run-dir-relative; got machine-specific "${source.path}"`,
-      );
-      assert(
-        !String(source.path ?? "").includes("\\"),
-        `packet raw source ${source.source_id} path must use forward slashes; got "${source.path}"`,
-      );
       assert(
         String(source.observed_at ?? "").length > 0 &&
           source.observed_at !== "raw-ingest" &&
@@ -145,13 +156,19 @@ function runExpectFail(command, args, options = {}) {
     cwd: options.cwd ?? root,
     encoding: "utf8",
     shell: process.platform === "win32",
+    env: options.env ? { ...process.env, ...options.env } : process.env,
   });
   assert(result.status !== 0, `Command unexpectedly passed: ${command} ${args.join(" ")}`);
   return result;
 }
 
+// The readiness fixture uses a single synthetic subagent, so the default
+// MYTHOS_MIN_AGENT_COVERAGE floor of 3 would fail. The floor is still exercised
+// in real runs; this override keeps the fixture's intent (gate mechanics only).
 function runStrictGate(runDir) {
-  return run("node", ["scripts/strict-gate.mjs", "--run-dir", runDir]);
+  return run("node", ["scripts/strict-gate.mjs", "--run-dir", runDir], {
+    env: { MYTHOS_MIN_AGENT_COVERAGE: "1" },
+  });
 }
 
 function extractRunDir(stderr) {
@@ -226,6 +243,9 @@ function checkAgentPolicy() {
 function addSyntheticSubagentEvidence(runDir) {
   const fixturePath = path.join(runDir, "raw", "subagents", "readiness-subagent-output.md");
   fs.mkdirSync(path.dirname(fixturePath), { recursive: true });
+  // The root-cause record cites raw:subagents/... so it overlaps with the
+  // auto subagent-session record's source_ids and passes R5 traceability.
+  const rawSubagentSourceId = "raw:subagents/readiness-subagent-output.md";
   fs.writeFileSync(
     fixturePath,
     [
@@ -234,7 +254,7 @@ function addSyntheticSubagentEvidence(runDir) {
         id: "ev-root-cause-readiness",
         kind: "root-cause",
         summary: "Readiness root-cause claim intentionally starts without direct provenance.",
-        source_ids: ["raw:objective.md"],
+        source_ids: ["raw:objective.md", rawSubagentSourceId],
         observed_at: new Date().toISOString(),
       }),
       "```",
@@ -269,11 +289,14 @@ function addDirectProvenanceToReadinessRootCause(runDir) {
   const evidencePath = path.join(runDir, "worker-results", "evidence.jsonl");
   const sourceId = "file:scripts/readiness.mjs:root-cause-fixture";
   const sourcePath = path.join(root, "scripts", "readiness.mjs");
+  // Keep the raw:subagents/* source_id so the record remains traceable back to
+  // the subagent session that produced it (R5).
+  const rawSubagentSourceId = "raw:subagents/readiness-subagent-output.md";
   const records = readJsonl(evidencePath).map((record) => {
     if (record.id !== "ev-root-cause-readiness") return record;
     return {
       ...record,
-      source_ids: [sourceId, "raw:objective.md"],
+      source_ids: [sourceId, "raw:objective.md", rawSubagentSourceId],
       source_refs: [
         {
           source_id: sourceId,

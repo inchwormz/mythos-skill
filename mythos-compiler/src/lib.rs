@@ -2,6 +2,7 @@ pub mod compiler;
 pub mod schema;
 
 pub use compiler::artifacts::ArtifactRef;
+pub use compiler::contradictions::detect_auto_contradictions;
 pub use compiler::evidence::{PacketValidationError, validate_packet_sources};
 pub use compiler::journal::{JournalEvent, append_decision_log, append_event_jsonl};
 pub use compiler::lookup::lookup_sources;

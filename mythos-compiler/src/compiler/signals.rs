@@ -70,6 +70,9 @@ mod tests {
                 verifier_score: 0.1,
                 source_ids: vec!["src-1".to_string()],
                 source_refs: vec![],
+                agent_id: None,
+                lane: None,
+                closure_reason: None,
             },
             VerifierFinding {
                 id: "v2".to_string(),
@@ -78,6 +81,9 @@ mod tests {
                 verifier_score: 0.1,
                 source_ids: vec!["src-2".to_string()],
                 source_refs: vec![],
+                agent_id: None,
+                lane: None,
+                closure_reason: None,
             },
             VerifierFinding {
                 id: "v3".to_string(),
@@ -86,6 +92,9 @@ mod tests {
                 verifier_score: 1.0,
                 source_ids: vec!["src-3".to_string()],
                 source_refs: vec![],
+                agent_id: None,
+                lane: None,
+                closure_reason: None,
             },
         ];
 

@@ -1,4 +1,5 @@
 use crate::compiler::artifacts::ArtifactRef;
+use crate::compiler::contradictions::detect_auto_contradictions;
 use crate::compiler::journal::append_decision_log;
 use crate::compiler::packets::{CompilerInputBundle, build_next_pass_packet};
 use crate::compiler::signals::detect_recurring_failure_patterns;
@@ -82,6 +83,11 @@ pub fn compile_run_dir(run_dir: &Path) -> Result<RunDirCompileReport, Box<dyn st
 
     let recurring_patterns =
         detect_recurring_failure_patterns(&verifier_findings, &manifest.created_at);
+    // Auto-detect same-span divergent-summary contradictions between evidence
+    // records. This surfaces disagreement between workers that cite the same
+    // direct source (file/command/test) with differing summaries or attribution
+    // so Prime can see it in the recompiled packet.
+    let auto_contradictions = detect_auto_contradictions(&worker_evidence);
     let packet = build_next_pass_packet(CompilerInputBundle {
         objective_id: manifest.objective_id.clone(),
         run_id: manifest.run_id.clone(),
@@ -91,7 +97,7 @@ pub fn compile_run_dir(run_dir: &Path) -> Result<RunDirCompileReport, Box<dyn st
         evidence: worker_evidence.clone(),
         trusted_facts: facts_from_evidence(&worker_evidence),
         active_hypotheses: hypotheses_from_failures(&verifier_findings),
-        contradictions: vec![],
+        contradictions: auto_contradictions,
         recurring_failure_patterns: recurring_patterns,
         candidate_actions: actions_from_failures(&verifier_findings),
         verifier_findings: verifier_findings.clone(),
@@ -421,7 +427,11 @@ fn facts_from_evidence(evidence: &[EvidenceRecord]) -> Vec<CompiledFact> {
         .map(|item| CompiledFact {
             id: format!("fact:{}", item.id),
             statement: item.summary.clone(),
-            confidence: 0.7,
+            // Use the upstream evidence confidence when the subagent supplied one
+            // (e.g. explicit 0.95 from a high-signal code-change record). Fall
+            // back to the legacy 0.7 default when absent so untagged records
+            // continue to compile unchanged.
+            confidence: item.confidence.map(|value| value as f32).unwrap_or(0.7),
             objective_relevance: 0.8,
             novelty_gain: 0.3,
             needs_raw_drilldown: false,

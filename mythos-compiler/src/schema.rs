@@ -49,6 +49,20 @@ pub struct EvidenceRecord {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub source_refs: Vec<SourceRef>,
     pub observed_at: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub agent_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub lane: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub confidence: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub rationale: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub diff_ref: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub span_before: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub span_after: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -67,6 +81,10 @@ pub struct Contradiction {
     pub conflicting_item_ids: Vec<String>,
     pub severity: String,
     pub source_ids: Vec<String>,
+    /// G5: Optional source_refs so tampered files cited by a contradiction are
+    /// detectable. Back-compat: serializes as absent when None.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_refs: Option<Vec<SourceRef>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -98,6 +116,17 @@ pub struct VerifierFinding {
     pub source_ids: Vec<String>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub source_refs: Vec<SourceRef>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub agent_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub lane: Option<String>,
+    /// Optional justification stamp explaining why a `status:"passed"` finding
+    /// is a bounded-audit / bounded-investigation closure rather than a
+    /// genuine green. When present and non-empty, the strict gate treats the
+    /// finding as explicitly closed with scope, so the string-hack prefix
+    /// ("AUDIT-SCOPE PASSED:" etc.) Prime used in Pass 1/2 becomes typed.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub closure_reason: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

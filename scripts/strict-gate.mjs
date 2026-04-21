@@ -326,6 +326,23 @@ function checkPacketSourceIntegrity(packet, runDir, errors, anchorMs) {
   }
 }
 
+// G5: contradictions may carry optional source_refs populated from the
+// union of the conflicting evidence records' refs restricted to shared direct
+// spans. When present, verify each ref like any other source_ref — that way
+// tampered files cited by a contradiction are detectable.
+function checkContradictionSourceRefs(packet, runDir, errors, anchorMs) {
+  for (const contradiction of packet?.contradictions ?? []) {
+    const refs = Array.isArray(contradiction.source_refs) ? contradiction.source_refs : [];
+    for (const source of refs) {
+      const prefix = `contradiction ${contradiction.id ?? "<unknown>"}`;
+      checkHashAlg(source, errors, prefix);
+      checkFileSourceRef(source, runDir, errors, prefix);
+      checkRawSourceRef(source, runDir, errors, prefix);
+      checkObservedAtWindow(source.observed_at, anchorMs, errors, prefix, "source_ref observed_at");
+    }
+  }
+}
+
 function checkPacketSchemaVersion(packet, errors) {
   if (!packet) return;
   if (packet.schema_version !== "1.1.0") {
@@ -361,7 +378,9 @@ function checkCompiledSourceRefs(records, packet, errors, label) {
 
 function requiresDirectEvidence(record) {
   const kind = String(record.kind ?? "").toLowerCase();
-  if (["objective", "process", "subagent-session", "codex-synthesis"].includes(kind)) return false;
+  // `blocker` records by design have no direct file/command provenance —
+  // the block IS the evidence; the raw/subagents/* cite is the artifact.
+  if (["objective", "process", "subagent-session", "codex-synthesis", "blocker"].includes(kind)) return false;
   return true;
 }
 
@@ -371,6 +390,10 @@ function requiresDirectVerifier(record) {
   if (id.includes("subagent") || summary.includes("subagent")) return false;
   if (id.includes("synthesis") || summary.includes("codex synthesis")) return false;
   if (id.includes("smoke-not-run")) return false;
+  // H6: a closure_reason is a typed bounded-audit / bounded-investigation
+  // stamp. The finding still needs `source_ids`, but we no longer require a
+  // direct file|command|test source_ref — the closure is the provenance.
+  if (typeof record.closure_reason === "string" && record.closure_reason.trim().length > 0) return false;
   return Number(record.verifier_score ?? 0) >= 0.9 || id.includes("syntax") || id.includes("test");
 }
 
@@ -380,6 +403,136 @@ function statusSummary(records) {
     status: record.status ?? "<missing>",
     verifier_score: record.verifier_score ?? null,
   }));
+}
+
+// G8: Known evidence kinds pulled from prior Mythos runs plus the obvious
+// standard kinds. Records whose `kind` is outside this set get a soft warning
+// so typos or one-off improvisations (e.g. "fictional-kind") are surfaced
+// without failing the gate. Adding a new kind is as simple as appending to
+// this set.
+const KNOWN_EVIDENCE_KINDS = new Set([
+  "objective",
+  "subagent-session",
+  "codex-synthesis",
+  "observation",
+  "code-change",
+  "test-change",
+  "root-cause",
+  "blocker",
+  "symptom",
+  "measurement",
+  "failure-mode",
+  "gap",
+  "missing-check",
+  "proposal",
+  "risk",
+  "architecture",
+  "data-loss",
+  "code-defect",
+  "schema-gap",
+  "contract-gap",
+  "gate-gap",
+  "process-gap",
+  "plan",
+]);
+
+function checkUnknownEvidenceKinds(evidence, warnings) {
+  for (const record of evidence) {
+    const kind = String(record.kind ?? "").trim();
+    if (!kind) continue;
+    if (!KNOWN_EVIDENCE_KINDS.has(kind)) {
+      warnings.push(
+        `evidence record ${record.id ?? "<unknown>"} uses unknown kind '${kind}' — not rejected, but consider adding to the known-kinds set`,
+      );
+    }
+  }
+}
+
+// R5: Every evidence record whose kind is NOT in the infrastructure set
+// (objective/subagent-session/codex-synthesis) must have at least one
+// `source_ids` entry that references raw/subagents/* directly OR matches the
+// `source_ids` of a `subagent-session` record. This closes the "Prime invented
+// evidence outside any lane" laundering path.
+function checkSubagentTraceability(evidence, errors) {
+  const infrastructureKinds = new Set(["objective", "subagent-session", "codex-synthesis"]);
+  const sessionSourceIds = new Set();
+  for (const record of evidence) {
+    if (record.kind === "subagent-session") {
+      for (const sourceId of record.source_ids ?? []) sessionSourceIds.add(sourceId);
+    }
+  }
+  const offenders = [];
+  for (const record of evidence) {
+    const kind = String(record.kind ?? "").toLowerCase();
+    if (infrastructureKinds.has(kind)) continue;
+    const sourceIds = Array.isArray(record.source_ids) ? record.source_ids : [];
+    const hasRawSubagent = sourceIds.some((id) => typeof id === "string" && id.startsWith("raw:subagents/"));
+    const hasSessionOverlap = sourceIds.some((id) => sessionSourceIds.has(id));
+    if (!hasRawSubagent && !hasSessionOverlap) {
+      offenders.push(record.id ?? "<unknown>");
+    }
+  }
+  if (offenders.length > 0) {
+    errors.push(
+      `evidence records lack subagent-session traceability (expected raw:subagents/* or overlap with a subagent-session record): ${offenders.join(", ")}`,
+    );
+  }
+}
+
+// R6: For evidence kinds that assert concrete change/causation/tests
+// (code-change, root-cause, test-change), require at least one declared
+// source_ref with kind `file`, `command`, or `test` so the claim is anchored
+// to a direct, verifiable artifact.
+function checkDirectSourceRefRatio(evidence, errors) {
+  const directRefKinds = new Set(["file", "command", "test"]);
+  const requiredKinds = new Set(["code-change", "root-cause", "test-change"]);
+  const offenders = [];
+  for (const record of evidence) {
+    const kind = String(record.kind ?? "").toLowerCase();
+    if (!requiredKinds.has(kind)) continue;
+    const refs = Array.isArray(record.source_refs) ? record.source_refs : [];
+    const hasDirect = refs.some((ref) => ref && directRefKinds.has(ref.kind));
+    if (!hasDirect) offenders.push(record.id ?? "<unknown>");
+  }
+  if (offenders.length > 0) {
+    errors.push(
+      `evidence records of kind code-change/root-cause/test-change lack a direct file|command|test source_ref: ${offenders.join(", ")}`,
+    );
+  }
+}
+
+// R7: Count distinct agent_id values across evidence (excluding the seed
+// objective record and auto ev-subagent-session-* records). Require at least
+// MYTHOS_MIN_AGENT_COVERAGE distinct non-empty agent_ids. Skip for the
+// readiness-fixture packet (pass-0001 with only the pending synthesis
+// finding) so bootstrap scenarios still pass.
+function checkAgentCoverage(evidence, findings, manifest, packet, errors) {
+  const env = process.env.MYTHOS_MIN_AGENT_COVERAGE;
+  const parsed = env !== undefined && env !== "" ? Number(env) : NaN;
+  const minCoverage = Number.isFinite(parsed) && parsed > 0 ? parsed : 3;
+
+  // Readiness-fixture escape hatch: pass-0001 with only vf-codex-synthesis-pending.
+  const passId = packet?.pass_id ?? manifest?.pass_id;
+  const onlyPendingFinding =
+    Array.isArray(findings) &&
+    findings.length === 1 &&
+    findings[0]?.id === "vf-codex-synthesis-pending";
+  if (passId === "pass-0001" && onlyPendingFinding) return;
+
+  const distinct = new Set();
+  for (const record of evidence) {
+    if (record.id === "ev-objective") continue;
+    if (typeof record.id === "string" && record.id.startsWith("ev-subagent-session-")) continue;
+    const agentId = record.agent_id;
+    if (typeof agentId === "string" && agentId.trim().length > 0) {
+      distinct.add(agentId.trim());
+    }
+  }
+  if (distinct.size < minCoverage) {
+    errors.push(
+      `agent-id coverage floor not met: saw ${distinct.size} distinct agent_id(s) across evidence, need at least ${minCoverage} (set MYTHOS_MIN_AGENT_COVERAGE to override)`,
+    );
+  }
 }
 
 function main() {
@@ -427,6 +580,12 @@ function main() {
   checkCompiledSourceRefs(evidence, packet, errors, "evidence");
   checkCompiledSourceRefs(findings, packet, errors, "verifier finding");
   checkPacketSourceIntegrity(packet, runDir, errors, anchor);
+  checkContradictionSourceRefs(packet, runDir, errors, anchor);
+  checkSubagentTraceability(evidence, errors);
+  checkDirectSourceRefRatio(evidence, errors);
+  checkAgentCoverage(evidence, findings, manifest, packet, errors);
+  // G8: soft-warn on evidence records with kinds outside the known set.
+  checkUnknownEvidenceKinds(evidence, warnings);
 
   const summaryOnlyEvidence = evidence.filter(
     (record) => requiresDirectEvidence(record) && !hasDirectSource(record),
@@ -475,6 +634,26 @@ function main() {
   }
   if (subagentSessionEvidence.length === 0) {
     errors.push("no subagent-session evidence records found; raw subagent output was not ingested mechanically");
+  }
+  // G2: require every subagent-session record to carry non-empty agent_id AND
+  // lane so consumers can attribute the session to a specific lane. Historic
+  // packets (schema_version < 1.1.0) predate this stamping, so skip the check
+  // for those runs; all current runs use 1.1.0 and hit the enforcement path.
+  const schemaVersion = packet?.schema_version ?? null;
+  const enforceG2 = schemaVersion === null || schemaVersion === "1.1.0" || schemaVersion > "1.1.0";
+  if (enforceG2) {
+    const missingAttribution = subagentSessionEvidence
+      .filter((record) => {
+        const agentOk = typeof record.agent_id === "string" && record.agent_id.trim().length > 0;
+        const laneOk = typeof record.lane === "string" && record.lane.trim().length > 0;
+        return !agentOk || !laneOk;
+      })
+      .map((record) => record.id ?? "<unknown>");
+    if (missingAttribution.length > 0) {
+      errors.push(
+        `G2: subagent-session evidence records must carry non-empty agent_id AND lane (offenders: ${missingAttribution.join(", ")})`,
+      );
+    }
   }
   for (const record of subagentSessionEvidence) {
     const refsRawSubagent = (record.source_ids ?? []).some((sourceId) => sourceId.startsWith("raw:subagents/"));
