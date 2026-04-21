@@ -1,6 +1,18 @@
 {
-  "name": "mythos-emulator",
-  "version": "0.3.0",
+  "name": "mythos-skill",
+  "version": "0.1.0",
+  "description": "Explicit-state recurrent synthesis for AI agent orchestration: JS runtime around the mythos-skill Rust packet compiler.",
+  "license": "MIT",
+  "author": "inchwormz <johnrichardmckeown@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inchwormz/mythos-skill.git"
+  },
+  "homepage": "https://github.com/inchwormz/mythos-skill",
+  "bugs": {
+    "url": "https://github.com/inchwormz/mythos-skill/issues"
+  },
+  "keywords": ["ai", "agents", "determinism", "provenance", "claude"],
   "private": true,
   "type": "module",
   "main": "driver.mjs",
@@ -10,7 +22,7 @@
     "gate": "node scripts/strict-gate.mjs",
     "ingest-subagent": "node scripts/ingest-subagent.mjs",
     "ready": "node scripts/readiness.mjs",
-    "test": "node scripts/readiness.mjs",
+    "test": "node --test tests/ && node scripts/readiness.mjs",
     "test:compiler": "cargo test --manifest-path mythos-compiler/Cargo.toml",
     "verify:determinism": "cargo test --manifest-path mythos-compiler/Cargo.toml --test compile_determinism"
   }

@@ -6,7 +6,7 @@
 //! a regression here means a non-deterministic code path slipped into
 //! promotion, source assembly, or serialisation.
 
-use mythos_compiler::compiler::run_dir::compile_run_dir;
+use mythos_skill::compiler::run_dir::compile_run_dir;
 use std::{env, fs, io, path::Path};
 
 #[test]
