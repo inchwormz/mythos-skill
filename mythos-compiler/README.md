@@ -1,42 +1,29 @@
-# mythos-compiler
+# mythos-skill
 
-`mythos-compiler` is the first local compiler slice for the hosted-brain /
-local-body Mythos architecture.
+Deterministic packet compiler for AI agent runs.
 
-It retargets the useful kernel ideas from `munin-memory` away from:
+Takes raw subagent output (evidence JSONL, verifier findings, raw artifacts) and compiles a schema-validated, hash-provenanced `next_pass_packet.json` that the orchestrating model reads instead of raw subagent prose.
 
-- cross-session user memory
+Part of the [mythos-skill](https://github.com/inchwormz/mythos-skill) project — see the repo for the full JS runtime (ingest, strict gate, readiness) that drives this crate.
 
-toward:
+## What this crate does
 
-- explicit-state recurrent synthesis for a single objective/run/branch/pass loop
+- Reads a run directory containing `manifest.json`, `worker-results/evidence.jsonl`, `verifier-results/findings.jsonl`, and `raw/` artifacts.
+- Validates every `source_ref` — hashes `file:` references against disk, checks line-range spans, enforces provenance rules for substantive evidence kinds.
+- Promotes evidence into `trusted_facts` using agent-supplied `confidence` when present.
+- Auto-detects `Contradiction` entries when different agents assert divergent summaries on the same direct source span, graduating severity by evidence kind.
+- Emits `next_pass_packet.json`, `snapshot.json`, `decision_log.jsonl` — byte-deterministic for byte-identical inputs.
 
-## First slice
+## Install
 
-This crate currently provides:
+```bash
+cargo install mythos-skill
+```
 
-- typed evidence records
-- typed packet and snapshot schemas
-- append-only journal helpers
-- artifact/source references
-- trust gating for next-pass packetization
-- promotion scoring for reusable directives
-- recurring failure signal extraction
-- packet assembly from compiler inputs
+## Run
 
-## Target outputs
-
-- `next_pass_packet.json`
-- `snapshot.json`
-- `decision_log.jsonl`
-
-`promotion_record` remains part of the typed log surface, but it is no longer a
-competing top-level output contract.
-
-## CLI
-
-```powershell
-cargo run --bin mythos -- compile --run-dir tests/fixtures/run-basic
+```bash
+mythos compile --run-dir <run-dir>
 ```
 
 Expected run directory shape:
@@ -47,28 +34,27 @@ Expected run directory shape:
 - `worker-results/evidence.jsonl`
 - `verifier-results/findings.jsonl`
 
-The command writes outputs to `state/` inside the run directory.
+Outputs land in `state/` inside the run directory.
 
-Evidence and verifier records may include `source_refs` alongside `source_ids`.
-Use this for direct provenance such as file lines, command output, test proof,
-or log spans. The compiler promotes declared `source_refs` into the packet source
-registry, and strict gates can reject substantive records that only cite a broad
-raw markdown summary.
-
-Minimal direct-provenance evidence shape:
+## Minimal evidence shape
 
 ```json
 {
   "id": "ev-example",
   "kind": "code-change",
   "summary": "The timeout helper is now used by Firecrawl API calls.",
+  "agent_id": "mythos-evidence-worker",
+  "lane": "impl",
+  "confidence": 0.9,
+  "rationale": "Read at file:scripts/foo.js:42.",
   "source_ids": ["file:skills/foo.js:42"],
   "source_refs": [
     {
       "source_id": "file:skills/foo.js:42",
       "path": "skills/foo.js",
       "kind": "file",
-      "hash": "stable-hash",
+      "hash": "<fnv1a-64>",
+      "hash_alg": "fnv1a-64",
       "span": "42",
       "observed_at": "2026-04-21T00:00:00Z"
     }
@@ -77,12 +63,10 @@ Minimal direct-provenance evidence shape:
 }
 ```
 
-## Relationship to Munin
+## Determinism guarantee
 
-This crate is not a full Munin fork. It is a surgical retargeting of the
-compiler-kernel shape described in:
+The `compile_determinism` integration test runs the compiler twice on a byte-identical fixture and asserts byte-identical `next_pass_packet.json` + `snapshot.json`. A regression here means a non-deterministic code path slipped in.
 
-- `../munin-fork-plan.md`
+## License
 
-The hosted model remains the control plane. This crate exists to make the
-compiler state explicit, local, replayable, and inspectable.
+MIT
