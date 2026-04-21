@@ -1,0 +1,17 @@
+# Rust build artefacts
+mythos-compiler/target/
+
+# Runtime-generated run dirs (created by driver.mjs)
+.codex/
+
+# Generated compiler output under fixtures (wiped and re-created by readiness)
+mythos-compiler/tests/fixtures/*/state/
+
+# Orphan UTF-16 scratch files — not used by any code path
+readiness-fixture-packet.json
+readiness-new-packet.json
+
+# Editor/OS noise
+.DS_Store
+Thumbs.db
+*.swp

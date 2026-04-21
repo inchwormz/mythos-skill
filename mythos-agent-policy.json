@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "fanout": {
+    "micro_lanes": 5,
+    "broad_lanes_max": 5
+  },
+  "default_micro_agent": {
+    "model": "gpt-5.4",
+    "reasoning_effort": "low",
+    "status": "trusted-baseline",
+    "rationale": "Use the known reliable model for mandatory micro-lanes unless a smaller model has a current, explicit capability profile."
+  },
+  "experimental_micro_agents": [
+    {
+      "model": "gpt-5.3-codex-spark",
+      "reasoning_effort": "low",
+      "status": "disabled-until-profiled",
+      "profile_required": true,
+      "profile_fields": [
+        "model",
+        "prompt_size_estimate",
+        "artifact_count",
+        "artifact_size_estimate",
+        "output_complete",
+        "source_backed",
+        "jsonl_convertible",
+        "failure_mode",
+        "confidence",
+        "expires_at"
+      ]
+    }
+  ],
+  "prime_consumption": {
+    "raw_subagent_chat_allowed": false,
+    "required_promotion_path": "subagent output -> run-dir evidence/findings/raw artifact -> driver.mjs --run-dir -> next_pass_packet.json"
+  }
+}

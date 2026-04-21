@@ -1,0 +1,17 @@
+{
+  "name": "mythos-emulator",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "main": "driver.mjs",
+  "scripts": {
+    "start": "node driver.mjs",
+    "compile": "node driver.mjs",
+    "gate": "node scripts/strict-gate.mjs",
+    "ingest-subagent": "node scripts/ingest-subagent.mjs",
+    "ready": "node scripts/readiness.mjs",
+    "test": "node scripts/readiness.mjs",
+    "test:compiler": "cargo test --manifest-path mythos-compiler/Cargo.toml",
+    "verify:determinism": "cargo test --manifest-path mythos-compiler/Cargo.toml --test compile_determinism"
+  }
+}
