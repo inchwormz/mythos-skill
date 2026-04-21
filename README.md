@@ -43,12 +43,28 @@ subagent markdown  (raw/subagents/<lane>.md)
 
 Mythos ships as two artefacts — a Rust compiler binary (`mythos`) and a Node runtime (`mythos-skill`). You need both for the full pipeline; the Rust binary is a hard requirement for `compile`.
 
-### One-shot (recommended)
+### One-liner (recommended)
+
+macOS / Linux:
 
 ```bash
-cargo install mythos-skill       # installs the `mythos` Rust compiler binary
-npm install -g mythos-skill      # installs the `mythos-skill` Node CLI (ingest, gate, ready, orchestrator)
-mythos-skill ready               # end-to-end self-test — must print "mythos readiness: passed"
+curl -fsSL https://raw.githubusercontent.com/inchwormz/mythos-skill/main/install.sh | sh
+```
+
+Windows PowerShell:
+
+```powershell
+iwr https://raw.githubusercontent.com/inchwormz/mythos-skill/main/install.ps1 | iex
+```
+
+These install the Rust compiler from crates.io, the Node runtime from GitHub, then run readiness.
+
+### Manual (three commands)
+
+```bash
+cargo install mythos-skill                       # Rust compiler binary
+npm install -g github:inchwormz/mythos-skill     # Node runtime (ingest, gate, ready, CLI)
+mythos-skill ready                               # end-to-end self-test — must print "mythos readiness: passed"
 ```
 
 ### Rust binary only (just the compiler)
