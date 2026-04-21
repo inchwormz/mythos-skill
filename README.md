@@ -41,35 +41,53 @@ subagent markdown  (raw/subagents/<lane>.md)
 
 ## Install
 
+Mythos ships as two artefacts — a Rust compiler binary (`mythos`) and a Node runtime (`mythos-skill`). You need both for the full pipeline; the Rust binary is a hard requirement for `compile`.
+
+### One-shot (recommended)
+
 ```bash
-cargo install mythos-skill
+cargo install mythos-skill       # installs the `mythos` Rust compiler binary
+npm install -g mythos-skill      # installs the `mythos-skill` Node CLI (ingest, gate, ready, orchestrator)
+mythos-skill ready               # end-to-end self-test — must print "mythos readiness: passed"
 ```
 
-Then clone this repo for the JS runtime:
+### Rust binary only (just the compiler)
+
+```bash
+cargo install mythos-skill
+mythos init my-run               # scaffold a minimal run dir
+mythos compile --run-dir my-run  # compile it
+```
+
+No Node runtime; you manage `evidence.jsonl` / `findings.jsonl` by hand or from your own tooling.
+
+### From source
 
 ```bash
 git clone https://github.com/inchwormz/mythos-skill
 cd mythos-skill
-npm run ready
+cargo install --path mythos-compiler   # builds & installs the mythos binary
+npm install                             # installs the Node CLI locally (+ postinstall verifies mythos)
+npm run ready                           # end-to-end fixture check
 ```
 
 ## Quick start
 
 ```bash
-# Compile a new objective
-node driver.mjs "your objective here"
+# 1. Scaffold a run directory (manifest.json, task.md, raw/, worker-results/, verifier-results/, seed evidence)
+mythos-skill init my-run
 
-# Ingest a subagent's output
-node scripts/ingest-subagent.mjs --run-dir <run> --lane <lane> --agent-id <id> --from <file.md>
+# 2. Ingest subagent output
+mythos-skill ingest --run-dir my-run --lane lane-a --agent-id agent-1 --from agent-a.md
 
-# Recompile after ingest
-node driver.mjs --run-dir <run>
+# 3. Compile the run into state/next_pass_packet.json
+mythos-skill compile --run-dir my-run
 
-# Record Prime's synthesis and advance pass id
-node driver.mjs --run-dir <run> --record-synthesis "your summary"
+# 4. Record your synthesis and advance the pass id
+mythos-skill compile --run-dir my-run --record-synthesis "one-paragraph summary with direct citations"
 
-# Verify the packet is fit to ship
-node scripts/strict-gate.mjs --run-dir <run>
+# 5. Verify the run passes the strict quality gate
+mythos-skill gate --run-dir my-run
 ```
 
 ## Subagent output contract

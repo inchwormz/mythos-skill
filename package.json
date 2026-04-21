@@ -1,7 +1,7 @@
 {
   "name": "mythos-skill",
   "version": "0.1.0",
-  "description": "Explicit-state recurrent synthesis for AI agent orchestration: JS runtime around the mythos-skill Rust packet compiler.",
+  "description": "Explicit-state recurrent synthesis for AI agent orchestration. JS runtime around the mythos-skill Rust packet compiler: ingest subagent output, compile deterministic packets, strict-gate for quality.",
   "license": "MIT",
   "author": "inchwormz <johnrichardmckeown@gmail.com>",
   "repository": {
@@ -12,10 +12,26 @@
   "bugs": {
     "url": "https://github.com/inchwormz/mythos-skill/issues"
   },
-  "keywords": ["ai", "agents", "determinism", "provenance", "claude"],
-  "private": true,
+  "keywords": ["ai", "agents", "determinism", "provenance", "claude", "mythos", "packet-compiler"],
   "type": "module",
   "main": "driver.mjs",
+  "bin": {
+    "mythos-skill": "bin/mythos-skill.mjs"
+  },
+  "files": [
+    "bin/",
+    "scripts/",
+    "tests/",
+    "mythos-compiler/schemas/",
+    "mythos-compiler/tests/fixtures/",
+    "driver.mjs",
+    "SKILL.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "node driver.mjs",
     "compile": "node driver.mjs",
@@ -24,6 +40,7 @@
     "ready": "node scripts/readiness.mjs",
     "test": "node --test tests/ && node scripts/readiness.mjs",
     "test:compiler": "cargo test --manifest-path mythos-compiler/Cargo.toml",
-    "verify:determinism": "cargo test --manifest-path mythos-compiler/Cargo.toml --test compile_determinism"
+    "verify:determinism": "cargo test --manifest-path mythos-compiler/Cargo.toml --test compile_determinism",
+    "postinstall": "node bin/postinstall.mjs"
   }
 }
