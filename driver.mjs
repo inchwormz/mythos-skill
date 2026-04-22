@@ -302,20 +302,39 @@ function createRunDir(objective) {
 }
 
 function compileRunDir(runDir) {
-  const result = spawnSync(
-    "cargo",
-    ["run", "--quiet", "--bin", "mythos", "--", "compile", "--run-dir", runDir],
-    {
-      cwd: compilerDir,
+  // Prefer the installed `mythos` binary from PATH (installed via
+  // `cargo install mythos-skill`). Fall back to `cargo run` only when we're
+  // inside a source checkout that still has mythos-compiler/Cargo.toml —
+  // the npm-distributed package ships schemas + fixtures only, so cargo
+  // won't work there even if it's installed.
+  const compilerCargoToml = path.join(compilerDir, "Cargo.toml");
+  const sourceCheckout = fs.existsSync(compilerCargoToml);
+
+  let result;
+  if (sourceCheckout) {
+    result = spawnSync(
+      "cargo",
+      ["run", "--quiet", "--bin", "mythos", "--", "compile", "--run-dir", runDir],
+      {
+        cwd: compilerDir,
+        encoding: "utf8",
+        shell: process.platform === "win32",
+      },
+    );
+  } else {
+    result = spawnSync("mythos", ["compile", "--run-dir", runDir], {
       encoding: "utf8",
       shell: process.platform === "win32",
-    },
-  );
+    });
+  }
 
-  // Guard against null stdout/stderr that can surface on spawn errors
-  // (e.g. cargo missing on PATH on Windows) — calling .trim() on null would
-  // throw TypeError and mask the real cause.
   if (result.error) {
+    if (!sourceCheckout && result.error.code === "ENOENT") {
+      fail(
+        "mythos binary not found on PATH. Install it with `cargo install mythos-skill` " +
+          "(or run from a source checkout that has mythos-compiler/Cargo.toml).",
+      );
+    }
     fail(`mythos-compiler spawn failed: ${result.error.message}`);
   }
   const stdout = typeof result.stdout === "string" ? result.stdout.trim() : "";

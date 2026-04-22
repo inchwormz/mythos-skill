@@ -456,8 +456,18 @@ function main() {
   checkAgentPolicy();
   checkStrictGate();
 
-  run("cargo", ["fmt", "--manifest-path", path.join(compilerDir, "Cargo.toml"), "--check"]);
-  run("cargo", ["test", "--manifest-path", path.join(compilerDir, "Cargo.toml")]);
+  // Only run cargo fmt/test when we're inside a source checkout. The
+  // npm-distributed package ships schemas + fixtures only (no src/ or
+  // Cargo.toml), so a cargo invocation would ENOENT.
+  const cargoTomlPath = path.join(compilerDir, "Cargo.toml");
+  if (fs.existsSync(cargoTomlPath)) {
+    run("cargo", ["fmt", "--manifest-path", cargoTomlPath, "--check"]);
+    run("cargo", ["test", "--manifest-path", cargoTomlPath]);
+  } else {
+    process.stdout.write(
+      "readiness: skipping cargo fmt/test (source checkout not present; relying on the installed `mythos` binary).\n",
+    );
+  }
 
   const fixtureState = path.join(compilerDir, "tests", "fixtures", "run-basic", "state");
   safeRemove(fixtureState);
