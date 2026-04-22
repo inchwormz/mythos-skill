@@ -205,6 +205,37 @@ function checkHashAlg(source, errors, prefix) {
   }
 }
 
+// G1/G6/G10: defense-in-depth against absolute or machine-specific paths
+// leaking into a packet. Ingest normalizes abs-inside-repo paths to repo-
+// relative, but a hand-crafted packet or an agent that bypassed ingest could
+// still carry them. Reject any `file:` source_id with a drive letter or
+// POSIX-absolute path, and reject backslashes — both break determinism
+// across machines.
+function checkMachineSpecificPath(source, errors, prefix) {
+  const sourceId = typeof source.source_id === "string" ? source.source_id : "";
+  const sourcePath = typeof source.path === "string" ? source.path : "";
+  const fileIdMatch = /^file:(.+?):(?:\d+(?:-\d+)?)$/.exec(sourceId);
+  const idPath = fileIdMatch ? fileIdMatch[1] : "";
+  const looksAbsolute = (candidate) =>
+    /^[A-Za-z]:[\\/]/.test(candidate) || candidate.startsWith("/");
+  const hasBackslash = (candidate) => candidate.includes("\\");
+  if (looksAbsolute(idPath)) {
+    errors.push(
+      `${prefix} source_id ${sourceId} embeds a machine-specific absolute path; must be repo-relative`,
+    );
+  }
+  if (source.kind === "file" && looksAbsolute(sourcePath)) {
+    errors.push(
+      `${prefix} file source_ref ${source.source_id ?? "<unknown>"} path must be repo-relative; got machine-specific "${sourcePath}"`,
+    );
+  }
+  if (source.kind === "file" && hasBackslash(sourcePath)) {
+    errors.push(
+      `${prefix} file source_ref ${source.source_id ?? "<unknown>"} path must use forward slashes; got "${sourcePath}"`,
+    );
+  }
+}
+
 function checkFileSourceRef(source, runDir, errors, prefix) {
   if (source.kind !== "file") return;
 
@@ -296,6 +327,7 @@ function checkDeclaredSourceRefs(records, runDir, errors, label, anchorMs) {
       }
       checkSourceKind(source, errors, prefix);
       checkHashAlg(source, errors, prefix);
+      checkMachineSpecificPath(source, errors, prefix);
       checkFileSourceRef(source, runDir, errors, prefix);
       checkRawSourceRef(source, runDir, errors, prefix);
       checkObservedAtWindow(source.observed_at, anchorMs, errors, prefix, "source_ref observed_at");
@@ -320,6 +352,7 @@ function checkPacketSourceIntegrity(packet, runDir, errors, anchorMs) {
   for (const source of packet?.sources ?? []) {
     const prefix = `packet sources ${source.source_id ?? "<unknown>"}`;
     checkHashAlg(source, errors, prefix);
+    checkMachineSpecificPath(source, errors, prefix);
     checkFileSourceRef(source, runDir, errors, prefix);
     checkRawSourceRef(source, runDir, errors, prefix);
     checkObservedAtWindow(source.observed_at, anchorMs, errors, prefix, "observed_at");
@@ -336,6 +369,7 @@ function checkContradictionSourceRefs(packet, runDir, errors, anchorMs) {
     for (const source of refs) {
       const prefix = `contradiction ${contradiction.id ?? "<unknown>"}`;
       checkHashAlg(source, errors, prefix);
+      checkMachineSpecificPath(source, errors, prefix);
       checkFileSourceRef(source, runDir, errors, prefix);
       checkRawSourceRef(source, runDir, errors, prefix);
       checkObservedAtWindow(source.observed_at, anchorMs, errors, prefix, "source_ref observed_at");

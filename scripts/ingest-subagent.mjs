@@ -98,10 +98,61 @@ function normalizeRawName(rawDir, rawPath) {
   return path.relative(rawDir, rawPath).replace(/\\/g, "/");
 }
 
+// G3: advisory lock using an O_EXCL sidecar. Two or more parallel ingest
+// processes writing to the same evidence.jsonl / findings.jsonl can interleave
+// partial lines if the underlying write is split by the OS. Serialize the
+// append through a lock file so each process sees the append as atomic from
+// the file-reader's perspective. Pure stdlib: `wx` gives O_EXCL|O_CREAT, which
+// fails with EEXIST when a competing process already holds the lock.
+function sleepMsSync(ms) {
+  const buffer = new Int32Array(new SharedArrayBuffer(4));
+  Atomics.wait(buffer, 0, 0, ms);
+}
+
+function withFileLock(file, fn, { retries = 200, waitMs = 25, staleMs = 30_000 } = {}) {
+  const lockFile = `${file}.lock`;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const fd = fs.openSync(lockFile, "wx");
+      try {
+        fs.writeSync(fd, `${process.pid}:${Date.now()}`);
+      } finally {
+        fs.closeSync(fd);
+      }
+      try {
+        return fn();
+      } finally {
+        try {
+          fs.unlinkSync(lockFile);
+        } catch {
+          // best-effort — another process may have already reaped a stale lock
+        }
+      }
+    } catch (err) {
+      if (err && err.code !== "EEXIST") throw err;
+      // If the lock looks stale (process died mid-append), reap it and retry.
+      try {
+        const stat = fs.statSync(lockFile);
+        if (Date.now() - stat.mtimeMs > staleMs) {
+          fs.unlinkSync(lockFile);
+          continue;
+        }
+      } catch {
+        // lock file vanished between EEXIST and statSync — loop and retry
+      }
+      sleepMsSync(waitMs);
+    }
+  }
+  throw new Error(`timed out waiting for ${lockFile} after ${retries * waitMs}ms`);
+}
+
 function appendJsonl(file, records) {
   if (records.length === 0) return;
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.appendFileSync(file, `${records.map((record) => JSON.stringify(record)).join("\n")}\n`, "utf8");
+  const payload = `${records.map((record) => JSON.stringify(record)).join("\n")}\n`;
+  withFileLock(file, () => {
+    fs.appendFileSync(file, payload, "utf8");
+  });
 }
 
 // Parse fenced blocks anchored to line starts. Inline triple-backticks embedded

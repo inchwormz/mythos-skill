@@ -11,7 +11,7 @@
 // Each test creates its own ephemeral run dir under .codex/mythos/tmp-test-*/
 // and cleans up via t.after.
 import { strict as assert } from "node:assert";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import test from "node:test";
 import fs from "node:fs";
 import path from "node:path";
@@ -1329,5 +1329,189 @@ test("G10 ingest: absolute source_ref.path on file kinds gets rewritten to repo-
     ref.path,
     "driver.mjs",
     `G10 source_ref.path must be repo-relative; got ${ref.path}`,
+  );
+});
+
+test("G3 ingest: two concurrent ingests against the same run dir produce a clean JSONL (no interleave)", async (t) => {
+  const runDir = freshRunDir("g3-concurrent-ingest");
+  t.after(() => removeDir(runDir));
+
+  // Two subagent lanes write separate fenced blocks; each lane calls ingest in
+  // parallel. Without G3 advisory locking, the two processes can interleave
+  // partial JSON lines into evidence.jsonl. With the O_EXCL lock the appends
+  // serialize and every line is parseable.
+  const observedAt = new Date().toISOString();
+  function writeFixture(laneName, evId) {
+    const subagentPath = path.join(runDir, "raw", "subagents", `${laneName}.md`);
+    const record = {
+      id: evId,
+      kind: "observation",
+      summary: `concurrent-fixture ${laneName} cites driver.mjs`,
+      source_ids: ["file:driver.mjs:1"],
+      source_refs: [
+        {
+          source_id: "file:driver.mjs:1",
+          path: "driver.mjs",
+          kind: "file",
+          hash: "placeholder-will-be-filled",
+          hash_alg: "fnv1a-64",
+          span: "1",
+          observed_at: observedAt,
+        },
+      ],
+      observed_at: observedAt,
+    };
+    fs.writeFileSync(
+      subagentPath,
+      ["```mythos-evidence-jsonl", JSON.stringify(record), "```", ""].join("\n"),
+      "utf8",
+    );
+    return subagentPath;
+  }
+
+  const laneCount = 5;
+  const lanes = Array.from({ length: laneCount }, (_, i) => ({
+    name: `concurrent-${i}`,
+    evId: `ev-g3-concurrent-${i}`,
+    from: writeFixture(`concurrent-${i}`, `ev-g3-concurrent-${i}`),
+  }));
+
+  // Fire all ingests in parallel. Collect the spawn promises so Node's test
+  // runner waits on the whole fanout.
+  function spawnIngest(lane) {
+    return new Promise((resolve, reject) => {
+      const child = spawn(
+        "node",
+        [
+          "scripts/ingest-subagent.mjs",
+          "--run-dir",
+          runDir,
+          "--lane",
+          lane.name,
+          "--agent-id",
+          `${lane.name}-agent`,
+          "--from",
+          lane.from,
+        ],
+        { cwd: repoRoot, shell: process.platform === "win32" },
+      );
+      let stdout = "";
+      let stderr = "";
+      child.stdout.on("data", (chunk) => {
+        stdout += chunk.toString();
+      });
+      child.stderr.on("data", (chunk) => {
+        stderr += chunk.toString();
+      });
+      child.on("error", reject);
+      child.on("close", (code) => resolve({ code, stdout, stderr, lane }));
+    });
+  }
+
+  const results = await Promise.all(lanes.map((lane) => spawnIngest(lane)));
+  for (const result of results) {
+    assert.equal(
+      result.code,
+      0,
+      `G3 concurrent ingest for ${result.lane.name} must exit 0: stdout=${result.stdout}\nstderr=${result.stderr}`,
+    );
+  }
+
+  // Every line in evidence.jsonl must be parseable JSON — if any lane's write
+  // interleaved mid-line, JSON.parse will throw on that line.
+  const evidenceFile = path.join(runDir, "worker-results", "evidence.jsonl");
+  const lines = fs
+    .readFileSync(evidenceFile, "utf8")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  for (const [index, line] of lines.entries()) {
+    try {
+      JSON.parse(line);
+    } catch (err) {
+      throw new Error(
+        `G3 concurrent ingest corrupted evidence.jsonl line ${index + 1}: ${err.message}\n  line="${line}"`,
+      );
+    }
+  }
+
+  // Every lane's evidence record must appear at least once — ingest cannot
+  // drop records under contention.
+  const records = lines.map((line) => JSON.parse(line));
+  for (const lane of lanes) {
+    const found = records.find((record) => record.id === lane.evId);
+    assert.ok(
+      found,
+      `G3 every lane must land its evidence record; missing ${lane.evId}. records=${JSON.stringify(records.map((r) => r.id))}`,
+    );
+  }
+
+  // Lock sidecar must be cleaned up after the last ingest exits.
+  assert.equal(
+    fs.existsSync(`${evidenceFile}.lock`),
+    false,
+    "G3 lock sidecar must be removed after ingest completes",
+  );
+});
+
+test("G-gate: absolute file: source_id in a hand-crafted packet fails the strict gate", (t) => {
+  const runDir = freshRunDir("g-gate-absolute-path-source-id");
+  t.after(() => removeDir(runDir));
+
+  // Simulate a packet that slipped past ingest — evidence.jsonl hand-written
+  // with a machine-specific absolute source_id. The gate's defense-in-depth
+  // check must reject it even though the file exists on this machine.
+  const observedAt = new Date().toISOString();
+  const absolutePath = path.join(repoRoot, "driver.mjs").replace(/\\/g, "/");
+  const driverBytes = fs.readFileSync(path.join(repoRoot, "driver.mjs"));
+  // Compute fnv1a-64 locally so the hash is valid — the gate must still
+  // reject on path-form grounds, not hash-mismatch grounds.
+  function fnv1a(buffer) {
+    let hash = 0xcbf29ce484222325n;
+    const prime = 0x100000001b3n;
+    const mask = 0xffffffffffffffffn;
+    for (const byte of buffer) {
+      hash ^= BigInt(byte);
+      hash = (hash * prime) & mask;
+    }
+    return hash.toString(16).padStart(16, "0");
+  }
+  const driverHash = fnv1a(driverBytes);
+
+  const record = {
+    id: "ev-gate-abs-path",
+    kind: "observation",
+    summary: "Evidence leaked an absolute source_id past ingest",
+    source_ids: [`file:${absolutePath}:1`, "raw:objective.md"],
+    source_refs: [
+      {
+        source_id: `file:${absolutePath}:1`,
+        path: absolutePath,
+        kind: "file",
+        hash: driverHash,
+        hash_alg: "fnv1a-64",
+        span: "1",
+        observed_at: observedAt,
+      },
+    ],
+    observed_at: observedAt,
+  };
+  fs.appendFileSync(
+    path.join(runDir, "worker-results", "evidence.jsonl"),
+    JSON.stringify(record) + "\n",
+    "utf8",
+  );
+
+  const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir]);
+  assert.notEqual(
+    gate.status,
+    0,
+    `G-gate: absolute source_id must fail the gate; stdout=${gate.stdout}\nstderr=${gate.stderr}`,
+  );
+  const output = `${gate.stdout}\n${gate.stderr}`;
+  assert.match(
+    output,
+    /machine-specific|must be repo-relative/,
+    `G-gate failure must mention machine-specific / repo-relative path; got output=${output}`,
   );
 });
