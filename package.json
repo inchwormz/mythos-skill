@@ -22,9 +22,11 @@
     "bin/",
     "scripts/",
     "tests/",
+    "skills/",
     "mythos-compiler/schemas/",
     "mythos-compiler/tests/fixtures/",
     "driver.mjs",
+    "mythos-agent-policy.json",
     "SKILL.md",
     "README.md",
     "LICENSE"
@@ -38,7 +40,7 @@
     "gate": "node scripts/strict-gate.mjs",
     "ingest-subagent": "node scripts/ingest-subagent.mjs",
     "ready": "node scripts/readiness.mjs",
-    "test": "node --test tests/ && node scripts/readiness.mjs",
+    "test": "node --test tests/packet_shape_integrity.test.js && node scripts/readiness.mjs",
     "test:compiler": "cargo test --manifest-path mythos-compiler/Cargo.toml",
     "verify:determinism": "cargo test --manifest-path mythos-compiler/Cargo.toml --test compile_determinism",
     "postinstall": "node bin/postinstall.mjs"

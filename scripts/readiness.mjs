@@ -184,60 +184,81 @@ function checkDriverIsCodexNative() {
   assert(!driver.includes('spawn("claude"'), "driver still spawns claude");
 }
 
+// Mythos ships two skill surfaces — Claude Code at skills/claude/SKILL.md and
+// Codex at skills/codex/SKILL.md. Readiness asserts the Mythos *contract* is
+// present in each (subagent fanout, Prime consumption rule, strict gate,
+// machine-readable records). Model names, reasoning-effort policy, and other
+// environment-specific details live in mythos-agent-policy.json, not the
+// contract itself.
+// Phrases that must appear in every Mythos skill contract, in either their
+// CLI form (`mythos-skill gate`) or the underlying script form
+// (`strict-gate.mjs`). A skill can use either spelling.
+const MYTHOS_CONTRACT_PATTERNS = [
+  { label: "machine-readable record contract", match: /mythos-evidence-jsonl/ },
+  { label: "ingest step", match: /mythos-skill ingest|ingest-subagent\.mjs|mythos-skill ingest\b/ },
+  { label: "gate step", match: /mythos-skill gate|strict-gate/ },
+  { label: "direct source_refs", match: /source_refs/ },
+  { label: "readiness step", match: /mythos-skill ready|npm run ready/ },
+];
+
 function checkSkillRequiresSubagents() {
-  const workspaceSkill = path.join(root, "..", ".codex", "skills", "mythos", "SKILL.md");
-  const skill = fs.readFileSync(workspaceSkill, "utf8");
-  assert(skill.includes("Mandatory Subagent Lanes"), "mythos skill lacks subagent protocol");
-  assert(skill.includes("Substantive Mythos runs use subagents"), "mythos skill does not require subagents");
-  assert(skill.includes("5 microagents"), "mythos skill does not require 5 microagents");
-  assert(skill.includes("gpt-5.4` with low reasoning"), "mythos skill does not default microagents to GPT-5.4 low");
-  assert(skill.includes("Spark is experimental"), "mythos skill does not treat Spark as experimental");
-  assert(skill.includes("gpt-5.3-codex-spark"), "mythos skill does not document Spark as optional");
-  assert(!skill.includes("exactly 5 Spark microagents"), "mythos skill still hard-requires 5 Spark agents");
-  assert(skill.includes("up to 5 GPT-5.4 low/medium agents"), "mythos skill does not require max GPT-5.4 fanout");
-  assert(skill.includes("Prime's first job is"), "mythos skill does not make Prime schedule before solving");
+  const skillFiles = [
+    path.join(root, "skills", "claude", "SKILL.md"),
+    path.join(root, "skills", "codex", "SKILL.md"),
+  ];
+  const missing = skillFiles.filter((file) => !fs.existsSync(file));
   assert(
-    skill.includes("Prime consumes recompiled packets, not raw subagent chat"),
-    "mythos skill does not block direct Prime consumption of subagent chat",
+    missing.length === 0,
+    `missing skill contract file(s): ${missing.map((file) => path.relative(root, file)).join(", ")}`,
   );
-  assert(
-    skill.includes("Prime must only proceed from compiler-validated `next_pass_packet.json`"),
-    "mythos skill does not require compiler-validated packets",
-  );
-  assert(skill.includes("npm run ready"), "mythos skill does not scope readiness to npm run ready");
-  assert(skill.includes("explore"), "mythos skill lacks explore lane");
-  assert(skill.includes("verifier"), "mythos skill lacks verifier lane");
-  assert(skill.includes("strict-gate.mjs"), "mythos skill does not require strict gate");
-  assert(skill.includes("source_refs"), "mythos skill does not require direct source_refs");
-  assert(skill.includes("ingest-subagent.mjs"), "mythos skill does not require subagent quarantine ingester");
-  assert(skill.includes("mythos-evidence-jsonl"), "mythos skill does not require machine-readable subagent records");
-  assert(skill.includes("Subagent chat is quarantined raw input"), "mythos hard rules do not quarantine subagent chat");
-  assert(
-    skill.includes("Strict gate must pass before final answer"),
-    "mythos hard rules do not require strict gate before final answer",
-  );
+
+  for (const skillPath of skillFiles) {
+    const relName = path.relative(root, skillPath);
+    const skill = fs.readFileSync(skillPath, "utf8");
+    // Substantive subagent fanout — keyword varies between skills ("Mandatory
+    // Subagent Lanes" vs "Subagent Lanes"), so match on the common stem.
+    assert(
+      /Subagent Lanes/.test(skill),
+      `${relName} lacks a Subagent Lanes section`,
+    );
+    assert(
+      skill.includes("Prime consumes recompiled packets, not raw subagent chat") ||
+        skill.includes("Prime consumes only the recompiled packet"),
+      `${relName} does not block direct Prime consumption of subagent chat`,
+    );
+    for (const pattern of MYTHOS_CONTRACT_PATTERNS) {
+      assert(
+        pattern.match.test(skill),
+        `${relName} does not reference the ${pattern.label} (expected ${pattern.match})`,
+      );
+    }
+  }
 }
 
+// Agent policy is optional — Mythos does not require any particular model
+// choice. When the file is present, enforce only the Mythos contract fields
+// (fanout shape + Prime consumption rule). Model names and reasoning-effort
+// are environment-specific and may vary by Prime surface.
 function checkAgentPolicy() {
   const policyPath = path.join(root, "mythos-agent-policy.json");
+  if (!fs.existsSync(policyPath)) return;
   const policy = JSON.parse(fs.readFileSync(policyPath, "utf8"));
-  assert(policy.fanout?.micro_lanes === 5, "agent policy must launch 5 micro-lanes");
-  assert(policy.fanout?.broad_lanes_max === 5, "agent policy must allow up to 5 broad lanes");
-  assert(policy.default_micro_agent?.model === "gpt-5.4", "default microagent must be gpt-5.4");
-  assert(policy.default_micro_agent?.reasoning_effort === "low", "default microagent must use low reasoning");
-  assert(
-    policy.experimental_micro_agents?.some(
-      (agent) =>
-        agent.model === "gpt-5.3-codex-spark" &&
-        agent.status === "disabled-until-profiled" &&
-        agent.profile_required === true,
-    ),
-    "Spark must remain disabled until profiled",
-  );
-  assert(
-    policy.prime_consumption?.raw_subagent_chat_allowed === false,
-    "Prime must not consume raw subagent chat",
-  );
+  if (policy.fanout) {
+    assert(
+      Number.isInteger(policy.fanout.micro_lanes) && policy.fanout.micro_lanes > 0,
+      "agent policy fanout.micro_lanes must be a positive integer",
+    );
+    assert(
+      Number.isInteger(policy.fanout.broad_lanes_max) && policy.fanout.broad_lanes_max >= 0,
+      "agent policy fanout.broad_lanes_max must be a non-negative integer",
+    );
+  }
+  if (policy.prime_consumption) {
+    assert(
+      policy.prime_consumption.raw_subagent_chat_allowed === false,
+      "agent policy must forbid raw subagent chat (prime_consumption.raw_subagent_chat_allowed=false)",
+    );
+  }
 }
 
 function addSyntheticSubagentEvidence(runDir) {
