@@ -85,23 +85,29 @@ subagent isolated session
 
 Subagent replies are completion signals, not context. Prime consumes only the recompiled packet.
 
-## Subagent Output Contract
+## Subagent Output Contract (forgiving - do not over-specify to lanes)
 
-Subagents write fenced blocks inside their `raw/subagents/<lane>.md`:
+Two required fields per claim, in a fenced block:
 
 ````markdown
 ```mythos-evidence-jsonl
-{"id":"ev-example","kind":"observation","summary":"...","source_ids":["file:path:10"],"source_refs":[...],"observed_at":"..."}
+{"summary":"<one factual claim>","source_ids":["file:<repo-relative-path>:<line>"]}
 ```
 
 ```mythos-verifier-jsonl
-{"id":"vf-example","summary":"...","status":"passed","verifier_score":1,"source_ids":["command:test"],"source_refs":[...]}
+{"summary":"<verdict>","status":"passed","verifier_score":1.0,"source_ids":["file:<path>:<line>"]}
 ```
 ````
 
-Direct source id prefixes: `file:<repo-relative-path>:<line>`, `command:<name>`, `test:<name>`, `log:<name>`.
-
-Prose outside fenced blocks does not reach the packet. `BLOCKED <reason>` on its own line produces a `kind:"blocker"` evidence record.
+Ingest repairs everything else (ids/kinds/timestamps defaulted, synonyms
+aliased, sloppy JSON repaired, bare fences classified by content, bare
+`path:line` citations prefixed) and reports each repair. Do NOT write
+`source_refs` - hand-written refs are discarded and resynthesized with real
+hashes. Unrepairable rules: citations must resolve to real files/lines (else
+downgraded, never fact-eligible); passed findings with score >= 0.9 need a
+content-backed citation or the gate goes red; prose-only output survives only
+as one demoted `unstructured` record; `BLOCKED <reason>` on its own line
+reports a stuck lane.
 
 ## Strict Gate
 
@@ -116,6 +122,6 @@ If it fails, do the missing loop step and re-run. A worktree patch or passing te
 - Packet state is explicit state, not latent memory.
 - Substantive runs use subagents after packet compilation.
 - Prime consumes recompiled packets, not raw subagent chat.
-- Substantive evidence must carry direct `source_refs`.
+- Substantive evidence must cite real `file:<path>:<line>` sources (ingest synthesizes the hashed `source_refs`).
 - Subagent chat is a completion signal, not context.
 - Do not claim readiness unless `mythos-skill ready` passes.

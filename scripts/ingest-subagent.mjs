@@ -155,40 +155,233 @@ function appendJsonl(file, records) {
   });
 }
 
-// Parse fenced blocks anchored to line starts. Inline triple-backticks embedded
-// in prose (e.g. narrative that mentions ```jsonl) no longer break extraction.
-// Opening and closing fences must both begin at column 0.
+// ---------------------------------------------------------------------------
+// FORGIVING PARSER (post-mortem 2026-07-12, run mythos-zero-visual-44).
+//
+// Live NTM agents do real work and then transcribe it imperfectly: bare ```
+// fences, pretty-printed JSON, arrays, single quotes, trailing commas, field
+// synonyms, bare path:line citations, whole reports in prose. The first field
+// test died because every one of those was a hard rejection, and each
+// rejection cost a full agent round-trip until the orchestrator gave up.
+//
+// Principle: format is NOT the trust anchor - hashes, attribution stamping,
+// and the strict gate are. So ingest is liberal in what it accepts, records
+// every repair it performs, and stays exactly as strict about truth
+// downstream. Nothing here weakens a single gate check.
+// ---------------------------------------------------------------------------
+
+// Fence scanner: ``` or ~~~, up to 3 leading spaces, any (or no) label.
+// Classification is per-BLOCK by label when the label names mythos/evidence/
+// verifier, otherwise by sniffing whether the content parses into records.
+// Routing is then per-RECORD by shape (status/verifier_score => verifier), so
+// an agent that dumps both kinds into one block still ingests correctly.
 function parseBlocks(text) {
   const blocks = [];
-  const fence = /(?:^|\r?\n)```([^\n`]*)\r?\n([\s\S]*?)(?:^|\r?\n)```(?=\r?\n|$)/gm;
+  const captured = [];
+  const fence = /(?:^|\r?\n)[ ]{0,3}(```+|~~~+)([^\n]*)\r?\n([\s\S]*?)(?:^|\r?\n)[ ]{0,3}\1[ \t]*(?=\r?\n|$)/gm;
   let match;
   while ((match = fence.exec(text)) !== null) {
-    const header = match[1].trim().toLowerCase();
-    const body = match[2].trim();
-    let matched = false;
-    if (header === "mythos-evidence-jsonl") {
-      blocks.push({ type: "evidence", body });
-      matched = true;
+    const label = match[2].trim().toLowerCase();
+    const body = match[3].trim();
+    if (!body) continue;
+    captured.push([match.index, match.index + match[0].length]);
+    let type = null;
+    if (label.includes("verifier")) type = "verifier";
+    else if (label.includes("evidence")) type = "evidence";
+    if (type) {
+      blocks.push({ type, body, label });
+      continue;
     }
-    if (header === "mythos-verifier-jsonl") {
-      blocks.push({ type: "verifier", body });
-      matched = true;
+    // Unlabeled / generically-labeled block: accept only if the content
+    // actually parses into record-shaped objects. Command output, code, and
+    // tables fail this test and stay ignored.
+    const sniff = parseRecordsFromBlock({ body, label });
+    const shaped = sniff.records.filter(
+      (record) =>
+        record &&
+        typeof record === "object" &&
+        (record.summary !== undefined ||
+          record.status !== undefined ||
+          record.source_ids !== undefined ||
+          record.text !== undefined ||
+          record.claim !== undefined),
+    );
+    if (shaped.length > 0 && shaped.length >= sniff.records.length / 2) {
+      blocks.push({ type: "sniffed", body, label: label || "(bare)" });
     }
-    // Back-compat: accept a "jsonl" fence when preceded by an explicit
-    // "mythos-evidence-jsonl" or "mythos-verifier-jsonl" heading within 240
-    // characters. The older "suggested evidence/verifier" preamble is still
-    // accepted for legacy subagents but is now case-insensitive and trimmed.
-    if (!matched && (header === "jsonl" || header.includes(" jsonl"))) {
-      const preamble = text.slice(Math.max(0, match.index - 240), match.index).toLowerCase();
-      if (preamble.includes("mythos-evidence-jsonl") || preamble.includes("suggested evidence")) {
-        blocks.push({ type: "evidence", body });
+  }
+
+  // Second-chance label scan (field-observed variant: agents wrap the label
+  // in SINGLE backticks - `mythos-verifier-jsonl - so no real fence exists).
+  // Wherever a mythos evidence/verifier label appears OUTSIDE a captured
+  // fence, collect the record-shaped lines that follow it. Delimiters are
+  // ignored entirely; content decides.
+  const labelScan = /`{0,2}mythos[-_ ](evidence|verifier)[-_ ]?jsonl`{0,2}/gi;
+  const lines = text.split(/\r?\n/);
+  // Precompute line start offsets to map matches to line numbers.
+  const lineStarts = [];
+  let offset = 0;
+  for (const line of lines) {
+    lineStarts.push(offset);
+    offset += line.length + 1;
+  }
+  let labelMatch;
+  while ((labelMatch = labelScan.exec(text)) !== null) {
+    const at = labelMatch.index;
+    if (captured.some(([start, end]) => at >= start && at < end)) continue;
+    let lineIdx = lineStarts.findIndex(
+      (start, i) => at >= start && (i + 1 >= lineStarts.length || at < lineStarts[i + 1]),
+    );
+    if (lineIdx === -1) continue;
+    const collected = [];
+    let nonJsonRun = 0;
+    for (let i = lineIdx + 1; i < lines.length; i++) {
+      const stripped = lines[i].trim().replace(/^`+|`+$/g, "").trim();
+      if (!stripped) {
+        if (collected.length > 0) break;
+        nonJsonRun += 1;
+        if (nonJsonRun > 2) break; // label was a prose mention, not a header
+        continue;
       }
-      if (preamble.includes("mythos-verifier-jsonl") || preamble.includes("suggested verifier")) {
-        blocks.push({ type: "verifier", body });
+      if (stripped.startsWith("#")) break;
+      if (!stripped.startsWith("{")) {
+        if (collected.length > 0) break;
+        nonJsonRun += 1;
+        if (nonJsonRun > 2) break;
+        continue;
       }
+      collected.push(stripped);
+    }
+    if (collected.length > 0) {
+      blocks.push({
+        type: labelMatch[1].toLowerCase() === "verifier" ? "verifier" : "evidence",
+        body: collected.join("\n"),
+        label: `label-scan:${labelMatch[1].toLowerCase()}`,
+      });
     }
   }
   return blocks;
+}
+
+// Route a single parsed record to evidence vs verifier by its shape.
+const VERIFIER_STATUS_ALIASES = new Map([
+  ["pass", "passed"], ["passed", "passed"], ["ok", "passed"], ["green", "passed"], ["success", "passed"],
+  ["fail", "failed"], ["failed", "failed"], ["red", "failed"], ["error", "failed"],
+  ["skip", "skipped"], ["skipped", "skipped"],
+  ["pending", "pending"], ["proposed", "proposed"], ["open", "pending"],
+]);
+
+function routeRecord(record, blockType) {
+  if (blockType === "evidence" || blockType === "verifier") {
+    // Explicit label wins unless the record is unmistakably the other kind.
+    if (blockType === "evidence" && record.verifier_score === undefined && record.status === undefined) return "evidence";
+    if (blockType === "verifier") return "verifier";
+  }
+  if (record.verifier_score !== undefined) return "verifier";
+  const status = typeof record.status === "string" ? record.status.trim().toLowerCase() : null;
+  if (status && VERIFIER_STATUS_ALIASES.has(status)) return "verifier";
+  return "evidence";
+}
+
+// Conservative JSON repair ladder. Each variant must fully JSON.parse to be
+// accepted; we never "half fix" content.
+function repairJsonText(text) {
+  const attempts = [];
+  let current = text
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'");
+  attempts.push(current);
+  // strip // and /* */ comments (crude but string-safe enough for records)
+  attempts.push(current.replace(/^\s*\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, ""));
+  // trailing commas
+  const noTrailing = (s) => s.replace(/,\s*([}\]])/g, "$1");
+  attempts.push(noTrailing(current));
+  // quote unquoted keys
+  const quotedKeys = (s) => s.replace(/([{,]\s*)([A-Za-z_][A-Za-z0-9_-]*)\s*:/g, '$1"$2":');
+  attempts.push(noTrailing(quotedKeys(current)));
+  // single-quoted strings -> double (only when it makes the whole thing parse)
+  const singleToDouble = (s) =>
+    s.replace(/'((?:[^'\\]|\\.)*)'/g, (whole, inner) => '"' + inner.replace(/"/g, '\\"') + '"');
+  attempts.push(noTrailing(quotedKeys(singleToDouble(current))));
+  for (const attempt of attempts) {
+    try {
+      return { value: JSON.parse(attempt), repaired: attempt !== text };
+    } catch {
+      // next attempt
+    }
+  }
+  return null;
+}
+
+// Extract records from a block body: JSONL lines, pretty-printed multi-line
+// objects (brace-balanced, string-aware), or a whole-block array - with the
+// repair ladder applied at each level. Returns {records, notes, skipped}.
+function parseRecordsFromBlock(block) {
+  const records = [];
+  const notes = [];
+  const skipped = [];
+  const push = (value, note) => {
+    const list = Array.isArray(value) ? value : [value];
+    for (const item of list) {
+      if (item && typeof item === "object" && !Array.isArray(item)) {
+        records.push(item);
+        if (note) notes.push(note);
+      }
+    }
+  };
+
+  const body = block.body.trim();
+  // Whole-block array (agents love emitting one JSON array).
+  if (body.startsWith("[")) {
+    const whole = repairJsonText(body);
+    if (whole && Array.isArray(whole.value)) {
+      push(whole.value, whole.repaired ? "repaired: whole-block array" : null);
+      return { records, notes, skipped };
+    }
+  }
+
+  // Brace-balanced assembly: handles one-per-line JSONL AND pretty-printed
+  // objects spanning many lines, in the same pass.
+  let acc = "";
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  const flush = () => {
+    const chunk = acc.trim();
+    acc = "";
+    if (!chunk) return;
+    const parsed = repairJsonText(chunk);
+    if (parsed) {
+      push(parsed.value, parsed.repaired ? `repaired: ${chunk.slice(0, 60)}...` : null);
+    } else {
+      skipped.push(chunk.slice(0, 120));
+    }
+  };
+  for (const line of body.split(/\r?\n/)) {
+    if (depth === 0 && !line.trim()) continue;
+    if (depth === 0 && !line.trim().startsWith("{") && !acc) {
+      // Non-JSON line between records (agents interleave commentary): skip it
+      // silently rather than poisoning the accumulator.
+      continue;
+    }
+    acc += (acc ? "\n" : "") + line;
+    for (const ch of line) {
+      if (escaped) { escaped = false; continue; }
+      if (ch === "\\") { escaped = true; continue; }
+      if (ch === '"') inString = !inString;
+      if (inString) continue;
+      if (ch === "{") depth += 1;
+      else if (ch === "}") depth -= 1;
+    }
+    if (depth <= 0 && acc.trim()) {
+      flush();
+      depth = 0;
+      inString = false;
+      escaped = false;
+    }
+  }
+  if (acc.trim()) flush();
+  return { records, notes, skipped };
 }
 
 const ALLOWED_SOURCE_KINDS = new Set([
@@ -269,18 +462,175 @@ function normalizeVerifierRecord(record) {
   return next;
 }
 
-function parseJsonlBlock(block) {
-  return block.body
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line, index) => {
-      try {
-        return JSON.parse(line);
-      } catch (error) {
-        throw new Error(`invalid ${block.type} JSONL line ${index + 1}: ${error.message}`);
+// Field-synonym maps: agents abbreviate and rename under pressure. Aliases
+// are format repair (free); they never touch trust semantics.
+const SUMMARY_ALIASES = ["summary", "text", "note", "claim", "description", "finding", "detail", "message"];
+const SOURCE_ALIASES = ["source_ids", "sources", "source", "source_id", "citations", "citation", "refs", "files", "file", "evidence_refs"];
+const OBSERVED_ALIASES = ["observed_at", "observedAt", "timestamp", "time", "when", "date"];
+const KIND_ALIASES = ["kind", "type", "category"];
+const KNOWN_ID_PREFIXES = /^(file|command|test|log|raw|packet|verifier|evidence|objective):/;
+
+function slugifyCitation(input) {
+  return (
+    String(input)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 64) || "citation"
+  );
+}
+
+// Coerce one citation string toward a canonical source id. Handles bare
+// path:line, "path line N", "path#L12", backticks, "file: path:12" spacing,
+// missing line numbers, and free text (which becomes a label-hashed log: id -
+// visible, traceable, never provenance).
+function hasLineSuffix(pathish) {
+  return /:(\d+)(?:-(\d+))?$/.test(pathish);
+}
+
+function coerceSourceId(rawInput, warnings) {
+  let s = String(rawInput ?? "").trim().replace(/^[`'"]+|[`'"]+$/g, "");
+  if (!s) return null;
+  s = s.replace(/^(file|command|test|log|raw)\s*:\s*/i, (m, p) => `${p.toLowerCase()}:`);
+  if (KNOWN_ID_PREFIXES.test(s)) {
+    // file: ids without a :line suffix would starve ref synthesis downstream;
+    // pin them to line 1 (whole-file citation intent).
+    if (s.startsWith("file:") && !hasLineSuffix(s)) {
+      const fixed = `${s.replace(/\\/g, "/")}:1`;
+      warnings.push(`citation-coerced: "${rawInput}" -> "${fixed}" (missing line pinned to 1)`);
+      return fixed;
+    }
+    return s;
+  }
+  const looksPathy = /[\\/]/.test(s) || /\.[a-z]{1,5}(:|#L|\s+line\s+|$)/i.test(s);
+  if (looksPathy) {
+    let candidate = s
+      .replace(/#L(\d+)(?:-L?(\d+))?$/i, (m, a, b) => (b ? `:${a}-${b}` : `:${a}`))
+      .replace(/\s+lines?\s+(\d+)(?:\s*[-–]\s*(\d+))?$/i, (m, a, b) => (b ? `:${a}-${b}` : `:${a}`))
+      .replace(/\\/g, "/")
+      .replace(/\s+/g, "");
+    if (!hasLineSuffix(candidate)) candidate = `${candidate}:1`;
+    const coerced = `file:${candidate}`;
+    warnings.push(`citation-coerced: "${rawInput}" -> "${coerced}"`);
+    return coerced;
+  }
+  const slug = `log:${slugifyCitation(s)}`;
+  warnings.push(`citation-freeform: "${String(rawInput).slice(0, 80)}" -> ${slug} (not provenance)`);
+  return slug;
+}
+
+// Normalize an arbitrary agent-emitted object into the canonical record shape
+// BEFORE strict processing. Every transformation is recorded. Declared
+// source_refs are deliberately DISCARDED (their ids are merged into
+// source_ids): ingest synthesizes and hashes refs itself, so agent-authored
+// refs carry zero information and were the single biggest rejection source in
+// the field test.
+function normalizeRecordShape(record, { blockType, laneSlug, index, observedAt, runDir, repoRoot }) {
+  const warnings = Array.isArray(record.provenance_warnings) ? [...record.provenance_warnings] : [];
+  const repairs = [];
+  const next = { ...record };
+
+  const pickAlias = (aliases, canonical) => {
+    for (const key of aliases) {
+      if (next[key] !== undefined && next[key] !== null && next[key] !== "") {
+        if (key !== canonical) {
+          next[canonical] = next[key];
+          delete next[key];
+          repairs.push(`aliased: ${key} -> ${canonical}`);
+        }
+        return true;
       }
-    });
+    }
+    return false;
+  };
+
+  pickAlias(SUMMARY_ALIASES, "summary");
+  pickAlias(KIND_ALIASES, "kind");
+  pickAlias(OBSERVED_ALIASES, "observed_at");
+  pickAlias(SOURCE_ALIASES, "source_ids");
+
+  if (typeof next.summary !== "string" || next.summary.trim() === "") {
+    next.summary = JSON.stringify(record).slice(0, 200);
+    repairs.push("defaulted: summary from record body");
+  }
+
+  // Merge declared source_refs' ids into source_ids, then drop the refs.
+  if (Array.isArray(next.source_refs) && next.source_refs.length > 0) {
+    const refIds = next.source_refs
+      .map((ref) => (ref && typeof ref === "object" ? ref.source_id ?? ref.path : null))
+      .filter(Boolean);
+    next.source_ids = [...(Array.isArray(next.source_ids) ? next.source_ids : []), ...refIds];
+    repairs.push("declared source_refs discarded (ingest synthesizes + hashes refs itself)");
+  }
+  delete next.source_refs;
+
+  if (typeof next.source_ids === "string") next.source_ids = [next.source_ids];
+  if (!Array.isArray(next.source_ids)) next.source_ids = [];
+  const coerced = [];
+  const seen = new Set();
+  for (const id of next.source_ids) {
+    const out = coerceSourceId(id, warnings);
+    if (out && !seen.has(out)) {
+      seen.add(out);
+      coerced.push(out);
+    }
+  }
+  next.source_ids = coerced;
+
+  // Downgrade file: citations that cannot resolve on disk BEFORE strict
+  // processing would hard-fail the whole lane on them. The claim survives,
+  // visibly unverifiable, and can never promote to a fact.
+  next.source_ids = next.source_ids.map((id) => {
+    const parsed = /^file:(.+?)(?::(\d+(?:-\d+)?))?$/.exec(id);
+    if (!parsed) return id;
+    const p = parsed[1];
+    const resolved = resolveSourcePath(p, runDir, repoRoot);
+    if (resolved && fs.existsSync(resolved)) return id;
+    const downgraded = `log:unverifiable-${slugifyCitation(p)}`;
+    warnings.push(`unverifiable-citation: ${id} (path not found under run dir or repo_root) -> ${downgraded}`);
+    return downgraded;
+  });
+
+  // Timestamps: invalid or missing -> ingest time plus a note, never a
+  // rejection.
+  if (typeof next.observed_at !== "string" || Number.isNaN(Date.parse(next.observed_at))) {
+    if (next.observed_at !== undefined) repairs.push(`repaired: observed_at "${String(next.observed_at).slice(0, 40)}" -> ingest time`);
+    next.observed_at = observedAt;
+  }
+
+  if (typeof next.id !== "string" || next.id.trim() === "") {
+    const prefix = blockType === "verifier" ? "vf" : "ev";
+    next.id = `${prefix}-auto-${laneSlug}-${index + 1}`;
+    repairs.push(`defaulted: id -> ${next.id}`);
+  }
+
+  if (blockType === "verifier") {
+    const status = typeof next.status === "string" ? next.status.trim().toLowerCase() : "";
+    const mapped = VERIFIER_STATUS_ALIASES.get(status);
+    if (mapped) {
+      if (next.status !== mapped) repairs.push(`aliased: status "${next.status}" -> "${mapped}"`);
+      next.status = mapped;
+    } else if (next.status !== undefined && next.status !== null) {
+      // Present-but-unrecognized status: park as "proposed" (non-passing, so
+      // the gate surfaces it) rather than rejecting the record.
+      repairs.push(`repaired: status "${String(next.status).slice(0, 30)}" -> "proposed"`);
+      next.status = "proposed";
+    }
+    if (typeof next.verifier_score === "string") {
+      const num = Number(next.verifier_score);
+      if (Number.isFinite(num)) {
+        next.verifier_score = num;
+        repairs.push("repaired: verifier_score string -> number");
+      }
+    }
+    delete next.kind; // verifier records carry finding_kind, not kind
+  } else if (typeof next.kind !== "string" || next.kind.trim() === "") {
+    next.kind = "observation";
+    repairs.push("defaulted: kind -> observation");
+  }
+
+  if (warnings.length > 0) next.provenance_warnings = warnings;
+  return { record: next, repairs };
 }
 
 // Scan for a `BLOCKED <reason>` sentinel. Match is anchored to line starts
@@ -673,34 +1023,109 @@ function main() {
 
   const blocks = parseBlocks(rawText);
   const blockedReason = findBlockedSentinel(rawText);
-  if (blocks.length === 0 && !blockedReason) {
-    fail(
-      `subagent output quarantined at ${rawPath}, but no mythos-evidence-jsonl or mythos-verifier-jsonl block was found`,
-    );
-  }
 
   const evidence = [];
   const findings = [];
+  const repairNotes = [];
+  const skippedRecords = [];
+  const laneSlug = slugify(args.lane);
+  let recordIndex = 0;
+
+  const processOne = (record, routed) => {
+    validateObservedAt(record.id, record.observed_at, runCreatedAt);
+    const normalized = normalizeSourceRefs(record, observedAt, runCreatedAt, args.runDir, repoRoot);
+    const stamped = stampAttribution(normalized, { agentId: args.agentId, lane: args.lane });
+    // H4: every evidence/verifier record ingested from a quarantined raw file
+    // must carry that raw file's source_id so R5 traceability passes without
+    // post-ingest hand-patching. Prepend so the raw reference appears before
+    // the agent's explicit citations, and de-dupe to avoid stamping twice.
+    const withRaw = {
+      ...stamped,
+      source_ids: (stamped.source_ids ?? []).includes(rawSourceId)
+        ? stamped.source_ids
+        : [rawSourceId, ...(stamped.source_ids ?? [])],
+    };
+    return routed === "verifier" ? normalizeVerifierRecord(withRaw) : withRaw;
+  };
+
   for (const block of blocks) {
-    const records = parseJsonlBlock(block).map((record) => {
-      validateObservedAt(record.id, record.observed_at, runCreatedAt);
-      const normalized = normalizeSourceRefs(record, observedAt, runCreatedAt, args.runDir, repoRoot);
-      const stamped = stampAttribution(normalized, { agentId: args.agentId, lane: args.lane });
-      // H4: every evidence/verifier record ingested from a quarantined raw file
-      // must carry that raw file's source_id so R5 traceability passes without
-      // post-ingest hand-patching. Prepend so the raw reference appears before
-      // the agent's explicit citations, and de-dupe to avoid stamping twice.
-      const withRaw = {
-        ...stamped,
-        source_ids: (stamped.source_ids ?? []).includes(rawSourceId)
-          ? stamped.source_ids
-          : [rawSourceId, ...(stamped.source_ids ?? [])],
-      };
-      if (block.type === "verifier") return normalizeVerifierRecord(withRaw);
-      return withRaw;
-    });
-    if (block.type === "evidence") evidence.push(...records);
-    if (block.type === "verifier") findings.push(...records);
+    const parsed = parseRecordsFromBlock(block);
+    repairNotes.push(...parsed.notes);
+    for (const chunk of parsed.skipped) {
+      skippedRecords.push({ reason: "unparseable-json", preview: chunk });
+    }
+    for (const raw of parsed.records) {
+      const routed = routeRecord(raw, block.type);
+      const shaped = normalizeRecordShape(raw, {
+        blockType: routed,
+        laneSlug,
+        index: recordIndex,
+        observedAt,
+        runDir: args.runDir,
+        repoRoot,
+      });
+      recordIndex += 1;
+      repairNotes.push(...shaped.repairs.map((note) => `${shaped.record.id}: ${note}`));
+      let finalRecord;
+      try {
+        finalRecord = processOne(shaped.record, routed);
+      } catch (error) {
+        // Last-resort salvage: reset the timestamp (drift-window rejections)
+        // and retry once. A record that still fails is skipped WITH a reason
+        // in the report - it never takes the whole lane down with it.
+        try {
+          finalRecord = processOne(
+            {
+              ...shaped.record,
+              observed_at: observedAt,
+              provenance_warnings: [
+                ...(shaped.record.provenance_warnings ?? []),
+                `salvaged: ${String(error.message).slice(0, 140)}`,
+              ],
+            },
+            routed,
+          );
+        } catch (error2) {
+          skippedRecords.push({
+            id: shaped.record.id ?? "<unknown>",
+            reason: String(error2.message).slice(0, 200),
+          });
+          continue;
+        }
+      }
+      if (routed === "verifier") findings.push(finalRecord);
+      else evidence.push(finalRecord);
+    }
+  }
+
+  // Prose-only lane: capture, don't crash. The lane's report is quarantined
+  // and the packet shows one demoted "unstructured" record pointing at it, so
+  // the orchestrator sees a degraded lane instead of a dead pipeline. It can
+  // never become a fact and never counts toward agent coverage.
+  let unstructured = false;
+  if (evidence.length === 0 && findings.length === 0 && !blockedReason) {
+    unstructured = true;
+    const firstProse = rawText
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith("#") && !line.startsWith("```"))
+      .join(" ")
+      .slice(0, 280);
+    evidence.push(
+      stampAttribution(
+        {
+          id: `ev-unstructured-${stamp}-${laneSlug}`,
+          kind: "unstructured",
+          summary: `Lane returned prose without machine records: ${firstProse || "(empty prose)"}`,
+          source_ids: [rawSourceId],
+          observed_at: observedAt,
+          provenance_warnings: [
+            "unstructured: no machine-readable records found; content quarantined only - claims in this lane are unverified narrative",
+          ],
+        },
+        { agentId: args.agentId, lane: args.lane },
+      ),
+    );
   }
 
   // Blocker synthesis: any subagent that signals BLOCKED emits a machine-
@@ -755,6 +1180,10 @@ function main() {
         raw_source_id: rawSourceId,
         evidence_records: evidence.length,
         verifier_records: findings.length,
+        unstructured,
+        repairs: repairNotes.length,
+        repair_notes: repairNotes.slice(0, 20),
+        skipped_records: skippedRecords.slice(0, 20),
       },
       null,
       2,

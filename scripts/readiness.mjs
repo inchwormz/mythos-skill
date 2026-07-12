@@ -362,23 +362,6 @@ function checkStrictGate() {
     initialGate.stdout.includes("pass-0001") || initialGate.stdout.includes("only objective evidence"),
     "strict gate failure did not explain initial run failure",
   );
-  const proseOnlySubagent = path.join(generatedRunDir, "raw", "prose-only-subagent.md");
-  fs.writeFileSync(proseOnlySubagent, "This is a prose-only subagent response with no machine records.\n", "utf8");
-  const proseOnlyIngest = runExpectFail("node", [
-    "scripts/ingest-subagent.mjs",
-    "--run-dir",
-    generatedRunDir,
-    "--lane",
-    "readiness-prose-only",
-    "--agent-id",
-    "synthetic",
-    "--from",
-    proseOnlySubagent,
-  ]);
-  assert(
-    proseOnlyIngest.stderr.includes("no mythos-evidence-jsonl or mythos-verifier-jsonl block"),
-    "subagent ingester did not reject prose-only output",
-  );
   const bareReturnedProse = path.join(generatedRunDir, "raw", "subagents", "bare-returned-prose.md");
   fs.mkdirSync(path.dirname(bareReturnedProse), { recursive: true });
   fs.writeFileSync(bareReturnedProse, "Bare returned subagent prose without machine records.\n", "utf8");
@@ -390,6 +373,34 @@ function checkStrictGate() {
   assert(
     bareReturnedGate.stdout.includes("no subagent-session evidence records"),
     "bare returned subagent prose satisfied the gate without mechanical ingestion",
+  );
+
+  // Forgiving ingest (post-mortem 2026-07-12): prose-only output is captured
+  // as a demoted `unstructured` record instead of crashing the lane. Assert
+  // the fallback fires AND stays non-substantive (demotion warning present).
+  // Runs AFTER the bare-prose gate probe above, because this ingest creates
+  // the run's first subagent-session record.
+  const proseOnlySubagent = path.join(generatedRunDir, "raw", "prose-only-subagent.md");
+  fs.writeFileSync(proseOnlySubagent, "This is a prose-only subagent response with no machine records.\n", "utf8");
+  const proseOnlyIngest = run("node", [
+    "scripts/ingest-subagent.mjs",
+    "--run-dir",
+    generatedRunDir,
+    "--lane",
+    "readiness-prose-only",
+    "--agent-id",
+    "synthetic-prose",
+    "--from",
+    proseOnlySubagent,
+  ]);
+  const proseReport = JSON.parse(proseOnlyIngest.stdout);
+  assert(proseReport.unstructured === true, "prose-only ingest must flag unstructured fallback");
+  const proseRecords = readJsonl(path.join(generatedRunDir, "worker-results", "evidence.jsonl"));
+  const unstructuredRecord = proseRecords.find((record) => record.kind === "unstructured");
+  assert(unstructuredRecord, "prose-only ingest must synthesize an unstructured record");
+  assert(
+    Array.isArray(unstructuredRecord.provenance_warnings) && unstructuredRecord.provenance_warnings.length > 0,
+    "unstructured record must carry a demotion warning",
   );
 
   addSyntheticSubagentEvidence(generatedRunDir);

@@ -15,6 +15,7 @@ Standing red-team invariant from M2 on: a planted lying lane must turn the gate 
 | Milestone | Status | Gate result |
 |---|---|---|
 | M0 truth-in-labeling | **DONE 2026-07-12** | Rust 31/31 (CARGO_EXIT=0), Node 24/24 incl. 5 new red-team tests, readiness E2E passed (READY_EXIT=0) |
+| M0.5 forgiving ingest (field post-mortem) | **DONE 2026-07-12** | Node 33/33 incl. 9 new forgiveness tests; acceptance: all 5 REAL wreckage lanes ingest (48 ev + 33 vf records, 85 auto-repairs, 0 skipped) vs 3 hard lane-failures before; readiness green |
 | M1 `run` receipt capture | not started | - |
 | M2 attestation ladder full | not started | - |
 | M3 one binary + rename | not started | - |
@@ -65,6 +66,7 @@ Run: `.codex/mythos/runs/20260712T072030Z-map-every-fnv1a-64-implementation-in-t
 ## TRAPS LOG
 
 - 2026-07-12 `tail` swallowed a cargo OOM exit code -> false green reported, caught same turn. Rule: exit codes captured in-log (`CMD_EXIT=$?`), never inferred from pipeline status.
+- **STRICTNESS-SPIRAL (named 2026-07-12, first field test, run mythos-zero-visual-44):** live NTM agents did EXCELLENT substantive work (negative controls, SHA-256'd renders, exact values) but transcribed it imperfectly - bare ``` fences (17 vs 12 labeled), single-backtick "fences", pretty JSON, shorthand fields, prose reports. Every deviation was a hard lane rejection; the orchestrator responded by ESCALATING format demands (quoting the stale pre-M0 README ceremony incl. hand-written source_refs that M0 had already made unnecessary, writing an "exact receipt contract" into AGENTS.md, demanding self-validation), burning rounds across ~12 panes until total abandonment ("NO MYTHOS REQUIRED"). Root cause in one sentence: the contract put the structuring burden on agents at authoring time, so agent imperfection - which is a constant, not a bug - became pipeline failure. Mechanism fix (M0.5): structure-recovery moved INTO ingest (liberal parse, repairs logged per record, unverifiable citations downgraded not fatal, prose captured as demoted `unstructured`), trust checks unchanged. Standing rule now in docs + ntm-revive: NEVER escalate format demands at a lane.
 
 ## CHECKPOINTS
 

@@ -147,28 +147,44 @@ mythos-skill compile --run-dir my-run --record-synthesis "one-paragraph summary 
 mythos-skill gate --run-dir my-run
 ```
 
-## Subagent output contract
+## Subagent output contract (forgiving by design)
 
-Subagents write fenced blocks inside their assigned `raw/subagents/<lane>.md` file:
+The full contract an agent must get right is two fields:
 
 ````markdown
 ```mythos-evidence-jsonl
-{"id":"ev-example","kind":"observation","summary":"...","source_ids":["file:path:10"],"source_refs":[{"source_id":"file:path:10","path":"path","kind":"file","hash":"placeholder","span":"10","observed_at":"2026-04-21T00:00:00Z"}],"observed_at":"2026-04-21T00:00:00Z"}
+{"summary":"<one factual claim>","source_ids":["file:<repo-relative-path>:<line>"]}
 ```
 
 ```mythos-verifier-jsonl
-{"id":"vf-example","status":"passed","verifier_score":1,"source_ids":["command:test"],"source_refs":[...]}
+{"summary":"<verdict>","status":"passed","verifier_score":1.0,"source_ids":["file:<path>:<line>"]}
 ```
 ````
 
-Prose outside fenced blocks does not reach the packet. A `BLOCKED <reason>` sentinel on its own line produces a `kind:"blocker"` evidence record so blocked lanes leave a machine-readable trace.
+Everything else is repaired at ingest and every repair is recorded in the
+ingest report: missing ids/kinds/timestamps are defaulted; field synonyms
+(`text`/`note`/`claim`, `type`, `sources`, `timestamp`...) are aliased; sloppy
+JSON (single quotes, trailing commas, unquoted keys, pretty-printing, whole
+arrays) is repaired; bare or mislabeled fences are classified by content; bare
+`path:line` citations get the `file:` prefix. Do NOT write `source_refs` —
+ingest discards hand-written refs and synthesizes hashed ones from your
+`source_ids`.
 
-Preferred direct source id prefixes:
+What cannot be repaired, because it is the point of the system:
 
-- `file:<repo-relative-path>:<line>` — file and line evidence
-- `command:<stable-command-name>` — command output evidence
-- `test:<test-name-or-suite>` — test-specific proof
-- `log:<stable-log-name>` — log proof
+- **Cite real files at real lines.** A citation that does not resolve is
+  downgraded to a non-provenance `log:` id and the claim can never become a
+  trusted fact.
+- **A "passed" verifier finding (score >= 0.9) needs a content-backed
+  citation** or the strict gate goes red.
+- **Prose-only reports are quarantined, not rewarded**: the lane survives as a
+  single demoted `unstructured` record that counts for nothing.
+- Stuck? Put `BLOCKED <reason>` on its own line — it becomes a machine-readable
+  blocker record.
+
+Direct source id prefixes: `file:<repo-relative-path>:<line>` (content-hashed —
+real provenance) · `command:` / `test:` / `log:` (label-hashed identity keys —
+not provenance until execution receipts land in M2).
 
 ## Layout
 

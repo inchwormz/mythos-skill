@@ -515,11 +515,13 @@ fn resolve_source_path(run_dir: &Path, repo_root: Option<&str>, source_path: &st
     candidate
 }
 
-/// Evidence kinds that are infrastructure, never candidate facts.
+/// Evidence kinds that are infrastructure or quarantined prose, never
+/// candidate facts.
 const NON_FACT_KINDS: &[&str] = &[
     "objective",
     "subagent-session",
     "codex-synthesis",
+    "unstructured",
     "blocker",
 ];
 

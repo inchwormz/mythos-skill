@@ -102,28 +102,34 @@ subagent isolated session (Task tool)
 
 Subagent responses are **completion signals**, not context. Prime consumes only the recompiled packet.
 
-## Subagent Output Contract
+## Subagent Output Contract (forgiving - do not over-specify to lanes)
 
-Subagents write fenced blocks inside their `raw/subagents/<lane>.md` file:
+Tell subagents only this: end your report with a fenced block, one JSON object
+per claim, two fields required:
 
 ````markdown
 ```mythos-evidence-jsonl
-{"id":"ev-example","kind":"observation","summary":"...","source_ids":["file:path:10"],"source_refs":[{"source_id":"file:path:10","path":"path","kind":"file","hash":"placeholder","span":"10","observed_at":"2026-04-21T00:00:00Z"}],"observed_at":"2026-04-21T00:00:00Z"}
+{"summary":"<one factual claim>","source_ids":["file:<repo-relative-path>:<line>"]}
 ```
 
 ```mythos-verifier-jsonl
-{"id":"vf-example","summary":"...","status":"passed","verifier_score":1,"source_ids":["command:test"],"source_refs":[...]}
+{"summary":"<verdict>","status":"passed","verifier_score":1.0,"source_ids":["file:<path>:<line>"]}
 ```
 ````
 
-Preferred direct source ids:
+Ingest repairs everything else and reports what it repaired: missing
+ids/kinds/timestamps defaulted, field synonyms aliased, sloppy JSON (single
+quotes, trailing commas, arrays, pretty-print) repaired, bare/mislabeled
+fences classified by content, bare `path:line` citations prefixed. Subagents
+must NOT write `source_refs` - hand-written refs are discarded and
+resynthesized with real hashes from `source_ids`. Never escalate format
+demands at a lane; if ingest reports repairs, that is the system working.
 
-- `file:<repo-relative-path>:<line>` for file and line evidence
-- `command:<stable-command-name>` for command output evidence
-- `test:<test-name-or-suite>` for test-specific proof
-- `log:<stable-log-name>` for log proof
-
-Prose outside fenced blocks does not reach the packet. `BLOCKED <reason>` on its own line produces a `kind:"blocker"` evidence record.
+The unrepairable rules (the actual contract): citations must resolve to real
+files and lines (else downgraded to non-provenance and never fact-eligible);
+a passed finding with score >= 0.9 needs a content-backed citation or the
+gate goes red; prose-only output survives only as one demoted `unstructured`
+record; `BLOCKED <reason>` on its own line reports a stuck lane.
 
 ## Strict Gate
 
@@ -139,7 +145,7 @@ Typical failures and required repairs:
 - only objective evidence: launch/record subagent evidence, then recompile
 - stale packet: `mythos-skill compile --run-dir <run-dir>`
 - no `codex-synthesis` evidence: `mythos-skill compile --run-dir <run-dir> --record-synthesis "…"`
-- summary-only code-change/root-cause/test-change claims: add direct `source_refs`, then recompile
+- summary-only code-change/root-cause/test-change claims: the record needs a real `file:<path>:<line>` citation in `source_ids` (ingest builds the hashed `source_refs` itself), then re-ingest/recompile
 - pending verifier findings: satisfy them OR record a source-backed `passed` finding with `closure_reason` explaining the intentional bound
 - packet not `ready-to-halt`: continue the recurrence
 

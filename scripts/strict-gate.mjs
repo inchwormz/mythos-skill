@@ -417,7 +417,10 @@ function requiresDirectEvidence(record) {
   const kind = String(record.kind ?? "").toLowerCase();
   // `blocker` records by design have no direct file/command provenance —
   // the block IS the evidence; the raw/subagents/* cite is the artifact.
-  if (["objective", "process", "subagent-session", "codex-synthesis", "blocker"].includes(kind)) return false;
+  // `unstructured` records are quarantined prose fallbacks: already demoted,
+  // already labeled unverified — requiring provenance would just re-crash
+  // lanes the forgiving parser deliberately kept alive.
+  if (["objective", "process", "subagent-session", "codex-synthesis", "blocker", "unstructured"].includes(kind)) return false;
   return true;
 }
 
@@ -477,6 +480,7 @@ const KNOWN_EVIDENCE_KINDS = new Set([
   "gate-gap",
   "process-gap",
   "plan",
+  "unstructured",
 ]);
 
 function checkUnknownEvidenceKinds(evidence, warnings) {
@@ -568,6 +572,9 @@ function checkAgentCoverage(evidence, findings, manifest, packet, errors) {
   for (const record of evidence) {
     if (record.id === "ev-objective") continue;
     if (typeof record.id === "string" && record.id.startsWith("ev-subagent-session-")) continue;
+    // Unstructured prose fallbacks are not substantive contributions — three
+    // prose-only lanes must not satisfy the diversity floor.
+    if (String(record.kind ?? "") === "unstructured") continue;
     const agentId = record.agent_id;
     if (typeof agentId === "string" && agentId.trim().length > 0) {
       distinct.add(agentId.trim());
