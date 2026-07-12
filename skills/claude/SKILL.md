@@ -112,34 +112,31 @@ subagent isolated session (Task tool)
 
 Subagent responses are **completion signals**, not context. Prime consumes only the recompiled packet.
 
-## Subagent Output Contract (forgiving - do not over-specify to lanes)
+## Subagent Output Contract (zero-burden - lanes owe you NOTHING)
 
-Tell subagents only this: end your report with a fenced block, one JSON object
-per claim, two fields required:
+Design constraint (John, 2026-07-13): agents cannot be made to follow
+protocol, and the loop must never slow them down. So lane briefs are
+TASK-ONLY - no format instructions, no record schemas, no file paths to
+write. Whatever a lane produces, ingest structures it, in this order:
 
-````markdown
-```mythos-evidence-jsonl
-{"summary":"<one factual claim>","source_ids":["file:<repo-relative-path>:<line>"]}
-```
+1. Fenced `mythos-evidence-jsonl` / `mythos-verifier-jsonl` blocks if the
+   agent happened to emit them (repaired liberally: aliases, sloppy JSON,
+   bare/mislabeled fences classified by content; hand-written `source_refs`
+   are discarded and resynthesized with real hashes).
+2. Otherwise, claims HARVESTED from natural prose: any sentence citing a
+   concrete path (or `file.ext:line`) becomes its own asserted-tier record
+   with coerced, hash-verified citations.
+3. Otherwise, one demoted `unstructured` record (captured, counts for
+   nothing).
+4. A `BLOCKED <reason>` line anywhere becomes a machine-readable blocker.
 
-```mythos-verifier-jsonl
-{"summary":"<verdict>","status":"passed","verifier_score":1.0,"source_ids":["file:<path>:<line>"]}
-```
-````
+Optional courtesy line for richer packets (never a requirement): "cite file
+paths with line numbers for anything you'd want checked."
 
-Ingest repairs everything else and reports what it repaired: missing
-ids/kinds/timestamps defaulted, field synonyms aliased, sloppy JSON (single
-quotes, trailing commas, arrays, pretty-print) repaired, bare/mislabeled
-fences classified by content, bare `path:line` citations prefixed. Subagents
-must NOT write `source_refs` - hand-written refs are discarded and
-resynthesized with real hashes from `source_ids`. Never escalate format
-demands at a lane; if ingest reports repairs, that is the system working.
-
-The unrepairable rules (the actual contract): citations must resolve to real
-files and lines (else downgraded to non-provenance and never fact-eligible);
-a passed finding with score >= 0.9 needs a content-backed citation or the
-gate goes red; prose-only output survives only as one demoted `unstructured`
-record; `BLOCKED <reason>` on its own line reports a stuck lane.
+NEVER re-prompt a lane over format, and never escalate format demands - the
+2026-07-12 field disaster came from exactly that spiral. Trust does not come
+from lane compliance at all: it comes from ingest-computed hashes,
+caller-stamped attribution, receipts Prime mints, and the gate.
 
 ## Strict Gate
 

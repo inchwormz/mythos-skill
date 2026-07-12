@@ -516,6 +516,9 @@ function hasLineSuffix(pathish) {
   return /:(\d+)(?:-(\d+))?$/.test(pathish);
 }
 
+// NOTE: notes pushed into the second arg are FORMAT REPAIRS (free - they
+// never demote a record); semantic problems (nonexistent paths, unminted
+// receipts) are flagged separately as provenance warnings by the caller.
 function coerceSourceId(rawInput, warnings) {
   let s = String(rawInput ?? "").trim().replace(/^[`'"]+|[`'"]+$/g, "");
   if (!s) return null;
@@ -597,7 +600,10 @@ function normalizeRecordShape(record, { blockType, laneSlug, index, observedAt, 
   const coerced = [];
   const seen = new Set();
   for (const id of next.source_ids) {
-    const out = coerceSourceId(id, warnings);
+    // Citation coercion notes are format repairs (report-only), NOT
+    // provenance warnings - a bare "src/x.ts:12" is an honest citation in
+    // agents' native shorthand and must stay fact-eligible once backed.
+    const out = coerceSourceId(id, repairs);
     if (out && !seen.has(out)) {
       seen.add(out);
       coerced.push(out);
@@ -676,6 +682,48 @@ function normalizeRecordShape(record, { blockType, laneSlug, index, observedAt, 
 
   if (warnings.length > 0) next.provenance_warnings = warnings;
   return { record: next, repairs };
+}
+
+// Zero-burden prose harvesting: extract claim-shaped lines from a lane's
+// natural report. A line qualifies when it cites something that looks like a
+// concrete file path (with an extension, optionally :line). Fenced blocks
+// and headings are skipped; markdown noise is stripped; count is capped so a
+// pathological lane can't flood the packet. Each harvested claim is marked
+// rationale:"harvested-from-prose" so the report can show its origin.
+// Two citation shapes: a path with a directory component (line optional), or
+// a bare filename WITH a :line suffix - the line number signals citation
+// intent and keeps ordinary prose mentions of e.g. package.json from
+// harvesting as claims.
+const PATHISH_CITATION = /(?:[A-Za-z0-9_.-]+[\/\\])+[A-Za-z0-9_.-]+\.[A-Za-z0-9]{1,6}(?::\d+(?:-\d+)?)?|[A-Za-z0-9_-]+\.[A-Za-z0-9]{1,6}:\d+(?:-\d+)?/g;
+const HARVEST_CAP = 40;
+
+function harvestProseClaims(text) {
+  const claims = [];
+  let inFence = false;
+  for (const rawLine of text.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (/^(```|~~~)/.test(line)) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence || !line || line.startsWith("#")) continue;
+    const citations = [...new Set([...line.matchAll(PATHISH_CITATION)].map((m) => m[0]))];
+    if (citations.length === 0) continue;
+    const summary = line
+      .replace(/^[-*>|]+\s*/, "")
+      .replace(/[`*_]/g, "")
+      .trim()
+      .slice(0, 300);
+    if (summary.length < 12) continue;
+    claims.push({
+      kind: "observation",
+      summary,
+      source_ids: citations,
+      rationale: "harvested-from-prose",
+    });
+    if (claims.length >= HARVEST_CAP) break;
+  }
+  return claims;
 }
 
 // Scan for a `BLOCKED <reason>` sentinel. Match is anchored to line starts
@@ -1145,10 +1193,43 @@ function main() {
     }
   }
 
-  // Prose-only lane: capture, don't crash. The lane's report is quarantined
-  // and the packet shows one demoted "unstructured" record pointing at it, so
-  // the orchestrator sees a degraded lane instead of a dead pipeline. It can
-  // never become a fact and never counts toward agent coverage.
+  // ZERO-BURDEN CAPTURE (John's design constraint, 2026-07-13: "I can't
+  // change agent behaviour, I can only give receipts to Prime"). When a lane
+  // returned no machine records, the ENGINE does the structuring: harvest
+  // claim-shaped lines from the natural prose - any sentence citing a
+  // concrete file path becomes its own asserted-tier evidence record with
+  // coerced, hash-verified citations. Extraction can never create trust:
+  // harvested claims promote only if receipts or verifiers later back them.
+  let harvested = 0;
+  if (evidence.length === 0 && findings.length === 0 && !blockedReason) {
+    const proseClaims = harvestProseClaims(rawText);
+    for (const raw of proseClaims) {
+      const shaped = normalizeRecordShape(raw, {
+        blockType: "evidence",
+        laneSlug,
+        index: recordIndex,
+        observedAt,
+        runDir: args.runDir,
+        repoRoot,
+        receiptIds,
+      });
+      recordIndex += 1;
+      try {
+        evidence.push(processOne(shaped.record, "evidence"));
+        harvested += 1;
+      } catch {
+        // a single unharvestable line is not worth a report entry
+      }
+    }
+    if (harvested > 0) {
+      repairNotes.push(`harvested ${harvested} claim(s) from natural prose (no machine records in lane output)`);
+    }
+  }
+
+  // Prose-only lane with nothing harvestable: capture, don't crash. The
+  // packet shows one demoted "unstructured" record pointing at the raw file,
+  // so the orchestrator sees a degraded lane instead of a dead pipeline. It
+  // can never become a fact and never counts toward agent coverage.
   let unstructured = false;
   if (evidence.length === 0 && findings.length === 0 && !blockedReason) {
     unstructured = true;
@@ -1228,6 +1309,7 @@ function main() {
         evidence_records: evidence.length,
         verifier_records: findings.length,
         unstructured,
+        harvested,
         repairs: repairNotes.length,
         repair_notes: repairNotes.slice(0, 20),
         skipped_records: skippedRecords.slice(0, 20),

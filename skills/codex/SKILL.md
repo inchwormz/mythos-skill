@@ -93,29 +93,20 @@ subagent isolated session
 
 Subagent replies are completion signals, not context. Prime consumes only the recompiled packet.
 
-## Subagent Output Contract (forgiving - do not over-specify to lanes)
+## Subagent Output Contract (zero-burden - lanes owe you NOTHING)
 
-Two required fields per claim, in a fenced block:
-
-````markdown
-```mythos-evidence-jsonl
-{"summary":"<one factual claim>","source_ids":["file:<repo-relative-path>:<line>"]}
-```
-
-```mythos-verifier-jsonl
-{"summary":"<verdict>","status":"passed","verifier_score":1.0,"source_ids":["file:<path>:<line>"]}
-```
-````
-
-Ingest repairs everything else (ids/kinds/timestamps defaulted, synonyms
-aliased, sloppy JSON repaired, bare fences classified by content, bare
-`path:line` citations prefixed) and reports each repair. Do NOT write
-`source_refs` - hand-written refs are discarded and resynthesized with real
-hashes. Unrepairable rules: citations must resolve to real files/lines (else
-downgraded, never fact-eligible); passed findings with score >= 0.9 need a
-content-backed citation or the gate goes red; prose-only output survives only
-as one demoted `unstructured` record; `BLOCKED <reason>` on its own line
-reports a stuck lane.
+Lane briefs are TASK-ONLY: no format instructions, no schemas. Ingest
+structures whatever comes back: fenced `mythos-evidence-jsonl` /
+`mythos-verifier-jsonl` blocks if present (liberally repaired; hand-written
+`source_refs` discarded and resynthesized with real hashes); otherwise
+claims are HARVESTED from natural prose (sentences citing concrete paths or
+`file.ext:line` become asserted-tier records with hash-verified citations);
+otherwise one demoted `unstructured` record. `BLOCKED <reason>` anywhere
+becomes a blocker record. Optional courtesy line for richer packets: "cite
+file paths with line numbers for anything you'd want checked." NEVER
+re-prompt a lane over format. Trust comes from ingest-computed hashes,
+caller-stamped attribution, receipts Prime mints, and the gate - never from
+lane compliance.
 
 ## Strict Gate
 

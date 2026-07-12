@@ -266,6 +266,85 @@ test("prose-only lane survives as a demoted unstructured record instead of a har
   );
 });
 
+test("zero-burden: claims are harvested from natural prose with no protocol at all", (t) => {
+  const runDir = freshRunDir("prose-harvest");
+  t.after(() => removeDir(runDir));
+
+  const from = writeLane(
+    runDir,
+    "prose-harvest",
+    [
+      "# Investigation report",
+      "",
+      "Dug into the freeze pipeline this morning. Findings:",
+      "",
+      "- The escape helper in scripts/strict-gate.mjs:164 hashes with fnv1a, same constants as the Rust side.",
+      "- driver.mjs:93 duplicates that hash function again, third copy in the repo.",
+      "- I think the real fix belongs in mythos-compiler/src/compiler/run_dir.rs somewhere around the source dedupe.",
+      "",
+      "No blockers, just flagging the duplication.",
+      "",
+    ].join("\n"),
+  );
+  const result = ingest(runDir, "prose-harvest", from);
+  assert.equal(result.status, 0, `prose harvest ingest must succeed: ${result.stderr}`);
+  const report = JSON.parse(result.stdout);
+  assert.ok(report.harvested >= 3, `expected >=3 harvested claims, got ${report.harvested}`);
+  assert.equal(report.unstructured, false, "harvested lanes are structured, not unstructured");
+
+  const evidence = readJsonl(path.join(runDir, "worker-results", "evidence.jsonl"));
+  const harvested = evidence.filter((r) => r.rationale === "harvested-from-prose");
+  assert.ok(harvested.length >= 3, "harvested records must be marked with their origin");
+  const gateClaim = harvested.find((r) => r.summary.includes("escape helper"));
+  assert.ok(gateClaim, "the strict-gate claim must be harvested");
+  assert.ok(
+    gateClaim.source_ids.includes("file:scripts/strict-gate.mjs:164"),
+    `bare path citation must coerce to a canonical file id; got ${JSON.stringify(gateClaim.source_ids)}`,
+  );
+  assert.ok(
+    !(gateClaim.provenance_warnings ?? []).length,
+    `honest existing-path citations must NOT demote the record; got ${JSON.stringify(gateClaim.provenance_warnings)}`,
+  );
+});
+
+test("zero-burden: a harvested prose claim can still become a trusted fact once verified", (t) => {
+  const runDir = freshRunDir("prose-promote");
+  t.after(() => removeDir(runDir));
+
+  // Lane 1: pure prose (no protocol followed at all).
+  const proseLane = writeLane(
+    runDir,
+    "prose-worker",
+    "Looked at the dispatcher. The run passthrough lives in bin/mythos-skill.mjs:70 and forwards args verbatim.\n",
+  );
+  assert.equal(ingest(runDir, "prose-worker", proseLane).status, 0);
+
+  // Lane 2: a verifier that backs the same citation.
+  const verifierLane = writeLane(
+    runDir,
+    "verify-worker",
+    [
+      "```mythos-verifier-jsonl",
+      JSON.stringify({ id: "vf-backs-prose", summary: "confirmed the dispatcher forwards args verbatim", status: "passed", verifier_score: 1.0, source_ids: ["file:bin/mythos-skill.mjs:70"], observed_at: new Date().toISOString() }),
+      "```",
+      "",
+    ].join("\n"),
+  );
+  assert.equal(ingest(runDir, "verify-worker", verifierLane).status, 0);
+
+  const driver = runNode(["driver.mjs", "--run-dir", runDir]);
+  assert.equal(driver.status, 0, `compile failed: ${driver.stderr}`);
+  const packet = JSON.parse(fs.readFileSync(path.join(runDir, "state", "next_pass_packet.json"), "utf8"));
+  const promoted = packet.trusted_facts.find(
+    (f) => f.statement.includes("dispatcher") || (f.source_ids ?? []).includes("file:bin/mythos-skill.mjs:70"),
+  );
+  assert.ok(
+    promoted,
+    `a verifier-backed harvested claim must promote to trusted_facts; facts: ${JSON.stringify(packet.trusted_facts.map((f) => f.id))}`,
+  );
+  assert.equal(promoted.attestation, "verifier");
+});
+
 test("nonexistent file citation is downgraded to log:unverifiable, lane survives, record never a fact", (t) => {
   const runDir = freshRunDir("ghost-citation");
   t.after(() => removeDir(runDir));
