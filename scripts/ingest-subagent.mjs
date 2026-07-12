@@ -655,6 +655,17 @@ function normalizeRecordShape(record, { blockType, laneSlug, index, observedAt, 
     repairs.push(`defaulted: id -> ${next.id}`);
   }
 
+  // Charset enforcement (worklist items and briefs later render ids/labels
+  // near commands - a shell metacharacter in an id is an injection channel
+  // into Prime). Format repair, not demotion.
+  const sanitizeToken = (value, what) => {
+    const clean = String(value).replace(/[^A-Za-z0-9:._/\\-]/g, "-");
+    if (clean !== value) repairs.push(`sanitized ${what}: "${String(value).slice(0, 60)}" -> "${clean.slice(0, 60)}"`);
+    return clean;
+  };
+  next.id = sanitizeToken(next.id, "id");
+  next.source_ids = next.source_ids.map((id) => sanitizeToken(id, "source_id"));
+
   if (blockType === "verifier") {
     const status = typeof next.status === "string" ? next.status.trim().toLowerCase() : "";
     const mapped = VERIFIER_STATUS_ALIASES.get(status);

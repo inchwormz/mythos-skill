@@ -156,6 +156,18 @@ fn run_with_receipt(args: Vec<String>) -> Result<(), Box<dyn std::error::Error>>
     let lane = parse_flag_value(&flags, "--lane");
     let agent_id = parse_flag_value(&flags, "--agent-id");
     let label = parse_flag_value(&flags, "--label");
+    if let Some(ref value) = label {
+        // Labels are rendered inside briefs/suggested commands downstream;
+        // enforce a shell-safe charset at the mint.
+        if !value
+            .chars()
+            .all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, ':' | '.' | '_' | '/' | '-'))
+        {
+            return Err(
+                format!("--label `{value}` contains characters outside [A-Za-z0-9:._/-]").into(),
+            );
+        }
+    }
 
     let repo_root: Option<String> = fs::read_to_string(run_dir.join("manifest.json"))
         .ok()

@@ -47,12 +47,13 @@ mod contract_tests {
             required.iter().any(|value| value == "schema_version"),
             "packet schema must require schema_version"
         );
-        assert_eq!(
-            parsed["properties"]["schema_version"]["const"]
-                .as_str()
-                .unwrap_or_default(),
-            "1.1.0",
-            "packet schema_version must be pinned"
+        let versions = parsed["properties"]["schema_version"]["enum"]
+            .as_array()
+            .expect("schema_version enum");
+        assert!(
+            versions.iter().any(|value| value == "1.2.0")
+                && versions.iter().any(|value| value == "1.1.0"),
+            "packet schema_version enum must cover current + legacy versions"
         );
         assert!(parsed["$defs"]["evidenceRecord"].is_object());
         assert!(parsed["$defs"]["evidenceRecord"]["properties"]["source_refs"].is_object());

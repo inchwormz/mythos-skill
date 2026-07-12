@@ -63,6 +63,11 @@ Run: `.codex/mythos/runs/20260712T072030Z-map-every-fnv1a-64-implementation-in-t
 - Findings with verifier_score < 0.9 dodge the provenance requirement (legacy threshold rule) — close this in M2 when receipts make the requirement affordable for every finding.
 - DX: 4/4 live agents emitted valid fenced JSONL on the first try given the detailed contract prompt; zero ingest rejections. Save the lane-prompt template into the skill docs at M3.
 
+## KNOWN GAPS (documented, deferred with intent)
+
+- **EXECUTOR-BINDING (M5):** receipts authenticate EXECUTION, not the EXECUTOR. Any process on this box - including a lane with shell access - can invoke `mythos run`, including with a chosen label (e.g. mint a passing `test:cargo-suite` via a no-op). Single-operator assumption for now; per-principal signing keys are the M5 fix. Adversarial-review finding, 2026-07-13.
+- **LABEL-SEMANTICS:** a passing label attests "this command ran green", NOT that the command semantically covers a claim citing it. A lane bulk-citing plausible passing labels inflates its attested tier. Mitigated by conservative lane-digest rules (label-based attestation never earns skip-verified); real fix is receipt<->claim association done engine-side with care (deferred).
+
 ## TRAPS LOG
 
 - 2026-07-12 `tail` swallowed a cargo OOM exit code -> false green reported, caught same turn. Rule: exit codes captured in-log (`CMD_EXIT=$?`), never inferred from pipeline status.

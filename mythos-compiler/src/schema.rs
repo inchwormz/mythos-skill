@@ -2,7 +2,12 @@ use serde::{Deserialize, Serialize};
 
 /// Current Mythos packet schema version. Bump when the `NextPassPacket` or
 /// `Snapshot` shape changes in a way downstream consumers must react to.
-pub const MYTHOS_SCHEMA_VERSION: &str = "1.1.0";
+/// 1.2.0 (2026-07-13): worklist fields on candidate actions, lane_digests,
+/// work receipts. Consumers accept {1.1.0 legacy-read, 1.2.0 current}.
+pub const MYTHOS_SCHEMA_VERSION: &str = "1.2.0";
+
+/// Versions consumers must accept when reading packets.
+pub const MYTHOS_KNOWN_SCHEMA_VERSIONS: &[&str] = &["1.1.0", "1.2.0"];
 
 /// Canonical hash algorithm label emitted for every `SourceRef.hash` value.
 /// The strict gate and ingester must reject source refs whose `hash_alg` does

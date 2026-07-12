@@ -430,11 +430,13 @@ function checkContradictionSourceRefs(packet, runDir, errors, anchorMs, warnings
   }
 }
 
+const KNOWN_SCHEMA_VERSIONS = new Set(["1.1.0", "1.2.0"]);
+
 function checkPacketSchemaVersion(packet, errors) {
   if (!packet) return;
-  if (packet.schema_version !== "1.1.0") {
+  if (!KNOWN_SCHEMA_VERSIONS.has(packet.schema_version)) {
     errors.push(
-      `packet schema_version "${packet.schema_version ?? "<missing>"}" is not the expected "1.1.0"`,
+      `packet schema_version "${packet.schema_version ?? "<missing>"}" is not in the known set (${[...KNOWN_SCHEMA_VERSIONS].join("|")})`,
     );
   }
 }
@@ -748,8 +750,9 @@ function main() {
   // lane so consumers can attribute the session to a specific lane. Historic
   // packets (schema_version < 1.1.0) predate this stamping, so skip the check
   // for those runs; all current runs use 1.1.0 and hit the enforcement path.
+  // Set-membership, never lexicographic string comparison (breaks at 1.10.0).
   const schemaVersion = packet?.schema_version ?? null;
-  const enforceG2 = schemaVersion === null || schemaVersion === "1.1.0" || schemaVersion > "1.1.0";
+  const enforceG2 = schemaVersion === null || KNOWN_SCHEMA_VERSIONS.has(schemaVersion);
   if (enforceG2) {
     const missingAttribution = subagentSessionEvidence
       .filter((record) => {

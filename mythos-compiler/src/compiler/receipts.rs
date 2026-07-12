@@ -153,7 +153,18 @@ pub fn store_artifact(
     fs::create_dir_all(&dir)?;
     let rel = format!("receipts/artifacts/{hash}.txt");
     let path = run_dir.join(&rel);
-    if !path.exists() {
+    if path.exists() {
+        // Content-address squatting defense: fnv1a is a weak hash, and a lane
+        // could pre-plant a file under a hash a future artifact will get.
+        // Byte-compare on collision; mismatch is a hard integrity error.
+        let existing = fs::read(&path)?;
+        if existing != bytes {
+            return Err(format!(
+                "artifact collision at {rel}: existing bytes differ from new content under the same hash - refusing to proceed (possible content-address squatting)"
+            )
+            .into());
+        }
+    } else {
         fs::write(&path, bytes)?;
     }
     Ok((hash, rel))
@@ -242,6 +253,40 @@ mod tests {
         fs::write(&path, text).unwrap();
         let err = load_verified_receipts(&dir).expect_err("tamper must break chain");
         assert!(format!("{err}").contains("chain broken"), "got: {err}");
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn receipt_record_is_frozen_canary() {
+        // The hash chain preimage is the serialized record. ADDING ANY FIELD
+        // to ReceiptRecord makes version-skewed verifiers (which drop unknown
+        // fields on deserialize) compute different content hashes for valid
+        // journals and report false tampering. The record is FROZEN:
+        // extensions live in content-addressed artifacts. If this test fails,
+        // you added a field - move it to an artifact instead.
+        let mut record = blank_receipt(0);
+        record.id = "rcpt-0001".to_string();
+        record.prev_record_hash = "GENESIS".to_string();
+        record.record_hash = String::new();
+        let serialized = serde_json::to_string(&record).expect("serialize");
+        let expected = "{\"id\":\"rcpt-0001\",\"label\":\"test:demo\",\"cmd\":[\"echo\",\"hi\"],\"cwd\":\".\",\"exit_code\":0,\"duration_ms\":5,\"started_at\":\"2026-07-12T00:00:00Z\",\"ended_at\":\"2026-07-12T00:00:01Z\",\"stdout_hash\":\"0000000000000000\",\"stderr_hash\":\"0000000000000000\",\"stdout_tail\":\"hi\",\"stderr_tail\":\"\",\"lane\":\"orchestrator\",\"agent_id\":\"prime\",\"writer\":\"mythos-test\",\"prev_record_hash\":\"GENESIS\",\"record_hash\":\"\"}";
+        assert_eq!(
+            serialized, expected,
+            "ReceiptRecord serialization changed - the record is FROZEN (see receipt_record_is_frozen_canary comment)"
+        );
+    }
+
+    #[test]
+    fn artifact_collision_with_different_bytes_is_fatal() {
+        let dir = temp_run_dir("squat");
+        let (_hash, rel) = super::store_artifact(&dir, b"honest content").expect("store");
+        // Overwrite the stored artifact to simulate a pre-planted file, then
+        // store the same honest content again - it lands on the same path and
+        // must detect the byte mismatch.
+        fs::write(dir.join(&rel), b"planted content").unwrap();
+        let err = super::store_artifact(&dir, b"honest content")
+            .expect_err("collision with different bytes must fail");
+        assert!(format!("{err}").contains("squatting"), "got: {err}");
         let _ = fs::remove_dir_all(&dir);
     }
 
