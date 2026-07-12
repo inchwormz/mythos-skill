@@ -306,6 +306,11 @@ mod tests {
                 actionability_score: 0.9,
                 decision_dependency_ids: vec![],
                 source_ids: source_ids.clone(),
+                category: None,
+                blocking: None,
+                resolved: None,
+                resolution_id: None,
+                suggested_argv: vec![],
             }],
             verifier_findings: vec![VerifierFinding {
                 id: "ver-1".to_string(),

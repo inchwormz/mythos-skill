@@ -238,6 +238,14 @@
           "type": "array",
           "items": { "type": "string" },
           "minItems": 1
+        },
+        "category": { "type": "string", "enum": ["adjudicate", "unblock", "resolve-finding", "verify-claim", "re-task-or-accept"] },
+        "blocking": { "type": "boolean" },
+        "resolved": { "type": "boolean" },
+        "resolution_id": { "type": "string" },
+        "suggested_argv": {
+          "type": "array",
+          "items": { "type": "string" }
         }
       },
       "additionalProperties": false

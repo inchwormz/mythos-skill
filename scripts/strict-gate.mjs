@@ -79,7 +79,7 @@ function walkFiles(dir) {
 }
 
 function inputFiles(runDir) {
-  const inputDirs = ["raw", "worker-results", "verifier-results", "receipts"];
+  const inputDirs = ["raw", "worker-results", "verifier-results", "receipts", "decisions"];
   return [
     path.join(runDir, "manifest.json"),
     path.join(runDir, "task.md"),
@@ -813,8 +813,23 @@ function main() {
   if (!haltKinds.includes("ready-to-halt")) {
     errors.push("packet is not ready-to-halt");
   }
-  if ((packet?.candidate_actions ?? []).length > 0) {
-    errors.push("packet still has candidate_actions; resolve or record them before finalizing");
+  // Phase 2: the compiler is the single author of blocking classification;
+  // the gate consumes the flags. Blocking && !resolved = red. Advisory items
+  // (verify-claim, re-task-or-accept, low/medium adjudications) never red.
+  // Legacy 1.1.0 packets carry no flags - preserve their old strictness.
+  const actions = packet?.candidate_actions ?? [];
+  if (packet?.schema_version === "1.1.0") {
+    if (actions.length > 0) {
+      errors.push("packet still has candidate_actions; resolve or record them before finalizing");
+    }
+  } else {
+    for (const item of actions) {
+      if (item.blocking === true && item.resolved !== true) {
+        errors.push(
+          `unresolved blocking worklist item [${item.category ?? "?"}] ${item.id}: ${String(item.title ?? "").slice(0, 120)} (clear with: mythos resolve --run-dir <run-dir> --target ${item.decision_dependency_ids?.[0] ?? "<target>"} --reason "...")`,
+        );
+      }
+    }
   }
 
   if ((packet?.sources ?? []).length < evidence.length + findings.length) {

@@ -4,6 +4,7 @@ use crate::compiler::evidence::is_direct_source_id;
 use crate::compiler::journal::append_decision_log;
 use crate::compiler::packets::{CompilerInputBundle, build_next_pass_packet};
 use crate::compiler::receipts::load_verified_receipts;
+use crate::compiler::resolutions::{ResolutionRecord, load_verified_resolutions};
 use crate::compiler::signals::detect_recurring_failure_patterns;
 use crate::compiler::snapshot::build_snapshot;
 use crate::schema::{
@@ -136,6 +137,18 @@ pub fn compile_run_dir(run_dir: &Path) -> Result<RunDirCompileReport, Box<dyn st
         &auto_contradictions,
         &exec_receipts,
     );
+
+    // Phase 2: the derived worklist replaces template candidate_actions.
+    // Resolutions (Prime's typed adjudications, hash-chained) clear blocking
+    // items; a broken resolution chain is a hard compile error.
+    let resolutions = load_verified_resolutions(run_dir)?;
+    let worklist = derive_worklist(
+        &worker_evidence,
+        &verifier_findings,
+        &auto_contradictions,
+        &trusted_facts,
+        &resolutions,
+    );
     let packet = build_next_pass_packet(CompilerInputBundle {
         objective_id: manifest.objective_id.clone(),
         run_id: manifest.run_id.clone(),
@@ -144,14 +157,14 @@ pub fn compile_run_dir(run_dir: &Path) -> Result<RunDirCompileReport, Box<dyn st
         objective,
         evidence: worker_evidence.clone(),
         trusted_facts,
-        active_hypotheses: hypotheses_from_failures(&verifier_findings),
+        active_hypotheses: vec![],
         contradictions: auto_contradictions,
         recurring_failure_patterns: recurring_patterns,
-        candidate_actions: actions_from_failures(&verifier_findings),
+        candidate_actions: worklist.clone(),
         verifier_findings: verifier_findings.clone(),
         open_questions: open_questions_from_failures(&verifier_findings),
         raw_drilldown_refs: raw_sources,
-        halt_signals: halt_signals_from_findings(&verifier_findings, &manifest.created_at),
+        halt_signals: halt_signals_from_state(&verifier_findings, &worklist, &manifest.created_at),
         sources,
     })?;
 
@@ -223,7 +236,13 @@ fn write_input_fingerprint(
             files.push(candidate);
         }
     }
-    for dir in ["raw", "worker-results", "verifier-results", "receipts"] {
+    for dir in [
+        "raw",
+        "worker-results",
+        "verifier-results",
+        "receipts",
+        "decisions",
+    ] {
         collect_files_recursive(&run_dir.join(dir), &mut files)?;
     }
     files.sort_by_key(|path| path.to_string_lossy().to_string());
@@ -834,6 +853,155 @@ fn facts_from_evidence(
         .collect()
 }
 
+/// Phase 2: the derived worklist. Every item tells Prime what to DO, carries
+/// a category, a compiler-authored `blocking` flag, and (when clearable by
+/// judgment) a resolution linkage. `suggested_argv` uses only engine tokens -
+/// agent text never reaches it (finding 13); "<run-dir>" is a placeholder
+/// Prime substitutes.
+fn derive_worklist(
+    evidence: &[EvidenceRecord],
+    findings: &[VerifierFinding],
+    contradictions: &[Contradiction],
+    trusted_facts: &[CompiledFact],
+    resolutions: &[ResolutionRecord],
+) -> Vec<CandidateAction> {
+    let mut resolved_by: HashMap<&str, &ResolutionRecord> = HashMap::new();
+    for resolution in resolutions {
+        resolved_by.insert(resolution.target_id.as_str(), resolution);
+    }
+    let fact_ids: BTreeSet<String> = trusted_facts.iter().map(|fact| fact.id.clone()).collect();
+
+    let mut items: Vec<CandidateAction> = Vec::new();
+    let mut push = |id: String,
+                    category: &str,
+                    blocking: bool,
+                    target: &str,
+                    title: String,
+                    rationale: String,
+                    source_ids: Vec<String>,
+                    suggested_argv: Vec<String>| {
+        let resolution = resolved_by.get(target);
+        items.push(CandidateAction {
+            id,
+            title,
+            rationale,
+            actionability_score: if blocking { 0.9 } else { 0.5 },
+            decision_dependency_ids: vec![target.to_string()],
+            source_ids,
+            category: Some(category.to_string()),
+            blocking: Some(blocking),
+            resolved: Some(resolution.is_some()),
+            resolution_id: resolution.map(|r| r.id.clone()),
+            suggested_argv,
+        });
+    };
+
+    for contradiction in contradictions {
+        let blocking =
+            contradiction.id.starts_with("con:receipt:") || contradiction.severity == "high";
+        push(
+            format!("wl:adjudicate:{}", contradiction.id),
+            "adjudicate",
+            blocking,
+            &contradiction.id,
+            format!("Adjudicate contradiction {}", contradiction.id),
+            contradiction.summary.clone(),
+            contradiction.source_ids.clone(),
+            vec![],
+        );
+    }
+    for record in evidence.iter().filter(|record| record.kind == "blocker") {
+        push(
+            format!("wl:unblock:{}", record.id),
+            "unblock",
+            true,
+            &record.id,
+            format!(
+                "Unblock lane {}",
+                record.lane.as_deref().unwrap_or("(unknown)")
+            ),
+            record.summary.clone(),
+            record.source_ids.clone(),
+            vec![],
+        );
+    }
+    for finding in findings.iter().filter(|finding| {
+        finding.status != "passed" && finding.finding_kind.as_deref() != Some("synthesis")
+    }) {
+        push(
+            format!("wl:resolve-finding:{}", finding.id),
+            "resolve-finding",
+            true,
+            &finding.id,
+            format!("Resolve non-passing finding {}", finding.id),
+            finding.summary.clone(),
+            finding.source_ids.clone(),
+            vec![],
+        );
+    }
+    const LOAD_BEARING: &[&str] = &["code-change", "test-change", "root-cause"];
+    for record in evidence.iter().filter(|record| {
+        LOAD_BEARING.contains(&record.kind.as_str())
+            && !fact_ids.contains(&format!("fact:{}", record.id))
+            && !resolved_by.contains_key(record.id.as_str())
+    }) {
+        let cited_label = record
+            .source_ids
+            .iter()
+            .find(|id| id.starts_with("command:") || id.starts_with("test:"));
+        let suggested = cited_label
+            .map(|label| {
+                vec![
+                    "mythos".to_string(),
+                    "run".to_string(),
+                    "--run-dir".to_string(),
+                    "<run-dir>".to_string(),
+                    "--label".to_string(),
+                    label.clone(),
+                    "--".to_string(),
+                ]
+            })
+            .unwrap_or_default();
+        push(
+            format!("wl:verify-claim:{}", record.id),
+            "verify-claim",
+            false,
+            &record.id,
+            format!("Verify load-bearing claim {}", record.id),
+            record.summary.clone(),
+            record.source_ids.clone(),
+            suggested,
+        );
+    }
+    for record in evidence
+        .iter()
+        .filter(|record| record.kind == "unstructured")
+    {
+        push(
+            format!("wl:re-task:{}", record.id),
+            "re-task-or-accept",
+            false,
+            &record.id,
+            format!(
+                "Re-task or accept unstructured lane {}",
+                record.lane.as_deref().unwrap_or("(unknown)")
+            ),
+            record.summary.clone(),
+            record.source_ids.clone(),
+            vec![],
+        );
+    }
+
+    items.sort_by(|left, right| {
+        right
+            .blocking
+            .cmp(&left.blocking)
+            .then_with(|| left.id.cmp(&right.id))
+    });
+    items
+}
+
+#[allow(dead_code)]
 fn hypotheses_from_failures(findings: &[VerifierFinding]) -> Vec<Hypothesis> {
     findings
         .iter()
@@ -848,22 +1016,6 @@ fn hypotheses_from_failures(findings: &[VerifierFinding]) -> Vec<Hypothesis> {
         .collect()
 }
 
-fn actions_from_failures(findings: &[VerifierFinding]) -> Vec<CandidateAction> {
-    findings
-        .iter()
-        .filter(|finding| finding.status != "passed")
-        .map(|finding| CandidateAction {
-            id: format!("action:{}", finding.id),
-            title: format!("Fix {}", finding.summary),
-            rationale: "Verifier finding is not passing and needs a concrete next action."
-                .to_string(),
-            actionability_score: 0.8,
-            decision_dependency_ids: vec![finding.id.clone()],
-            source_ids: finding.source_ids.clone(),
-        })
-        .collect()
-}
-
 fn open_questions_from_failures(findings: &[VerifierFinding]) -> Vec<String> {
     findings
         .iter()
@@ -872,35 +1024,67 @@ fn open_questions_from_failures(findings: &[VerifierFinding]) -> Vec<String> {
         .collect()
 }
 
-fn halt_signals_from_findings(findings: &[VerifierFinding], created_at: &str) -> Vec<HaltSignal> {
+/// Ready-to-halt requires BOTH: every finding passing AND no unresolved
+/// blocking worklist item (Phase 2 - the compiler is the single author of
+/// blocking classification; halt and gate consume it).
+fn halt_signals_from_state(
+    findings: &[VerifierFinding],
+    worklist: &[CandidateAction],
+    created_at: &str,
+) -> Vec<HaltSignal> {
     let failed: Vec<&VerifierFinding> = findings
         .iter()
         .filter(|finding| finding.status != "passed")
         .collect();
+    let unresolved_blocking = worklist
+        .iter()
+        .filter(|item| item.blocking == Some(true) && item.resolved != Some(true))
+        .count();
 
-    if failed.is_empty() {
+    // Halt signals must cite at least one registered source (packet
+    // validation); fall back to the seed objective artifact when the
+    // contributing sets are empty.
+    let with_fallback = |ids: Vec<String>| -> Vec<String> {
+        if ids.is_empty() {
+            vec!["raw:objective.md".to_string()]
+        } else {
+            ids
+        }
+    };
+
+    if failed.is_empty() && unresolved_blocking == 0 {
         return vec![HaltSignal {
             id: format!("halt:{created_at}:ready"),
             kind: "ready-to-halt".to_string(),
             contribution: 1.0,
-            rationale: "All verifier findings are passing.".to_string(),
-            source_ids: dedupe_source_ids(
+            rationale: "All verifier findings passing; no unresolved blocking worklist items."
+                .to_string(),
+            source_ids: with_fallback(dedupe_source_ids(
                 findings
                     .iter()
                     .flat_map(|finding| finding.source_ids.clone()),
-            ),
+            )),
         }];
     }
 
+    let blocking_sources = worklist
+        .iter()
+        .filter(|item| item.blocking == Some(true) && item.resolved != Some(true))
+        .flat_map(|item| item.source_ids.clone());
     vec![HaltSignal {
         id: format!("halt:{created_at}:continue"),
         kind: "continue".to_string(),
         contribution: 1.0,
         rationale: format!(
-            "{} verifier finding(s) are still not passing.",
+            "{} non-passing finding(s), {unresolved_blocking} unresolved blocking worklist item(s).",
             failed.len()
         ),
-        source_ids: dedupe_source_ids(failed.iter().flat_map(|finding| finding.source_ids.clone())),
+        source_ids: with_fallback(dedupe_source_ids(
+            failed
+                .iter()
+                .flat_map(|finding| finding.source_ids.clone())
+                .chain(blocking_sources),
+        )),
     }]
 }
 

@@ -51,6 +51,10 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             let rest: Vec<String> = args.collect();
             diff_with_receipt(rest)
         }
+        "resolve" => {
+            let rest: Vec<String> = args.collect();
+            resolve_worklist_item(rest)
+        }
         "compile" => {
             let run_dir = parse_run_dir(args.collect())?;
             preflight_run_dir(&run_dir)?;
@@ -94,6 +98,9 @@ COMMANDS:
                             (numstat summary by default; --patch embeds the full
                             patch, hard-capped at 512KB). Work receipts attest
                             tree state and are invisible to claim attestation.
+    resolve --run-dir <dir> --target <id> --reason <text> [--cite <source-id>]
+                            Record a hash-chained adjudication clearing a blocking
+                            worklist item (recompile to apply)
     compile --run-dir <dir> Compile a run directory into state/next_pass_packet.json
     report --run-dir <dir>  Render a human-readable state/report.html for the run
     --version, -V           Print version
@@ -146,6 +153,65 @@ fn parse_flag_value(args: &[String], flag: &str) -> Option<String> {
     args.get(index + 1).cloned()
 }
 
+fn charset_ok(value: &str) -> bool {
+    value
+        .chars()
+        .all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, ':' | '.' | '_' | '/' | '-'))
+}
+
+/// Phase 2: Prime's typed adjudication. Appends a hash-chained resolution to
+/// decisions/resolutions.jsonl; compile marks the matching worklist item
+/// resolved on the next pass.
+fn resolve_worklist_item(args: Vec<String>) -> Result<(), Box<dyn std::error::Error>> {
+    let run_dir = PathBuf::from(
+        parse_flag_value(&args, "--run-dir").ok_or("`resolve` requires --run-dir <dir>")?,
+    );
+    preflight_run_dir(&run_dir)?;
+    let target = parse_flag_value(&args, "--target").ok_or(
+        "`resolve` requires --target <id> (a contradiction, blocker-evidence, or finding id)",
+    )?;
+    let reason = parse_flag_value(&args, "--reason")
+        .ok_or("`resolve` requires --reason \"<why this is adjudicated>\"")?;
+    let cite = parse_flag_value(&args, "--cite");
+    if !charset_ok(&target) {
+        return Err(
+            format!("--target `{target}` contains characters outside [A-Za-z0-9:._/-]").into(),
+        );
+    }
+    if let Some(ref value) = cite {
+        if !charset_ok(value) {
+            return Err(
+                format!("--cite `{value}` contains characters outside [A-Za-z0-9:._/-]").into(),
+            );
+        }
+    }
+
+    let record = mythos_skill::compiler::resolutions::append_resolution(
+        &run_dir,
+        mythos_skill::compiler::resolutions::ResolutionRecord {
+            id: String::new(),
+            target_id: target,
+            reason,
+            cite,
+            resolved_at: iso_now(),
+            writer: format!("mythos/{VERSION}"),
+            prev_record_hash: String::new(),
+            record_hash: String::new(),
+        },
+    )?;
+    println!(
+        "{}",
+        serde_json::json!({
+            "ok": true,
+            "resolution": record.id,
+            "target": record.target_id,
+            "record_hash": record.record_hash,
+            "next": "recompile the run (mythos-skill compile --run-dir <dir>) to apply",
+        })
+    );
+    Ok(())
+}
+
 /// M1: execute a command and mint an execution receipt the agent cannot
 /// author. Exits with the CHILD's exit code so orchestrator scripting sees
 /// reality; the receipt is minted either way.
@@ -170,13 +236,16 @@ fn run_with_receipt(args: Vec<String>) -> Result<(), Box<dyn std::error::Error>>
     if let Some(ref value) = label {
         // Labels are rendered inside briefs/suggested commands downstream;
         // enforce a shell-safe charset at the mint.
-        if !value
-            .chars()
-            .all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, ':' | '.' | '_' | '/' | '-'))
-        {
+        if !charset_ok(value) {
             return Err(
                 format!("--label `{value}` contains characters outside [A-Za-z0-9:._/-]").into(),
             );
+        }
+        if value == WORK_LABEL {
+            return Err(format!(
+                "--label `{WORK_LABEL}` is reserved for `mythos diff` work receipts"
+            )
+            .into());
         }
     }
 

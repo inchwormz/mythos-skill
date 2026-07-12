@@ -131,6 +131,21 @@ pub struct CandidateAction {
     pub actionability_score: f32,
     pub decision_dependency_ids: Vec<String>,
     pub source_ids: Vec<String>,
+    /// Worklist fields (schema 1.2.0). category: adjudicate | unblock |
+    /// resolve-finding | verify-claim | re-task-or-accept. The COMPILER is
+    /// the single author of `blocking`; the gate and `mythos next` only
+    /// consume it. `suggested_argv` is built exclusively from
+    /// engine-validated tokens (never agent free text).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub category: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub blocking: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub resolved: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub resolution_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub suggested_argv: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
