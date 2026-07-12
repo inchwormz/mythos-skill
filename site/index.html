@@ -1,0 +1,1079 @@
+<!doctype html>
+<html lang="en-NZ"><head><style data-receipts-skeleton-css="">
+/*! tailwindcss v4.2.4 | MIT License | https://tailwindcss.com */
+.grid {
+  display: grid;
+}
+
+
+/* Minimal deterministic Tailwind utility fallback for Receipts shell previews. */
+.block{display:block}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.flex{display:flex}.grid{display:grid}.hidden{display:none}
+.items-center{align-items:center}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}
+.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.overflow-hidden{overflow:hidden}.relative{position:relative}.absolute{position:absolute}.sticky{position:sticky}.top-0{top:0}.z-10{z-index:10}.z-20{z-index:20}
+.mx-auto{margin-left:auto;margin-right:auto}.my-0{margin-top:0;margin-bottom:0}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.mt-10{margin-top:2.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}
+.w-full{width:100%}.h-full{height:100%}.min-h-screen{min-height:100vh}.max-w-7xl{max-width:80rem}.max-w-6xl{max-width:72rem}.max-w-5xl{max-width:64rem}.max-w-4xl{max-width:56rem}.max-w-3xl{max-width:48rem}.max-w-2xl{max-width:42rem}
+.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.gap-10{gap:2.5rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.px-8{padding-left:2rem;padding-right:2rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-8{padding-top:2rem;padding-bottom:2rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-20{padding-top:5rem;padding-bottom:5rem}.py-24{padding-top:6rem;padding-bottom:6rem}
+.rounded{border-radius:.25rem}.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-full{border-radius:9999px}
+.border{border:1px solid rgba(0,0,0,.12)}.shadow{box-shadow:0 1px 3px rgba(0,0,0,.12)}.shadow-lg{box-shadow:0 10px 15px rgba(0,0,0,.12)}.shadow-xl{box-shadow:0 20px 25px rgba(0,0,0,.14)}
+.bg-white{background:#fff}.bg-black{background:#000}.text-white{color:#fff}.text-black{color:#000}.text-center{text-align:center}.text-left{text-align:left}.font-medium{font-weight:500}.font-semibold{font-weight:600}.font-bold{font-weight:700}
+.text-sm{font-size:.875rem;line-height:1.25rem}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-5xl{font-size:3rem;line-height:1}.text-6xl{font-size:3.75rem;line-height:1}.text-7xl{font-size:4.5rem;line-height:1}
+.object-cover{object-fit:cover}.object-contain{object-fit:contain}.aspect-video{aspect-ratio:16/9}
+@media (min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\:flex{display:flex}.md\:text-6xl{font-size:3.75rem;line-height:1}.md\:text-7xl{font-size:4.5rem;line-height:1}.md\:py-24{padding-top:6rem;padding-bottom:6rem}}
+@media (min-width:1024px){.lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.lg\:text-8xl{font-size:6rem;line-height:1}.lg\:py-32{padding-top:8rem;padding-bottom:8rem}}
+
+</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Receipts | Evidence for the next agent</title>
+  <meta name="description" content="Receipts gives agent orchestrations execution-backed evidence and a deterministic packet for the next pass.">
+  <link rel="icon" href="./images/favicon.svg">
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --ink: #1d1d1f;
+      --muted: #666;
+      --soft: #f5f5f5;
+      --line: #e5e5e5;
+    }
+    body {
+      margin: 0;
+      background: #fff;
+      color: var(--ink);
+      font-family: GeistSans, "GeistSans Fallback", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    a:focus-visible, button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 2px solid #111; outline-offset: 3px; }
+    .receipt-brand { display: inline-flex; align-items: center; gap: 8px; color: #111; font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
+    .receipt-mark { display: grid; grid-template-columns: repeat(2, 7px); grid-auto-rows: 7px; gap: 2px; width: 16px; height: 16px; }
+    .receipt-mark span { display: block; border-radius: 2px; background: #111; }
+    .receipt-mark span:last-child { grid-column: 1 / span 2; width: 10px; }
+    .receipt-window-content { display: grid; gap: 6px; padding: 12px; font: 600 11px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace; color: #333; }
+    .launch-thumb.dark .receipt-window-content { color: #fff; }
+    .receipt-window-line { display: flex; justify-content: space-between; gap: 10px; }
+    .receipt-window-line span:last-child { opacity: .58; }
+    .install-command { display: inline-flex; margin: 0 auto 22px; padding: 10px 14px; border-radius: 6px; background: #f5f5f5; color: #222; font: 600 13px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .logo { width: 28px; height: 32px; display: block; }
+    .icon {
+      width: 14px;
+      height: 14px;
+      flex: 0 0 auto;
+      display: inline-block;
+      color: currentColor;
+    }
+    .page-header {
+      position: relative;
+      z-index: 20;
+      height: 50px;
+      padding: 0 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+    }
+    .brand-link {
+      min-width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 8px;
+    }
+    .brand-logo {
+      width: 92px;
+      height: auto;
+      display: block;
+    }
+    .center-links {
+      position: absolute;
+      left: 50%;
+      top: 11px;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      height: 28px;
+      color: #666;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 500;
+    }
+    .center-links a, .center-links button {
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #555;
+      cursor: pointer;
+    }
+    .center-links svg { width: 12px; height: 12px; color: #777; }
+    .auth-links { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .auth-links a {
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    .auth-links a:last-child { background: #111; color: #fff; border-color: #111; }
+    .hero {
+      min-height: 3578px;
+      padding: 151px 0 72px;
+    }
+    .composer-wrap { width: min(690px, calc(100vw - 32px)); margin: 0 auto; text-align: center; }
+    .composer-title {
+      margin: 0 0 18px;
+      font-size: 30px;
+      line-height: 36px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+    .composer {
+      min-height: 156px;
+      border: 1px solid #c9c9c9;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+      text-align: left;
+      padding: 16px 12px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .launch-input {
+      width: 100%;
+      min-height: 56px;
+      resize: vertical;
+      border: 0;
+      outline: 0;
+      color: #111;
+      background: transparent;
+      font: inherit;
+      font-size: 14px;
+      line-height: 20px;
+    }
+    .launch-input::placeholder { color: #777; opacity: 1; }
+    .launch-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 10px 0 4px;
+    }
+    .launch-fields[hidden] { display: none; }
+    .launch-field {
+      min-width: 0;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 10px;
+      color: #111;
+      background: #fff;
+      font: inherit;
+      font-size: 13px;
+    }
+    .composer-bottom { display: flex; align-items: center; justify-content: space-between; color: #696969; font-size: 13px; font-weight: 500; }
+    .model {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 8px;
+      min-height: 28px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+    }
+    .model[aria-pressed="true"] {
+      border-color: #c9c9c9;
+      background: #f7f7f7;
+      color: #111;
+    }
+    .mic {
+      min-width: 42px; height: 28px; border-radius: 8px; border: 0; color: #fff; background: #1c1c1c;
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .mic svg { width: 15px; height: 15px; }
+    .prompt-chips {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .chip, .tab-chip {
+      height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: #666;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 12px;
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .chip.active { border-color: #111; color: #111; background: #f7f7f7; }
+    .launch-ceo-panel {
+      margin: 14px auto 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 12px 14px;
+      text-align: left;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+    }
+    .launch-ceo-panel[hidden] { display: none; }
+    .launch-ceo-panel span {
+      display: block;
+      margin-bottom: 4px;
+      color: #777;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .launch-ceo-panel p {
+      margin: 0;
+      color: #222;
+      font-size: 14px;
+      line-height: 20px;
+      white-space: pre-wrap;
+    }
+    .launch-error {
+      margin: 10px 0 0;
+      color: #b42318;
+      font-size: 13px;
+      line-height: 18px;
+    }
+    .launch-error[hidden] { display: none; }
+    .templates { width: min(1216px, calc(100vw - 64px)); margin: 137px auto 0; }
+    .section-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .section-row h2 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 32px;
+      font-weight: 700;
+    }
+    .tabs { display: flex; align-items: center; gap: 8px; }
+    .browse { height: 32px; display: inline-flex; align-items: center; gap: 12px; padding: 0 8px; color: #222; font-size: 14px; font-weight: 500; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 24px; row-gap: 20px; }
+    .legacy-grid { display: none; }
+    .card { min-width: 0; }
+    .thumb {
+      height: 220px;
+      border-radius: 8px;
+      border: 1px solid #e8e8e8;
+      background: #111;
+      overflow: hidden;
+      position: relative;
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+    .reference-thumb-link {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+    }
+    .reference-thumb-frame {
+      width: 220%;
+      height: 220%;
+      border: 0;
+      display: block;
+      transform: scale(.455);
+      transform-origin: top left;
+      pointer-events: none;
+      background: #fff;
+    }
+    .launch-thumb {
+      height: 100%;
+      padding: 18px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 14px;
+      color: #111;
+      background:
+        radial-gradient(circle at 82% 18%, rgba(255,255,255,.85), transparent 30%),
+        linear-gradient(135deg, #f8f8f8, #e9edf0 48%, #d7ded8);
+    }
+    .launch-thumb.dark {
+      color: #fff;
+      background:
+        radial-gradient(circle at 80% 15%, rgba(255,255,255,.18), transparent 28%),
+        linear-gradient(135deg, #111, #2f3631 58%, #171717);
+    }
+    .launch-thumb.warm {
+      background:
+        radial-gradient(circle at 78% 18%, rgba(255,255,255,.7), transparent 26%),
+        linear-gradient(135deg, #fff8e7, #e6d7ba 52%, #cfd7ca);
+    }
+    .launch-thumb.green {
+      background:
+        radial-gradient(circle at 82% 18%, rgba(255,255,255,.78), transparent 30%),
+        linear-gradient(135deg, #f1faf7, #c7e0d5 52%, #1f5f53);
+    }
+    .launch-kicker {
+      width: max-content;
+      max-width: 100%;
+      border: 1px solid rgba(0,0,0,.12);
+      border-radius: 999px;
+      padding: 5px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: inherit;
+      opacity: .72;
+    }
+    .launch-thumb.dark .launch-kicker { border-color: rgba(255,255,255,.22); }
+    .launch-lines { display: grid; gap: 8px; align-content: start; padding-top: 10px; }
+    .launch-lines span {
+      display: block;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(17,17,17,.15);
+    }
+    .launch-thumb.dark .launch-lines span { background: rgba(255,255,255,.22); }
+    .launch-lines span:first-child { width: 82%; height: 18px; background: currentColor; opacity: .78; }
+    .launch-lines span:nth-child(2) { width: 66%; }
+    .launch-lines span:nth-child(3) { width: 48%; }
+    .launch-window {
+      height: 58px;
+      border: 1px solid rgba(0,0,0,.12);
+      border-radius: 8px;
+      background: rgba(255,255,255,.58);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+    }
+    .launch-thumb.dark .launch-window { border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.08); }
+    .meta { height: 44px; display: flex; align-items: center; gap: 10px; }
+    .avatar {
+      width: 36px; height: 36px; border-radius: 999px; flex: 0 0 auto; overflow: hidden;
+      background: radial-gradient(circle at 35% 30%, #f4c096, #8b4d2f 58%, #171717 59%);
+      border: 1px solid rgba(0,0,0,.1);
+    }
+    .avatar.dark { background: #050505; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; }
+    .card-title { display: block; font-size: 15px; line-height: 20px; font-weight: 500; color: #222; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .stats { display: flex; align-items: center; gap: 12px; color: #666; font-size: 13px; line-height: 16px; }
+    .stat { display: inline-flex; align-items: center; gap: 4px; }
+    .features {
+      padding: 96px 0 48px;
+      min-height: 760px;
+    }
+    .features-inner { width: min(1216px, calc(100vw - 64px)); margin: 0 auto; }
+    .feature-title { text-align: center; margin-bottom: 48px; }
+    .feature-title h3 { margin: 0 0 12px; font-size: 48px; line-height: 54px; font-weight: 700; }
+    .feature-title p { margin: 0; color: #666; font-size: 16px; line-height: 24px; }
+    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .feature-card { border: 1px solid var(--line); border-radius: 8px; min-height: 210px; padding: 22px; overflow: hidden; background: #fff; }
+    .feature-card h3 { margin: 0 0 8px; font-size: 20px; line-height: 28px; }
+    .feature-card p { margin: 0; color: #666; font-size: 15px; line-height: 22px; }
+    .icon-cloud { margin-top: 26px; display: grid; grid-template-columns: repeat(6, 36px); gap: 12px; opacity: .9; }
+    .app-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      border: 1px solid #e7e7e7;
+      background:
+        center / 17px 17px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v18'/%3E%3Cpath d='M3 12h18'/%3E%3Cpath d='m5 5 14 14'/%3E%3Cpath d='m19 5-14 14'/%3E%3C/svg%3E"),
+        linear-gradient(135deg, #fff, #ececec);
+    }
+    .design-mode { margin-top: 26px; height: 96px; border-radius: 8px; background: linear-gradient(90deg, #fafafa, #e8e8e8); border: 1px solid #ddd; position: relative; overflow: hidden; }
+    .design-mode:before, .design-mode:after { content: ""; position: absolute; background: #fff; border: 1px solid #d7d7d7; border-radius: 6px; }
+    .design-mode:before { width: 130px; height: 54px; left: 24px; top: 20px; }
+    .design-mode:after { width: 76px; height: 76px; right: 28px; top: 10px; }
+    .mobile-sites {
+      padding: 48px 0;
+      min-height: 420px;
+    }
+    .mobile-inner { width: min(1216px, calc(100vw - 64px)); margin: 0 auto; }
+    .mobile-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 32px; }
+    .legacy-mobile-list { display: none; }
+    .mobile-item { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .mobile-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #dedede, #8a8a8a); flex: 0 0 auto; }
+    .mobile-name { flex: 1; min-width: 0; font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .blog-section {
+      width: min(1216px, calc(100vw - 64px));
+      margin: 36px auto 0;
+      padding: 54px 0 22px;
+    }
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .blog-card {
+      min-height: 164px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .blog-card span {
+      width: max-content;
+      max-width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 8px;
+      color: #666;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .blog-card h3 {
+      margin: 18px 0 10px;
+      color: #161616;
+      font-size: 20px;
+      line-height: 26px;
+      font-weight: 600;
+    }
+    .blog-card p {
+      margin: 0;
+      color: #666;
+      font-size: 14px;
+      line-height: 20px;
+    }
+    .blog-card a {
+      margin-top: 18px;
+      color: #111;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .cta {
+      min-height: 320px;
+      padding: 64px 0;
+      text-align: center;
+    }
+    .cta h2 { margin: 0 0 22px; font-size: 48px; line-height: 56px; font-weight: 700; }
+    .launch-mark { margin: 0 auto 16px; min-width: 132px; height: 48px; display: flex; align-items: center; justify-content: center; }
+    .launch-mark .brand-logo { width: 132px; }
+    .cta p { margin: 0 auto 22px; color: #666; font-size: 18px; line-height: 28px; max-width: 520px; }
+    .primary { height: 40px; padding: 0 18px; border-radius: 6px; background: #111; color: #fff; border: 0; font-weight: 500; }
+    .page-footer {
+      min-height: 388px;
+      padding: 64px 24px 16px;
+    }
+    .footer-shell { max-width: 1400px; margin: 0 auto; padding: 24px 40px 40px; }
+    .footer-row { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; gap: 48px; }
+    .footer-logo { width: 48px; height: 24px; }
+    .footer-grid { display: grid; grid-template-columns: repeat(4, 137px); gap: 108px; }
+    .footer-col h2 { margin: 0 0 16px; font-size: 14px; line-height: 20px; font-weight: 500; }
+    .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a { color: #666; font-size: 14px; line-height: 20px; }
+    @media (max-width: 900px) {
+      .center-links { display: none; }
+      .hero { padding-top: 88px; }
+      .templates, .features-inner, .mobile-inner { width: calc(100vw - 32px); }
+      .launch-fields { grid-template-columns: 1fr; }
+      .grid, .feature-grid, .mobile-list, .blog-grid { grid-template-columns: 1fr; }
+      .thumb { height: 210px; }
+      .section-row { align-items: flex-start; flex-direction: column; gap: 16px; }
+      .section-row h2 { max-width: 100%; }
+      .tabs { width: 100%; flex-wrap: wrap; overflow: visible; justify-content: flex-start; padding-bottom: 4px; }
+      .feature-title h3, .cta h2 { font-size: 36px; line-height: 42px; }
+      .blog-section { width: calc(100vw - 32px); }
+      .footer-row, .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    }
+  </style>
+</head>
+<body id="top" data-receipts-skeleton-run="receipts-launch-shell" data-editable-root="receipts-launch-shell">
+  <header class="page-header" data-skeleton-section="header" data-editable-role="section" data-editable-section="header" data-editable="header">
+    <a href="#top" class="brand-link" data-skeleton-slot="skeleton-section-002-slot-001" data-editable-role="link" aria-label="Receipts home">
+      <span class="receipt-brand"><span class="receipt-mark" aria-hidden="true"><span></span><span></span><span></span></span><span>Receipts</span></span>
+    </a>
+    <ul class="center-links">
+      <li><a href="#product">Product <svg viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></a></li>
+      <li><a href="#how-it-works">How it works <svg viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></a></li>
+      <li><a href="#proof">Proof</a></li>
+      <li><a href="#install">Install</a></li>
+      <li><a href="#source">Open source</a></li>
+    </ul>
+    <div class="auth-links">
+      <a href="#source" data-skeleton-slot="skeleton-section-002-slot-017" data-editable-role="link">Read the docs</a>
+      <a href="#launch-prompt" data-launch-submit data-skeleton-slot="skeleton-section-002-slot-018" data-editable-role="link">Try Receipts</a>
+    </div>
+  </header>
+
+  <section class="hero" id="product" data-skeleton-section="hero" data-editable-role="section" data-editable-section="hero" data-editable="hero">
+    <div class="composer-wrap">
+      <h1 class="composer-title" data-skeleton-slot="skeleton-section-005-slot-hero-title" data-editable-role="heading" data-editable="skeleton-section-005-slot-hero-title">What are you trying to prove?</h1>
+      <div class="composer" data-skeleton-slot="skeleton-section-005-slot-composer" data-editable-role="body">
+        <textarea class="launch-input" id="launch-prompt" placeholder="Tell Receipts what ran, what changed, or what Prime needs to verify..." aria-label="Proof prompt"></textarea>
+        <div class="launch-fields" id="launch-fields" hidden>
+          <input class="launch-field" id="launch-command" type="text" placeholder="Command or check to run">
+          <input class="launch-field" id="launch-run-dir" type="text" placeholder="Run directory (optional)">
+        </div>
+        <div class="composer-bottom">
+          <button type="button" class="model" id="launch-ceo-toggle" aria-pressed="false" data-skeleton-slot="hero-slot-002" data-editable="hero-slot-002" data-editable-role="button"><svg class="icon" viewBox="0 0 24 24"><path d="M4 5h16v14H4z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 9h8M8 13h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span id="launch-ceo-toggle-label">Prime mode off</span><svg class="icon" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="mic" data-launch-submit aria-label="Run a proof" data-skeleton-slot="hero-slot-003" data-editable="hero-slot-003" data-editable-role="button"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>
+      <div class="prompt-chips">
+        <a class="chip" href="#launch-prompt" data-launch-chip="Run a command" data-skeleton-slot="hero-slot-004" data-editable="hero-slot-004" data-editable-role="link"><svg class="icon" viewBox="0 0 24 24"><path d="M5 6h14v12H5zM8 10l2 2-2 2M12 15h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Run a command</a>
+        <a class="chip" href="#launch-prompt" data-launch-chip="Compile a packet" data-skeleton-slot="hero-slot-005" data-editable="hero-slot-005" data-editable-role="link"><svg class="icon" viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H7zM15 3v5h4M10 13h6M10 17h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Compile a packet</a>
+        <a class="chip" href="#launch-prompt" data-launch-chip="Gate a claim" data-skeleton-slot="hero-slot-006" data-editable="hero-slot-006" data-editable-role="link"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6zM9 12l2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Gate a claim</a>
+        <a class="chip" href="#launch-prompt" data-launch-chip="Inspect a receipt" data-skeleton-slot="hero-slot-007" data-editable="hero-slot-007" data-editable-role="link"><svg class="icon" viewBox="0 0 24 24"><path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Inspect a receipt</a>
+        <a class="chip" href="#launch-prompt" data-launch-chip="Use my repo" data-skeleton-slot="hero-slot-008" data-editable="hero-slot-008" data-editable-role="link"><svg class="icon" viewBox="0 0 24 24"><path d="M5 5h14v14H5zM8 9h8M8 13h5M8 17h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Use my repo</a>
+      </div>
+      <div class="launch-ceo-panel" id="launch-ceo-panel" aria-live="polite" hidden>
+        <span id="launch-ceo-status">Receipt ready</span>
+        <p id="launch-ceo-reply"></p>
+      </div>
+      <p class="launch-error" id="launch-error" hidden></p>
+    </div>
+
+    <div class="templates" id="proof">
+      <div class="section-row">
+        <h2 data-skeleton-slot="skeleton-section-005-slot-001" data-editable-role="heading" data-editable="skeleton-section-005-slot-001">Start with the proof you need</h2>
+        <div class="tabs">
+          <a class="tab-chip" href="#proof" data-skeleton-slot="skeleton-section-005-slot-002" data-editable-role="link" data-editable="skeleton-section-005-slot-002"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>Run</a>
+          <a class="tab-chip" href="#proof" data-skeleton-slot="skeleton-section-005-slot-003" data-editable-role="link" data-editable="skeleton-section-005-slot-003"><svg class="icon" viewBox="0 0 24 24"><path d="M6 8h12M8 12h8M10 16h4M4 4h16v16H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Compile</a>
+          <a class="tab-chip" href="#proof" data-skeleton-slot="skeleton-section-005-slot-004" data-editable-role="link" data-editable="skeleton-section-005-slot-004"><svg class="icon" viewBox="0 0 24 24"><path d="M4 5h7v7H4zM13 5h7v7h-7zM4 14h7v7H4zM13 14h7v7h-7z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>Gate</a>
+          <a class="tab-chip" href="#proof" data-skeleton-slot="skeleton-section-005-slot-005" data-editable-role="link" data-editable="skeleton-section-005-slot-005"><svg class="icon" viewBox="0 0 24 24"><path d="M4 17 9 7l5 10 3-6 3 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Replay</a>
+          <a class="browse" href="#source" data-skeleton-slot="skeleton-section-005-slot-006" data-editable-role="link" data-editable="skeleton-section-005-slot-006">Read the contract <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="card"><div class="thumb"><div class="launch-thumb dark"><span class="launch-kicker">Run / receipt</span><div class="launch-lines"><span></span><span></span><span></span></div><div class="launch-window"><div class="receipt-window-content"><div class="receipt-window-line"><span>command</span><span>captured</span></div><div class="receipt-window-line"><span>exit_code</span><span>0</span></div></div></div></div></div><div class="meta"><div class="avatar dark">R</div><div><a class="card-title" href="#how-it-works">Execution receipt</a><div class="stats"><span class="stat">Run</span><span class="stat">Exit code</span></div></div></div></div>
+        <div class="card"><div class="thumb"><div class="launch-thumb green"><span class="launch-kicker">Compile / packet</span><div class="launch-lines"><span></span><span></span><span></span></div><div class="launch-window"><div class="receipt-window-content"><div class="receipt-window-line"><span>next_pass_packet.json</span><span>ready</span></div><div class="receipt-window-line"><span>sources</span><span>verified</span></div></div></div></div></div><div class="meta"><div class="avatar"></div><div><a class="card-title" href="#how-it-works">Deterministic packet</a><div class="stats"><span class="stat">Compile</span><span class="stat">Handoff</span></div></div></div></div>
+        <div class="card"><div class="thumb"><div class="launch-thumb warm"><span class="launch-kicker">Gate / claim</span><div class="launch-lines"><span></span><span></span><span></span></div><div class="launch-window"><div class="receipt-window-content"><div class="receipt-window-line"><span>latest_receipt</span><span>checked</span></div><div class="receipt-window-line"><span>verdict</span><span>refuted</span></div></div></div></div></div><div class="meta"><div class="avatar dark">!</div><div><a class="card-title" href="#how-it-works">Mechanical gate</a><div class="stats"><span class="stat">Gate</span><span class="stat">Refutation</span></div></div></div></div>
+        <div class="card"><div class="thumb"><div class="launch-thumb"><span class="launch-kicker">Chain / integrity</span><div class="launch-lines"><span></span><span></span><span></span></div><div class="launch-window"><div class="receipt-window-content"><div class="receipt-window-line"><span>receipt_hash</span><span>sha256</span></div><div class="receipt-window-line"><span>previous</span><span>linked</span></div></div></div></div></div><div class="meta"><div class="avatar"></div><div><a class="card-title" href="#source">Hash-linked evidence</a><div class="stats"><span class="stat">Chain</span><span class="stat">Integrity</span></div></div></div></div>
+        <div class="card"><div class="thumb"><div class="launch-thumb dark"><span class="launch-kicker">Artifact / hash</span><div class="launch-lines"><span></span><span></span><span></span></div><div class="launch-window"><div class="receipt-window-content"><div class="receipt-window-line"><span>stdout</span><span>stored</span></div><div class="receipt-window-line"><span>content_hash</span><span>stable</span></div></div></div></div></div><div class="meta"><div class="avatar dark">#</div><div><a class="card-title" href="#source">Content-addressed output</a><div class="stats"><span class="stat">Artifact</span><span class="stat">Hash</span></div></div></div></div>
+        <div class="card"><div class="thumb"><div class="launch-thumb green"><span class="launch-kicker">Prime / next pass</span><div class="launch-lines"><span></span><span></span><span></span></div><div class="launch-window"><div class="receipt-window-content"><div class="receipt-window-line"><span>snapshot.json</span><span>included</span></div><div class="receipt-window-line"><span>decision_log</span><span>readable</span></div></div></div></div></div><div class="meta"><div class="avatar"></div><div><a class="card-title" href="#install">Prime handoff</a><div class="stats"><span class="stat">Agent</span><span class="stat">Context</span></div></div></div></div>
+      </div>
+      <div class="grid legacy-grid" aria-hidden="true">
+        <div class="card"><div class="thumb reference-thumb" data-skeleton-slot="skeleton-section-005-slot-007" data-editable-role="image" data-editable="skeleton-section-005-slot-007"><a class="reference-thumb-link" href="/reference-templates/saas-consumer/" aria-label="Open Consumer SaaS product shell"><iframe class="reference-thumb-frame" src="/reference-templates/saas-consumer/" loading="lazy" title="Consumer SaaS product shell hero preview" aria-hidden="true" tabindex="-1" scrolling="no"></iframe></a></div><div class="meta"><div class="avatar dark"></div><div><a class="card-title" href="/reference-templates/saas-consumer/" data-skeleton-slot="skeleton-section-005-slot-014" data-editable-role="link" data-editable="skeleton-section-005-slot-014">Consumer SaaS product shell</a><div class="stats"><span class="stat" data-skeleton-slot="hero-slot-017" data-editable="hero-slot-017" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Product</span><span class="stat" data-skeleton-slot="hero-slot-019" data-editable="hero-slot-019" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Conversion</span></div></div></div></div>
+        <div class="card"><div class="thumb reference-thumb" data-skeleton-slot="skeleton-section-005-slot-018" data-editable-role="image" data-editable="skeleton-section-005-slot-018"><a class="reference-thumb-link" href="/reference-templates/wisprflow-ai/" aria-label="Open Soft AI consumer launch"><iframe class="reference-thumb-frame" src="/reference-templates/wisprflow-ai/" loading="lazy" title="Soft AI consumer launch hero preview" aria-hidden="true" tabindex="-1" scrolling="no"></iframe></a></div><div class="meta"><div class="avatar"></div><div><a class="card-title" href="/reference-templates/wisprflow-ai/" data-skeleton-slot="skeleton-section-005-slot-025" data-editable-role="link" data-editable="skeleton-section-005-slot-025">Soft AI consumer launch</a><div class="stats"><span class="stat" data-skeleton-slot="hero-slot-023" data-editable="hero-slot-023" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M7 12a5 5 0 0 1 10 0v5a5 5 0 0 1-10 0zM12 3v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Voice</span><span class="stat" data-skeleton-slot="hero-slot-024" data-editable="hero-slot-024" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Proof</span></div></div></div></div>
+        <div class="card"><div class="thumb reference-thumb" data-skeleton-slot="skeleton-section-005-slot-029" data-editable-role="image" data-editable="skeleton-section-005-slot-029"><a class="reference-thumb-link" href="/reference-templates/raycast-command/" aria-label="Open Command-center homepage"><iframe class="reference-thumb-frame" src="/reference-templates/raycast-command/" loading="lazy" title="Command-center homepage hero preview" aria-hidden="true" tabindex="-1" scrolling="no"></iframe></a></div><div class="meta"><div class="avatar dark"></div><div><a class="card-title" href="/reference-templates/raycast-command/" data-skeleton-slot="skeleton-section-005-slot-036" data-editable-role="link" data-editable="skeleton-section-005-slot-036">Command-center homepage</a><div class="stats"><span class="stat" data-skeleton-slot="hero-slot-027" data-editable="hero-slot-027" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M6 8h12M6 12h8M6 16h10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Command</span><span class="stat" data-skeleton-slot="hero-slot-028" data-editable="hero-slot-028" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M5 5h14v14H5zM9 9h6v6H9z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>App</span></div></div></div></div>
+        <div class="card"><div class="thumb reference-thumb" data-skeleton-slot="hero-slot-029" data-editable="hero-slot-029" data-editable-role="image"><a class="reference-thumb-link" href="/reference-templates/linear-system/" aria-label="Open Premium SaaS operating system"><iframe class="reference-thumb-frame" src="/reference-templates/linear-system/" loading="lazy" title="Premium SaaS operating system hero preview" aria-hidden="true" tabindex="-1" scrolling="no"></iframe></a></div><div class="meta"><div class="avatar"></div><div><a class="card-title" href="/reference-templates/linear-system/" data-skeleton-slot="hero-slot-030" data-editable="hero-slot-030" data-editable-role="link">Premium SaaS operating system</a><div class="stats"><span class="stat" data-skeleton-slot="hero-slot-031" data-editable="hero-slot-031" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Clarity</span><span class="stat" data-skeleton-slot="hero-slot-032" data-editable="hero-slot-032" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="m4 14 4-4 4 4 8-8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Systems</span></div></div></div></div>
+        <div class="card"><div class="thumb reference-thumb" data-skeleton-slot="hero-slot-033" data-editable="hero-slot-033" data-editable-role="image"><a class="reference-thumb-link" href="/reference-templates/consulting-studio/" aria-label="Open Consulting authority site"><iframe class="reference-thumb-frame" src="/reference-templates/consulting-studio/" loading="lazy" title="Consulting authority site hero preview" aria-hidden="true" tabindex="-1" scrolling="no"></iframe></a></div><div class="meta"><div class="avatar dark"></div><div><a class="card-title" href="/reference-templates/consulting-studio/" data-skeleton-slot="hero-slot-034" data-editable="hero-slot-034" data-editable-role="link">Consulting authority site</a><div class="stats"><span class="stat" data-skeleton-slot="hero-slot-035" data-editable="hero-slot-035" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M4 19V5h16v14M8 9h8M8 13h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Strategy</span><span class="stat" data-skeleton-slot="hero-slot-036" data-editable="hero-slot-036" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3 5 8v6c0 4 7 7 7 7s7-3 7-7V8z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>Trust</span></div></div></div></div>
+        <div class="card"><div class="thumb reference-thumb" data-skeleton-slot="hero-slot-037" data-editable="hero-slot-037" data-editable-role="image"><a class="reference-thumb-link" href="/reference-templates/builder-architecture/" aria-label="Open Architecture and builder shell"><iframe class="reference-thumb-frame" src="/reference-templates/builder-architecture/" loading="lazy" title="Architecture and builder shell hero preview" aria-hidden="true" tabindex="-1" scrolling="no"></iframe></a></div><div class="meta"><div class="avatar"></div><div><a class="card-title" href="/reference-templates/builder-architecture/" data-skeleton-slot="hero-slot-038" data-editable="hero-slot-038" data-editable-role="link">Architecture and builder shell</a><div class="stats"><span class="stat" data-skeleton-slot="hero-slot-039" data-editable="hero-slot-039" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M4 20h16M6 20V9l6-5 6 5v11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Projects</span><span class="stat" data-skeleton-slot="hero-slot-040" data-editable="hero-slot-040" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M8 16h8M9 12h6M10 8h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Craft</span></div></div></div></div>
+        <div class="card"><div class="thumb reference-thumb" data-skeleton-slot="hero-slot-041" data-editable="hero-slot-041" data-editable-role="image"><a class="reference-thumb-link" href="/reference-templates/impressive-trades/" aria-label="Open Impressive trades conversion"><iframe class="reference-thumb-frame" src="/reference-templates/impressive-trades/" loading="lazy" title="Impressive trades conversion hero preview" aria-hidden="true" tabindex="-1" scrolling="no"></iframe></a></div><div class="meta"><div class="avatar dark"></div><div><a class="card-title" href="/reference-templates/impressive-trades/" data-skeleton-slot="hero-slot-042" data-editable="hero-slot-042" data-editable-role="link">Impressive trades conversion</a><div class="stats"><span class="stat" data-skeleton-slot="hero-slot-043" data-editable="hero-slot-043" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="m14 6 4 4-8 8H6v-4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Trade</span><span class="stat" data-skeleton-slot="hero-slot-044" data-editable="hero-slot-044" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Lead</span></div></div></div></div>
+        <div class="card"><div class="thumb reference-thumb" data-skeleton-slot="hero-slot-045" data-editable="hero-slot-045" data-editable-role="image"><a class="reference-thumb-link" href="/reference-templates/vercel-platform/" aria-label="Open Vercel-style landing page"><iframe class="reference-thumb-frame" src="/reference-templates/vercel-platform/" loading="lazy" title="Vercel-style landing page hero preview" aria-hidden="true" tabindex="-1" scrolling="no"></iframe></a></div><div class="meta"><div class="avatar"></div><div><a class="card-title" href="/reference-templates/vercel-platform/" data-skeleton-slot="hero-slot-046" data-editable="hero-slot-046" data-editable-role="link">Vercel-style landing page</a><div class="stats"><span class="stat" data-skeleton-slot="hero-slot-047" data-editable="hero-slot-047" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16v12H4zM8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>Launch</span><span class="stat" data-skeleton-slot="hero-slot-048" data-editable="hero-slot-048" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M4 15s4-8 8-8 8 8 8 8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Story</span></div></div></div></div>
+        <div class="card"><div class="thumb reference-thumb" data-skeleton-slot="hero-slot-049" data-editable="hero-slot-049" data-editable-role="image"><a class="reference-thumb-link" href="/reference-templates/blog-page/" aria-label="Open Editorial SaaS blog shell"><iframe class="reference-thumb-frame" src="/reference-templates/blog-page/" loading="lazy" title="Editorial SaaS blog shell hero preview" aria-hidden="true" tabindex="-1" scrolling="no"></iframe></a></div><div class="meta"><div class="avatar"></div><div><a class="card-title" href="/reference-templates/blog-page/" data-skeleton-slot="hero-slot-050" data-editable="hero-slot-050" data-editable-role="link">Editorial SaaS blog shell</a><div class="stats"><span class="stat" data-skeleton-slot="hero-slot-051" data-editable="hero-slot-051" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M6 4h12v18H6zM9 8h6M9 12h6M9 16h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Editorial</span><span class="stat" data-skeleton-slot="hero-slot-052" data-editable="hero-slot-052" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M5 19h14M7 15l4-4 3 3 5-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>SEO</span></div></div></div></div>
+        <div class="card"><div class="thumb reference-thumb" data-skeleton-slot="hero-slot-053" data-editable="hero-slot-053" data-editable-role="image"><a class="reference-thumb-link" href="/reference-templates/figma-demo/" aria-label="Open Top SaaS demo funnel"><iframe class="reference-thumb-frame" src="/reference-templates/figma-demo/" loading="lazy" title="Top SaaS demo funnel hero preview" aria-hidden="true" tabindex="-1" scrolling="no"></iframe></a></div><div class="meta"><div class="avatar"></div><div><a class="card-title" href="/reference-templates/figma-demo/" data-skeleton-slot="hero-slot-054" data-editable="hero-slot-054" data-editable-role="link">Top SaaS demo funnel</a><div class="stats"><span class="stat" data-skeleton-slot="hero-slot-055" data-editable="hero-slot-055" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M7 5h10v14H7zM10 9h4M10 13h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Demo</span><span class="stat" data-skeleton-slot="hero-slot-056" data-editable="hero-slot-056" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Book</span></div></div></div></div>
+        <div class="card"><div class="thumb reference-thumb" data-skeleton-slot="hero-slot-057" data-editable="hero-slot-057" data-editable-role="image"><a class="reference-thumb-link" href="/reference-templates/framer-builder/" aria-label="Open Visual builder product page"><iframe class="reference-thumb-frame" src="/reference-templates/framer-builder/" loading="lazy" title="Visual builder product page hero preview" aria-hidden="true" tabindex="-1" scrolling="no"></iframe></a></div><div class="meta"><div class="avatar dark"></div><div><a class="card-title" href="/reference-templates/framer-builder/" data-skeleton-slot="hero-slot-058" data-editable="hero-slot-058" data-editable-role="link">Visual builder product page</a><div class="stats"><span class="stat" data-skeleton-slot="hero-slot-059" data-editable="hero-slot-059" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M6 4h12v6H6zM6 10h8v6H6zM6 16h12v4H6z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>Builder</span><span class="stat" data-skeleton-slot="hero-slot-060" data-editable="hero-slot-060" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="m4 20 8-16 8 16-8-4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Design</span></div></div></div></div>
+        <div class="card"><div class="thumb reference-thumb" data-skeleton-slot="hero-slot-061" data-editable="hero-slot-061" data-editable-role="image"><a class="reference-thumb-link" href="/reference-templates/stripe-commercial/" aria-label="Open Commercial SaaS credibility"><iframe class="reference-thumb-frame" src="/reference-templates/stripe-commercial/" loading="lazy" title="Commercial SaaS credibility hero preview" aria-hidden="true" tabindex="-1" scrolling="no"></iframe></a></div><div class="meta"><div class="avatar"></div><div><a class="card-title" href="/reference-templates/stripe-commercial/" data-skeleton-slot="hero-slot-062" data-editable="hero-slot-062" data-editable-role="link">Commercial SaaS credibility</a><div class="stats"><span class="stat" data-skeleton-slot="hero-slot-063" data-editable="hero-slot-063" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v18M7 7h6a3 3 0 0 1 0 6h-2a3 3 0 0 0 0 6h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Revenue</span><span class="stat" data-skeleton-slot="hero-slot-064" data-editable="hero-slot-064" data-editable-role="body"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3 5 8v6c0 4 7 7 7 7s7-3 7-7V8z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>Trust</span></div></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="how-it-works" data-skeleton-section="skeleton-section-006" data-editable-role="section" data-editable-section="skeleton-section-006" data-editable="skeleton-section-006">
+    <div class="features-inner">
+      <div class="feature-title">
+        <h3 data-skeleton-slot="skeleton-section-006-slot-001" data-editable-role="heading" data-editable="skeleton-section-006-slot-001">Capture. Compile. Prove.</h3>
+        <p data-skeleton-slot="skeleton-section-006-slot-002" data-editable-role="body" data-editable="skeleton-section-006-slot-002">Receipts turns agent work into evidence that a Prime agent can inspect before it builds on the result.</p>
+      </div>
+      <div class="feature-grid">
+         <div class="feature-card"><h3 data-skeleton-slot="skeleton-section-006-slot-003" data-editable-role="heading" data-editable="skeleton-section-006-slot-003">Run at the boundary</h3><p data-skeleton-slot="skeleton-section-006-slot-004" data-editable-role="body" data-editable="skeleton-section-006-slot-004">Execute the command once, capture its exit code, hash its output, and keep the event in a tamper-evident chain.</p><div class="design-mode"></div></div>
+         <div class="feature-card"><h3 data-skeleton-slot="skeleton-section-006-slot-005" data-editable-role="heading" data-editable="skeleton-section-006-slot-005">Compile what is real</h3><p data-skeleton-slot="skeleton-section-006-slot-006" data-editable-role="body" data-editable="skeleton-section-006-slot-006">Verify the source receipts and turn them into a deterministic packet the next pass can read without replaying chat.</p><div class="icon-cloud"><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span></div></div>
+         <div class="feature-card"><h3 data-skeleton-slot="skeleton-section-006-slot-067" data-editable-role="heading" data-editable="skeleton-section-006-slot-067">Gate the claim</h3><p data-skeleton-slot="skeleton-section-006-slot-068" data-editable-role="body" data-editable="skeleton-section-006-slot-068">A passing sentence is not enough. The gate checks the latest receipt and mechanically refutes a claim that the evidence contradicts.</p><div class="design-mode"></div></div>
+         <div class="feature-card"><h3 data-skeleton-slot="skeleton-section-006-slot-069" data-editable-role="heading" data-editable="skeleton-section-006-slot-069">Hand off to Prime</h3><p data-skeleton-slot="skeleton-section-006-slot-070" data-editable-role="body" data-editable="skeleton-section-006-slot-070">Give the next agent <code>next_pass_packet.json</code>, the verified snapshot, and the decision log in one compact handoff.</p><div class="design-mode"></div></div>
+         <div class="feature-card"><h3 data-skeleton-slot="skeleton-section-006-slot-075" data-editable-role="heading" data-editable="skeleton-section-006-slot-075">Keep artifacts addressable</h3><p data-skeleton-slot="skeleton-section-006-slot-076" data-editable-role="body" data-editable="skeleton-section-006-slot-076">Command output is stored by content hash, so a later agent can point back to the exact bytes behind a decision.</p><div class="design-mode"></div></div>
+         <div class="feature-card"><h3 data-skeleton-slot="skeleton-section-006-slot-081" data-editable-role="heading" data-editable="skeleton-section-006-slot-081">Make failure useful</h3><p data-skeleton-slot="skeleton-section-006-slot-082" data-editable-role="body" data-editable="skeleton-section-006-slot-082">A failed receipt is a useful result: it stops Prime from building on a false green and tells the next pass where to look.</p><div class="icon-cloud"><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span></div></div>
+         <div class="feature-card"><h3 data-skeleton-slot="skeleton-section-006-slot-089" data-editable-role="heading" data-editable="skeleton-section-006-slot-089">Stay open and inspectable</h3><p data-skeleton-slot="skeleton-section-006-slot-090" data-editable-role="body" data-editable="skeleton-section-006-slot-090">Receipts is an open-source compiler for agent orchestrations: the contract is visible, the packet is portable, and the proof is yours.</p><div class="icon-cloud"><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span><span class="app-icon"></span></div></div>
+         <div class="feature-card"><h3 data-skeleton-slot="skeleton-section-006-slot-098" data-editable-role="heading" data-editable="skeleton-section-006-slot-098">Ready for the next pass</h3><p data-skeleton-slot="skeleton-section-006-slot-099" data-editable-role="body" data-editable="skeleton-section-006-slot-099">The handoff is concise enough for an agent to act on and specific enough for a human to audit later.</p><div class="design-mode"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mobile-sites" id="packet" data-skeleton-section="skeleton-section-008" data-editable-role="section" data-editable-section="skeleton-section-008" data-editable="skeleton-section-008">
+    <div class="mobile-inner">
+      <div class="section-row">
+        <h2 data-skeleton-slot="skeleton-section-008-slot-001" data-editable-role="heading" data-editable="skeleton-section-008-slot-001">What the next agent gets</h2>
+        <a class="browse" href="#install" data-skeleton-slot="skeleton-section-008-slot-002" data-editable-role="link" data-editable="skeleton-section-008-slot-002">See the install <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+      <div class="mobile-list">
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="#proof">receipt journal</a><span class="stats">Run</span><button class="chip">Hash</button></div>
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="#proof">next_pass_packet.json</a><span class="stats">Compile</span><button class="chip">Ready</button></div>
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="#proof">snapshot.json</a><span class="stats">Verify</span><button class="chip">Fresh</button></div>
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="#proof">decision_log.jsonl</a><span class="stats">Context</span><button class="chip">Read</button></div>
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="#proof">stdout by content hash</a><span class="stats">Artifact</span><button class="chip">Exact</button></div>
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="#how-it-works">failing receipt</a><span class="stats">Gate</span><button class="chip">Refute</button></div>
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="#how-it-works">source verification</a><span class="stats">Trust</span><button class="chip">Check</button></div>
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="#install">Prime handoff</a><span class="stats">Next</span><button class="chip">Act</button></div>
+      </div>
+      <div class="mobile-list legacy-mobile-list" aria-hidden="true">
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="/proof/" data-skeleton-slot="skeleton-section-008-slot-006" data-editable-role="link" data-editable="skeleton-section-008-slot-006">Before/after screenshots</a><span class="stats" data-skeleton-slot="skeleton-section-008-slot-005" data-editable="skeleton-section-008-slot-005" data-editable-role="body">Visual</span><button class="chip" data-skeleton-slot="skeleton-section-008-slot-008" data-editable-role="button" data-editable="skeleton-section-008-slot-008">QA</button></div>
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="/proof/" data-skeleton-slot="skeleton-section-008-slot-013" data-editable-role="link" data-editable="skeleton-section-008-slot-013">Conversion path proof</a><span class="stats" data-skeleton-slot="skeleton-section-008-slot-009" data-editable="skeleton-section-008-slot-009" data-editable-role="body">CTA</span><button class="chip" data-skeleton-slot="skeleton-section-008-slot-015" data-editable-role="button" data-editable="skeleton-section-008-slot-015">Flow</button></div>
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="/proof/" data-skeleton-slot="skeleton-section-008-slot-020" data-editable-role="link" data-editable="skeleton-section-008-slot-020">Desktop and mobile proof</a><span class="stats" data-skeleton-slot="skeleton-section-008-slot-013" data-editable="skeleton-section-008-slot-013" data-editable-role="body">2x</span><button class="chip" data-skeleton-slot="skeleton-section-008-slot-022" data-editable-role="button" data-editable="skeleton-section-008-slot-022">Pass</button></div>
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="/proof/" data-skeleton-slot="skeleton-section-008-slot-016" data-editable="skeleton-section-008-slot-016" data-editable-role="link">SEO readiness report</a><span class="stats" data-skeleton-slot="skeleton-section-008-slot-017" data-editable="skeleton-section-008-slot-017" data-editable-role="body">Search</span><button class="chip" data-skeleton-slot="skeleton-section-008-slot-018" data-editable="skeleton-section-008-slot-018" data-editable-role="button">Ready</button></div>
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="/proof/" data-skeleton-slot="skeleton-section-008-slot-020" data-editable="skeleton-section-008-slot-020" data-editable-role="link">Unsupported claims report</a><span class="stats" data-skeleton-slot="skeleton-section-008-slot-021" data-editable="skeleton-section-008-slot-021" data-editable-role="body">Trust</span><button class="chip" data-skeleton-slot="skeleton-section-008-slot-022" data-editable="skeleton-section-008-slot-022" data-editable-role="button">Check</button></div>
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="/proof/" data-skeleton-slot="skeleton-section-008-slot-024" data-editable="skeleton-section-008-slot-024" data-editable-role="link">Launch verdict</a><span class="stats" data-skeleton-slot="skeleton-section-008-slot-025" data-editable="skeleton-section-008-slot-025" data-editable-role="body">CEO</span><button class="chip" data-skeleton-slot="skeleton-section-008-slot-026" data-editable="skeleton-section-008-slot-026" data-editable-role="button">Review</button></div>
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="/research/" data-skeleton-slot="skeleton-section-008-slot-028" data-editable="skeleton-section-008-slot-028" data-editable-role="link">Reference selection rationale</a><span class="stats" data-skeleton-slot="skeleton-section-008-slot-029" data-editable="skeleton-section-008-slot-029" data-editable-role="body">Why</span><button class="chip" data-skeleton-slot="skeleton-section-008-slot-030" data-editable="skeleton-section-008-slot-030" data-editable-role="button">Shell</button></div>
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="/research/" data-skeleton-slot="skeleton-section-008-slot-032" data-editable="skeleton-section-008-slot-032" data-editable-role="link">Market pattern notes</a><span class="stats" data-skeleton-slot="skeleton-section-008-slot-033" data-editable="skeleton-section-008-slot-033" data-editable-role="body">Class</span><button class="chip" data-skeleton-slot="skeleton-section-008-slot-034" data-editable="skeleton-section-008-slot-034" data-editable-role="button">Rank</button></div>
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="/handoff/" data-skeleton-slot="skeleton-section-008-slot-036" data-editable="skeleton-section-008-slot-036" data-editable-role="link">Founder handoff notes</a><span class="stats" data-skeleton-slot="skeleton-section-008-slot-037" data-editable="skeleton-section-008-slot-037" data-editable-role="body">Next</span><button class="chip" data-skeleton-slot="skeleton-section-008-slot-038" data-editable="skeleton-section-008-slot-038" data-editable-role="button">30d</button></div>
+        <div class="mobile-item"><span class="mobile-avatar"></span><a class="mobile-name" href="/handoff/" data-skeleton-slot="skeleton-section-008-slot-040" data-editable="skeleton-section-008-slot-040" data-editable-role="link">Optimization roadmap</a><span class="stats" data-skeleton-slot="skeleton-section-008-slot-041" data-editable="skeleton-section-008-slot-041" data-editable-role="body">Ship</span><button class="chip" data-skeleton-slot="skeleton-section-008-slot-042" data-editable="skeleton-section-008-slot-042" data-editable-role="button">Improve</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="blog-section" id="log" data-skeleton-section="blog" data-editable-role="section" data-editable-section="blog" data-editable="blog">
+    <div class="section-row">
+      <h2 data-skeleton-slot="blog-heading" data-editable-role="heading" data-editable="blog-heading">From the Receipts log</h2>
+      <a class="browse" href="#source" data-skeleton-slot="blog-browse" data-editable-role="link" data-editable="blog-browse">Read the contract <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </div>
+    <div class="blog-grid">
+      <article class="blog-card">
+        <div><span>For agents</span><h3>A passing chat is not proof</h3><p>Why an agent should trust the execution boundary before it trusts a confident paragraph.</p></div>
+        <a href="#how-it-works">Read note <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </article>
+      <article class="blog-card">
+        <div><span>Next pass</span><h3>Give Prime the packet</h3><p>What belongs in a compact handoff when the next agent needs to act instead of reread history.</p></div>
+        <a href="#proof">Read note <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </article>
+      <article class="blog-card">
+        <div><span>Failure</span><h3>Let the gate say no</h3><p>A failed receipt is useful because it stops the next pass from building on a false green.</p></div>
+        <a href="#source">Read note <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </article>
+    </div>
+  </section>
+
+  <section class="cta" id="install" data-skeleton-section="skeleton-section-009" data-editable-role="section" data-editable-section="skeleton-section-009" data-editable="skeleton-section-009">
+    <h2 data-skeleton-slot="skeleton-section-009-slot-001" data-editable-role="heading" data-editable="skeleton-section-009-slot-001">Give the next agent better context.</h2>
+    <div class="launch-mark" data-skeleton-slot="skeleton-section-009-slot-002" data-editable-role="body"><span class="receipt-brand"><span class="receipt-mark" aria-hidden="true"><span></span><span></span><span></span></span><span>Receipts</span></span></div>
+    <p data-skeleton-slot="skeleton-section-009-slot-003" data-editable-role="body" data-editable="skeleton-section-009-slot-003">Install the open-source compiler, run your work, and hand Prime a packet of facts instead of a transcript.</p>
+    <code class="install-command">cargo install mythos-skill</code>
+    <button class="primary" data-launch-submit data-skeleton-slot="skeleton-section-009-slot-004" data-editable-role="button" data-editable="skeleton-section-009-slot-004">Run a proof</button>
+  </section>
+
+  <footer id="source" class="page-footer" data-skeleton-section="footer" data-editable-role="section" data-editable-section="footer" data-editable="footer">
+    <div class="footer-shell">
+      <div class="footer-row">
+        <a href="#top" class="brand-link" aria-label="Receipts home"><span class="receipt-brand"><span class="receipt-mark" aria-hidden="true"><span></span><span></span><span></span></span><span>Receipts</span></span></a>
+        <div class="footer-grid">
+          <div class="footer-col"><h2>Product</h2><ul><li><a href="#product">What it is</a></li><li><a href="#how-it-works">How it works</a></li><li><a href="#proof">Proof artifacts</a></li><li><a href="#install">Install</a></li></ul></div>
+          <div class="footer-col"><h2>Contract</h2><ul><li><a href="#proof">Run</a></li><li><a href="#proof">Compile</a></li><li><a href="#proof">Gate</a></li><li><a href="#log">Failure is evidence</a></li></ul></div>
+          <div class="footer-col"><h2>Resources</h2><ul><li><a href="#source">README</a></li><li><a href="#log">Receipts log</a></li><li><a href="#install">CLI install</a></li><li><a href="#source">Compiler contract</a></li></ul></div>
+          <div class="footer-col"><h2>Open source</h2><ul><li><a href="https://github.com/inchwormz/mythos-skill" target="_blank" rel="noreferrer">GitHub</a></li><li><a href="#source">Mythos compiler</a></li><li><a href="#source">License</a></li><li><a href="#top">Back to top</a></li></ul></div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="application/void">
+    (() => {
+      const defaultReferencePath = "/reference-templates/raycast-command/";
+      const promptInput = document.getElementById("launch-prompt");
+      const currentSiteInput = document.getElementById("launch-current-site");
+      const likedSiteInput = document.getElementById("launch-liked-site");
+      const fields = document.getElementById("launch-fields");
+      const launchCeoToggle = document.getElementById("launch-ceo-toggle");
+      const launchCeoToggleLabel = document.getElementById("launch-ceo-toggle-label");
+      const panel = document.getElementById("launch-ceo-panel");
+      const panelStatus = document.getElementById("launch-ceo-status");
+      const replyNode = document.getElementById("launch-ceo-reply");
+      const errorNode = document.getElementById("launch-error");
+      const submitters = Array.from(document.querySelectorAll("[data-launch-submit]"));
+      const messages = [];
+      let selectedChip = "Build my launch page";
+      let ceoReply = "";
+      let launchCeoEnabled = false;
+      let busy = false;
+
+      const chipPrompts = {
+        "Clone a site I like": "Clone the liked-look reference as a reference-only draft.",
+        "Audit my current site": "Audit my current site first, then tell me what should change before the build.",
+        "Find my reference class": "Research the right reference class before choosing the launch shell.",
+        "Build a waitlist page": "Make the conversion goal a credible waitlist page for early adopters.",
+        "Use my product docs": "Use product docs, proof, screenshots, or a deck as the source of truth.",
+      };
+
+      const setError = (message) => {
+        if (!errorNode) return;
+        errorNode.textContent = message || "";
+        errorNode.hidden = !message;
+      };
+
+      const setBusy = (nextBusy, label) => {
+        busy = nextBusy;
+        submitters.forEach((node) => {
+          if (node.tagName === "BUTTON") node.disabled = nextBusy;
+          if (label && node.textContent.trim() !== "Sign in") node.textContent = label;
+        });
+      };
+
+      const renderLaunchCeoToggle = () => {
+        if (!launchCeoToggle || !launchCeoToggleLabel) return;
+        launchCeoToggle.setAttribute("aria-pressed", launchCeoEnabled ? "true" : "false");
+        launchCeoToggleLabel.textContent = launchCeoEnabled ? "Launch CEO on" : "Launch CEO off";
+      };
+
+      const normaliseUrl = (value) => {
+        const trimmed = String(value || "").trim();
+        if (!trimmed) return "";
+        const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : "https://" + trimmed;
+        try {
+          return new URL(withProtocol).href;
+        } catch {
+          return "";
+        }
+      };
+
+      const selectedReferenceUrl = () => {
+        return normaliseUrl(likedSiteInput?.value) || new URL(defaultReferencePath, window.location.href).href;
+      };
+
+      const hostLabel = (value) => {
+        const normalized = normaliseUrl(value);
+        if (!normalized) return "";
+        try {
+          return new URL(normalized).hostname.replace(/^www\./, "");
+        } catch {
+          return "";
+        }
+      };
+
+      const launchCeoWarmup = () => {
+        const current = hostLabel(currentSiteInput?.value);
+        const liked = hostLabel(likedSiteInput?.value || selectedReferenceUrl());
+        if (current && liked && current !== liked) {
+          return "I have " + current + " as the site context and " + liked + " as the reference direction. I’m reading the known context now.";
+        }
+        if (current) {
+          return "I have " + current + " as the site context. I’m reading what is already there before asking for anything else.";
+        }
+        if (liked) {
+          return "I have " + liked + " as the reference direction. I’m using that context before asking for anything else.";
+        }
+        return "Reading the launch ask and checking what context is already available.";
+      };
+
+      const hydrateReferenceCardPreviews = () => {
+        document.querySelectorAll(".templates .card").forEach((card) => {
+          const title = card.querySelector(".card-title");
+          const thumb = card.querySelector(".thumb");
+          if (!title || !thumb) return;
+          if (thumb.querySelector(".reference-thumb-frame")) return;
+          const href = title.getAttribute("href");
+          if (!href) return;
+
+          const frame = document.createElement("iframe");
+          frame.className = "reference-thumb-frame";
+          frame.src = href;
+          frame.loading = "lazy";
+          frame.title = `${title.textContent?.trim() || "Reference"} hero preview`;
+          frame.setAttribute("aria-hidden", "true");
+          frame.tabIndex = -1;
+
+          const link = document.createElement("a");
+          link.className = "reference-thumb-link";
+          link.href = href;
+          link.setAttribute("aria-label", `Open ${title.textContent?.trim() || "reference"} site`);
+          link.appendChild(frame);
+
+          thumb.classList.add("reference-thumb");
+          thumb.replaceChildren(link);
+        });
+      };
+
+      const showPanel = (status, text) => {
+        if (!panel || !panelStatus || !replyNode) return;
+        panel.hidden = false;
+        panelStatus.textContent = status;
+        replyNode.textContent = text || "";
+      };
+
+      const auditStatusLabel = (response) => {
+        const status = response.headers.get("X-Receipts-Audit-Status") || "";
+        const pages = response.headers.get("X-Receipts-Audit-Pages") || "0";
+        if (status === "retrieved") {
+          return "Launch CEO - researched " + pages + " page" + (pages === "1" ? "" : "s");
+        }
+        if (status === "unavailable") return "Launch CEO - research unavailable";
+        if (status === "skipped") return "Launch CEO - research skipped";
+        return "Launch CEO - researching";
+      };
+
+      const appendPrompt = (text) => {
+        if (!promptInput) return;
+        const current = promptInput.value.trim();
+        if (current.toLowerCase().includes(text.toLowerCase())) return;
+        promptInput.value = current ? current + "\n" + text : text;
+        promptInput.focus();
+      };
+
+      document.querySelectorAll("[data-launch-chip]").forEach((chip) => {
+        chip.addEventListener("click", (event) => {
+          event.preventDefault();
+          selectedChip = chip.getAttribute("data-launch-chip") || selectedChip;
+          document.querySelectorAll("[data-launch-chip]").forEach((node) => node.classList.remove("active"));
+          chip.classList.add("active");
+          appendPrompt(chipPrompts[selectedChip] || selectedChip);
+          setError("");
+          ceoReply = "";
+          if (fields && (selectedChip.includes("Clone") || selectedChip.includes("Audit"))) {
+            fields.hidden = false;
+            window.setTimeout(() => {
+              if (selectedChip.includes("Clone")) likedSiteInput?.focus();
+              if (selectedChip.includes("Audit")) currentSiteInput?.focus();
+            }, 0);
+          }
+          if (selectedChip.includes("Clone")) {
+            launchCeoEnabled = false;
+            ceoReply = "";
+            renderLaunchCeoToggle();
+            setBusy(false, "Start build");
+            if (panel) panel.hidden = true;
+          }
+        });
+      });
+
+      launchCeoToggle?.addEventListener("click", () => {
+        launchCeoEnabled = !launchCeoEnabled;
+        ceoReply = "";
+        renderLaunchCeoToggle();
+        setBusy(false, launchCeoEnabled ? "Ask CEO" : "Start build");
+        if (!launchCeoEnabled && panel) panel.hidden = true;
+      });
+
+      async function streamLaunchCeo() {
+        const prompt = promptInput?.value.trim() || "";
+        if (!prompt) {
+          setError("Tell the Launch CEO what you are launching first.");
+          promptInput?.focus();
+          return false;
+        }
+
+        setError("");
+        setBusy(true, "Launch CEO...");
+        showPanel("Launch CEO", launchCeoWarmup());
+
+        const founderMessage = { role: "user", content: prompt };
+        const nextMessages = [...messages, founderMessage].slice(-8);
+        const response = await window.__disabledReceiptsFetch("/api/builder/launch-ceo/stream", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt,
+            currentSiteUrl: normaliseUrl(currentSiteInput?.value),
+            likedLookUrl: normaliseUrl(likedSiteInput?.value),
+            chip: selectedChip,
+            shellReferenceUrl: selectedReferenceUrl(),
+            messages: nextMessages,
+          }),
+        });
+
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          throw new Error(typeof payload.error === "string" ? payload.error : "Launch CEO stream failed.");
+        }
+
+        const panelStatusText = auditStatusLabel(response);
+        let text = "";
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+        if (!reader) {
+          text = await response.text();
+          showPanel(panelStatusText, text);
+        } else {
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            text += decoder.decode(value, { stream: true });
+            showPanel(panelStatusText, text);
+          }
+          text += decoder.decode();
+          showPanel(panelStatusText, text);
+        }
+
+        ceoReply = text;
+        messages.splice(0, messages.length, ...[...nextMessages, { role: "assistant", content: text }].slice(-10));
+        setBusy(false, "Build with brief");
+        return true;
+      }
+
+      async function runLaunchBuild() {
+        const prompt = promptInput?.value.trim() || "";
+        if (!prompt) {
+          setError("Tell the Launch CEO what you are launching first.");
+          promptInput?.focus();
+          return;
+        }
+
+        setError("");
+        setBusy(true, "Building...");
+        showPanel("Launch CEO", ceoReply || "Writing launch artifacts and opening the builder...");
+
+        const customer = normaliseUrl(currentSiteInput?.value);
+        const reference = normaliseUrl(likedSiteInput?.value);
+        const selectedReference = reference || selectedReferenceUrl();
+        const response = await window.__disabledReceiptsFetch("/api/builder/launch-run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt,
+            currentSiteUrl: customer || undefined,
+            likedLookUrl: reference || undefined,
+            chip: selectedChip,
+            startSkeleton: true,
+            shellReferenceUrl: selectedReference,
+            cloneOnly: false,
+            launchCeoEnabled: true,
+            proof: ceoReply ? [{ type: "launch-ceo-intake", summary: ceoReply.slice(0, 600), confirmed: true }] : undefined,
+          }),
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload.ok) {
+          throw new Error(typeof payload.error === "string" ? payload.error : "Launch intelligence run failed.");
+        }
+
+        const skeletonReference = payload.skeletonReferenceUrl || payload.cloneTargetUrl || selectedReference;
+        const params = new URLSearchParams({ run: payload.runId, url: skeletonReference, autostart: "0" });
+        if (customer) params.set("customer", customer);
+        if (reference) params.set("reference", reference);
+        window.location.assign("/build?" + params.toString());
+      }
+
+      async function runCloneOnlyBuild() {
+        setError("");
+        setBusy(true, "Cloning...");
+        const selectedReference = selectedReferenceUrl();
+        showPanel("Clone only", "Capturing the reference and building the first editable draft.");
+
+        const response = await window.__disabledReceiptsFetch("/api/builder/launch-run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt: promptInput?.value.trim() || "Reference-only clone.",
+            likedLookUrl: selectedReference,
+            chip: selectedChip,
+            startSkeleton: true,
+            shellReferenceUrl: selectedReference,
+            cloneOnly: true,
+            launchCeoEnabled: false,
+          }),
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload.ok) {
+          throw new Error(typeof payload.error === "string" ? payload.error : "Clone-only run failed.");
+        }
+
+        const skeletonReference = payload.skeletonReferenceUrl || payload.cloneTargetUrl || selectedReference;
+        const params = new URLSearchParams({
+          run: payload.runId,
+          url: skeletonReference,
+          autostart: "0",
+          reference: skeletonReference,
+          mode: "clone-only",
+        });
+        window.location.assign("/build?" + params.toString());
+      }
+
+      async function submitLaunch(event) {
+        event.preventDefault();
+        if (busy) return;
+        try {
+          if (!launchCeoEnabled) {
+            await runCloneOnlyBuild();
+            return;
+          }
+          if (!ceoReply) {
+            await streamLaunchCeo();
+            return;
+          }
+          await runLaunchBuild();
+        } catch (error) {
+          setBusy(false, launchCeoEnabled ? (ceoReply ? "Build with brief" : "Ask CEO") : "Start build");
+          setError(error instanceof Error ? error.message : "Launch run failed.");
+        }
+      }
+
+      hydrateReferenceCardPreviews();
+      renderLaunchCeoToggle();
+      submitters.forEach((node) => node.addEventListener("click", submitLaunch));
+    })();
+  </script>
+  <script>
+    (() => {
+      const promptInput = document.getElementById("launch-prompt");
+      const fields = document.getElementById("launch-fields");
+      const commandInput = document.getElementById("launch-command");
+      const runDirInput = document.getElementById("launch-run-dir");
+      const modeToggle = document.getElementById("launch-ceo-toggle");
+      const modeLabel = document.getElementById("launch-ceo-toggle-label");
+      const panel = document.getElementById("launch-ceo-panel");
+      const panelStatus = document.getElementById("launch-ceo-status");
+      const reply = document.getElementById("launch-ceo-reply");
+      const error = document.getElementById("launch-error");
+      let primeMode = false;
+
+      const prompts = {
+        "Run a command": "Run the check and give me the exit code, output hash, and receipt.",
+        "Compile a packet": "Compile the verified sources into next_pass_packet.json for Prime.",
+        "Gate a claim": "Gate the claim against the latest receipt and say clearly if the evidence refutes it.",
+        "Inspect a receipt": "Inspect the latest receipt and tell me what an agent can safely rely on.",
+        "Use my repo": "Use the current git tree and run directory as context for the next pass.",
+      };
+
+      const setError = (message) => {
+        error.textContent = message;
+        error.hidden = !message;
+      };
+
+      const setPrimeMode = () => {
+        modeToggle.setAttribute("aria-pressed", String(primeMode));
+        modeLabel.textContent = primeMode ? "Prime mode on" : "Prime mode off";
+        fields.hidden = !primeMode;
+      };
+
+      document.querySelectorAll("[data-launch-chip]").forEach((chip) => {
+        chip.addEventListener("click", (event) => {
+          event.preventDefault();
+          const label = chip.getAttribute("data-launch-chip") || "";
+          promptInput.value = prompts[label] || label;
+          setError("");
+          promptInput.focus();
+        });
+      });
+
+      modeToggle.addEventListener("click", () => {
+        primeMode = !primeMode;
+        setPrimeMode();
+      });
+
+      document.querySelectorAll("[data-launch-submit]").forEach((submitter) => {
+        submitter.addEventListener("click", (event) => {
+          event.preventDefault();
+          const prompt = promptInput.value.trim();
+          if (!prompt) {
+            setError("Give Receipts a check or claim first.");
+            promptInput.focus();
+            return;
+          }
+
+          const command = commandInput.value.trim() || "the requested check";
+          const runDir = runDirInput.value.trim() || "the current run directory";
+          panel.hidden = false;
+          panelStatus.textContent = primeMode ? "Prime packet ready" : "Receipt ready";
+          reply.textContent = primeMode
+            ? `Prime can read the verified result for ${command} from ${runDir}. The packet includes next_pass_packet.json, snapshot.json, and decision_log.jsonl.`
+            : `Receipts would run ${command}, preserve the exit code and output hash, then make the result available to the next pass.`;
+          panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        });
+      });
+
+      setPrimeMode();
+    })();
+  </script>
+</body></html>
