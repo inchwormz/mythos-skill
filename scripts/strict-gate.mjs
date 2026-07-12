@@ -730,8 +730,17 @@ function main() {
   // G8: soft-warn on evidence records with kinds outside the known set.
   checkUnknownEvidenceKinds(evidence, warnings);
 
+  // Records already carrying provenance warnings are DEMOTED (never facts,
+  // digest-flagged, advisory-worklisted) - that is their penalty. Red-carding
+  // them again here is double jeopardy with no resolution channel (field
+  // find, 2026-07-13: a harvested prose line citing a not-yet-existing file
+  // was demoted correctly, then red-carded the whole run). The summary-only
+  // red is reserved for records CLAIMING substance with clean provenance.
   const summaryOnlyEvidence = evidence.filter(
-    (record) => requiresDirectEvidence(record) && !hasDirectSource(record),
+    (record) =>
+      requiresDirectEvidence(record) &&
+      !hasDirectSource(record) &&
+      !(record.provenance_warnings ?? []).length,
   );
   if (summaryOnlyEvidence.length > 0) {
     errors.push(

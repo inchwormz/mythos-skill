@@ -38,7 +38,7 @@ Contract changes (deliberate, tests rewritten): attribution-forgery test now ass
 ## DECISIONS
 
 - 2026-07-12 John: execute plan as written; product renamed **Receipts**; interface = CLI (dealer's choice, chosen for exec-boundary fit + cross-harness + one allowlist prefix), MCP later as veneer.
-- 2026-07-12 Claude: binary/crate/repo renames deferred to M3 to avoid breaking the JS layer twice; schema stays 1.1.0 in M0 (additive optional fields only), bump at M5.
+- 2026-07-12 Claude: binary/crate/repo renames deferred to M3 to avoid breaking the JS layer twice. (Schema: stayed 1.1.0 through M0-M2; bumped to 1.2.0 with legacy read in the prime-packet campaign Phase 0 - superseding the original stay-at-1.1.0 note. Staleness caught by the docs-truther lane 2026-07-13.)
 
 ## BLOCKED ON JOHN (park, don't grind)
 

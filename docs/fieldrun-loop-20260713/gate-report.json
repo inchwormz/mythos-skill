@@ -1,0 +1,25 @@
+{
+  "ok": false,
+  "run_dir": "C:\\Users\\johnr\\Projects\\mythos-skill\\.mythos\\runs\\20260712T234143Z-collapse-the-prime-loop-ceremony-and-truth-the-d",
+  "pass_id": "pass-0002",
+  "packet_pass_id": "pass-0002",
+  "evidence_count": 21,
+  "verifier_findings": [
+    {
+      "id": "vf-codex-synthesis-pending",
+      "status": "passed",
+      "verifier_score": 0.9
+    }
+  ],
+  "halt_kinds": [
+    "ready-to-halt"
+  ],
+  "candidate_actions": 6,
+  "errors": [
+    "summary-only evidence lacks direct file/command provenance: ev-auto-composites-builder-9"
+  ],
+  "warnings": [
+    "evidence ev-auto-docs-truther-6 citation drifted: file:RECEIPTS-LEDGER.md:66-69 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:RECEIPTS-LEDGER.md:66-69 citation drifted: file:RECEIPTS-LEDGER.md:66-69 was verified at ingest but the file has since changed (post-review fixes are the usual cause)"
+  ]
+}

@@ -1,0 +1,2031 @@
+{
+  "schema_version": "1.2.0",
+  "objective_id": "obj-20260712T234143Z",
+  "run_id": "run-20260712T234143Z",
+  "branch_id": "main",
+  "pass_id": "pass-0002",
+  "objective": "collapse the prime loop ceremony and truth the docs",
+  "evidence": [
+    {
+      "id": "ev-objective",
+      "kind": "objective",
+      "summary": "collapse the prime loop ceremony and truth the docs",
+      "source_ids": [
+        "raw:objective.md"
+      ],
+      "observed_at": "2026-07-12T23:41:43.878Z"
+    },
+    {
+      "id": "ev-subagent-session-20260712T235428Z-composites-builder",
+      "kind": "subagent-session",
+      "summary": "Captured quarantined subagent output for lane composites-builder; machine records were extracted without Prime synthesis.",
+      "source_ids": [
+        "raw:subagents/composites-builder.md"
+      ],
+      "source_refs": [
+        {
+          "source_id": "raw:subagents/composites-builder.md",
+          "path": "raw/subagents/composites-builder.md",
+          "kind": "raw",
+          "hash": "f6586aa5ff0a19c6",
+          "hash_alg": "fnv1a-64",
+          "span": null,
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.058Z",
+      "agent_id": "composites-builder-1",
+      "lane": "composites-builder"
+    },
+    {
+      "id": "ev-auto-composites-builder-1",
+      "kind": "observation",
+      "summary": "Implemented both loop-composite commands in bin/mythos-skill.mjs per the binding spec, plus the new test file. No other files touched (verified via git diff --stat - only bin/mythos-skill.mjs, 214 insertions/0 deletions, plus the new tests/loopcomposites.test.js).",
+      "source_ids": [
+        "raw:subagents/composites-builder.md:3-3",
+        "file:bin/mythos-skill.mjs:1",
+        "file:tests/loop_composites.test.js:1"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:bin/mythos-skill.mjs:1",
+          "path": "bin/mythos-skill.mjs",
+          "kind": "file",
+          "hash": "a790f0d35343b0df",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "file:tests/loop_composites.test.js:1",
+          "path": "tests/loop_composites.test.js",
+          "kind": "file",
+          "hash": "f63167df7ebd3b0a",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "raw:subagents/composites-builder.md:3-3",
+          "path": "raw/subagents/composites-builder.md",
+          "kind": "raw",
+          "hash": "f6586aa5ff0a19c6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "3-3",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.058Z",
+      "agent_id": "composites-builder-1",
+      "lane": "composites-builder",
+      "rationale": "harvested-from-prose"
+    },
+    {
+      "id": "ev-auto-composites-builder-2",
+      "kind": "observation",
+      "summary": "bin/mythos-skill.mjs changes at lines 13-27, 39-48, 60-263, 279-282:",
+      "source_ids": [
+        "raw:subagents/composites-builder.md:5-5",
+        "file:bin/mythos-skill.mjs:1"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:bin/mythos-skill.mjs:1",
+          "path": "bin/mythos-skill.mjs",
+          "kind": "file",
+          "hash": "a790f0d35343b0df",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "raw:subagents/composites-builder.md:5-5",
+          "path": "raw/subagents/composites-builder.md",
+          "kind": "raw",
+          "hash": "f6586aa5ff0a19c6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "5-5",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.058Z",
+      "agent_id": "composites-builder-1",
+      "lane": "composites-builder",
+      "rationale": "harvested-from-prose"
+    },
+    {
+      "id": "ev-auto-composites-builder-3",
+      "kind": "observation",
+      "summary": "absorb (cmdAbsorb, bin/mythos-skill.mjs:107-188): runs scripts/ingest-subagent.mjs (fatal, propagates exit code + stderr), then mythos diff --run-dir with note \"post-lane <lane>\" unless --no-diff (non-fatal, warns to stderr and continues on failure, extracts .receipt from its JSON stdout as workrece",
+      "source_ids": [
+        "raw:subagents/composites-builder.md:6-6",
+        "file:bin/mythos-skill.mjs:107-188",
+        "file:scripts/ingest-subagent.mjs:1"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:bin/mythos-skill.mjs:107-188",
+          "path": "bin/mythos-skill.mjs",
+          "kind": "file",
+          "hash": "a790f0d35343b0df",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "107-188",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "file:scripts/ingest-subagent.mjs:1",
+          "path": "scripts/ingest-subagent.mjs",
+          "kind": "file",
+          "hash": "6af43f51eb4cb003",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "raw:subagents/composites-builder.md:6-6",
+          "path": "raw/subagents/composites-builder.md",
+          "kind": "raw",
+          "hash": "f6586aa5ff0a19c6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "6-6",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.058Z",
+      "agent_id": "composites-builder-1",
+      "lane": "composites-builder",
+      "rationale": "harvested-from-prose"
+    },
+    {
+      "id": "ev-auto-composites-builder-4",
+      "kind": "observation",
+      "summary": "conclude (cmdConclude, bin/mythos-skill.mjs:190-263): runs driver.mjs --record-synthesis (fatal, stdout suppressed, stderr passed through), then scripts/strict-gate.mjs - its stdout is ALWAYS written to state/gate-report.json regardless of exit code, and that exit code is remembered as the command's",
+      "source_ids": [
+        "raw:subagents/composites-builder.md:7-7",
+        "file:bin/mythos-skill.mjs:190-263",
+        "file:scripts/strict-gate.mjs:1",
+        "log:unverifiable-state-gate-report-json"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:bin/mythos-skill.mjs:190-263",
+          "path": "bin/mythos-skill.mjs",
+          "kind": "file",
+          "hash": "a790f0d35343b0df",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "190-263",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "file:scripts/strict-gate.mjs:1",
+          "path": "scripts/strict-gate.mjs",
+          "kind": "file",
+          "hash": "00d3bf2f06e8af1a",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "log:unverifiable-state-gate-report-json",
+          "path": "unverifiable-state-gate-report-json",
+          "kind": "log",
+          "hash": "44bf292be6a74527",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "label",
+          "span": null,
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "raw:subagents/composites-builder.md:7-7",
+          "path": "raw/subagents/composites-builder.md",
+          "kind": "raw",
+          "hash": "f6586aa5ff0a19c6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "7-7",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.058Z",
+      "agent_id": "composites-builder-1",
+      "lane": "composites-builder",
+      "rationale": "harvested-from-prose",
+      "provenance_warnings": [
+        "unverifiable-citation: file:state/gate-report.json:1 (path not found under run dir or repo_root) -> log:unverifiable-state-gate-report-json"
+      ]
+    },
+    {
+      "id": "ev-auto-composites-builder-5",
+      "kind": "observation",
+      "summary": "Help text and COMMANDS map updated with absorb/conclude entries and usage examples (bin/mythos-skill.mjs:21-22 and bin/mythos-skill.mjs:44-45).",
+      "source_ids": [
+        "raw:subagents/composites-builder.md:8-8",
+        "file:bin/mythos-skill.mjs:21-22",
+        "file:bin/mythos-skill.mjs:44-45"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:bin/mythos-skill.mjs:21-22",
+          "path": "bin/mythos-skill.mjs",
+          "kind": "file",
+          "hash": "a790f0d35343b0df",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "21-22",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "file:bin/mythos-skill.mjs:44-45",
+          "path": "bin/mythos-skill.mjs",
+          "kind": "file",
+          "hash": "a790f0d35343b0df",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "44-45",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "raw:subagents/composites-builder.md:8-8",
+          "path": "raw/subagents/composites-builder.md",
+          "kind": "raw",
+          "hash": "f6586aa5ff0a19c6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "8-8",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.058Z",
+      "agent_id": "composites-builder-1",
+      "lane": "composites-builder",
+      "rationale": "harvested-from-prose"
+    },
+    {
+      "id": "ev-auto-composites-builder-6",
+      "kind": "observation",
+      "summary": "Key bug found and fixed mid-implementation: initially added shell true to every new spawn call, believing that matched the discipline the file already uses. It does not - the existing dispatcher never uses shell true when it already holds a fully-resolved executable path, and for good reason: proces",
+      "source_ids": [
+        "raw:subagents/composites-builder.md:10-10",
+        "log:unverifiable-files-nodejs-node-exe",
+        "file:bin/mythos-skill.mjs:90-100"
+      ],
+      "source_refs": [
+        {
+          "source_id": "log:unverifiable-files-nodejs-node-exe",
+          "path": "unverifiable-files-nodejs-node-exe",
+          "kind": "log",
+          "hash": "d24d89bdacc36c0b",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "label",
+          "span": null,
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "file:bin/mythos-skill.mjs:90-100",
+          "path": "bin/mythos-skill.mjs",
+          "kind": "file",
+          "hash": "a790f0d35343b0df",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "90-100",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "raw:subagents/composites-builder.md:10-10",
+          "path": "raw/subagents/composites-builder.md",
+          "kind": "raw",
+          "hash": "f6586aa5ff0a19c6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "10-10",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.058Z",
+      "agent_id": "composites-builder-1",
+      "lane": "composites-builder",
+      "rationale": "harvested-from-prose",
+      "provenance_warnings": [
+        "unverifiable-citation: file:Files/nodejs/node.exe:1 (path not found under run dir or repo_root) -> log:unverifiable-files-nodejs-node-exe"
+      ]
+    },
+    {
+      "id": "ev-auto-composites-builder-7",
+      "kind": "observation",
+      "summary": "tests/loopcomposites.test.js (new file, 4 tests, scaffolded off tests/worklistresolutions.test.js freshRunDir pattern):",
+      "source_ids": [
+        "raw:subagents/composites-builder.md:12-12",
+        "file:tests/loop_composites.test.js:1",
+        "file:tests/worklist_resolutions.test.js:1"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:tests/loop_composites.test.js:1",
+          "path": "tests/loop_composites.test.js",
+          "kind": "file",
+          "hash": "f63167df7ebd3b0a",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "file:tests/worklist_resolutions.test.js:1",
+          "path": "tests/worklist_resolutions.test.js",
+          "kind": "file",
+          "hash": "0592adf5d0a6f34d",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "raw:subagents/composites-builder.md:12-12",
+          "path": "raw/subagents/composites-builder.md",
+          "kind": "raw",
+          "hash": "f6586aa5ff0a19c6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "12-12",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.058Z",
+      "agent_id": "composites-builder-1",
+      "lane": "composites-builder",
+      "rationale": "harvested-from-prose"
+    },
+    {
+      "id": "ev-auto-composites-builder-9",
+      "kind": "observation",
+      "summary": "3. Conclude on a green-able run - exit 0, state/gate-report.json parses ok:true, stdout contains RECEIPTS BRIEF.",
+      "source_ids": [
+        "raw:subagents/composites-builder.md:15-15",
+        "log:unverifiable-state-gate-report-json"
+      ],
+      "source_refs": [
+        {
+          "source_id": "log:unverifiable-state-gate-report-json",
+          "path": "unverifiable-state-gate-report-json",
+          "kind": "log",
+          "hash": "44bf292be6a74527",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "label",
+          "span": null,
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "raw:subagents/composites-builder.md:15-15",
+          "path": "raw/subagents/composites-builder.md",
+          "kind": "raw",
+          "hash": "f6586aa5ff0a19c6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "15-15",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.058Z",
+      "agent_id": "composites-builder-1",
+      "lane": "composites-builder",
+      "rationale": "harvested-from-prose",
+      "provenance_warnings": [
+        "unverifiable-citation: file:state/gate-report.json:1 (path not found under run dir or repo_root) -> log:unverifiable-state-gate-report-json"
+      ]
+    },
+    {
+      "id": "ev-auto-composites-builder-10",
+      "kind": "observation",
+      "summary": "node --test tests/loopcomposites.test.js - 4/4 pass.",
+      "source_ids": [
+        "raw:subagents/composites-builder.md:19-19",
+        "file:tests/loop_composites.test.js:1"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:tests/loop_composites.test.js:1",
+          "path": "tests/loop_composites.test.js",
+          "kind": "file",
+          "hash": "f63167df7ebd3b0a",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "raw:subagents/composites-builder.md:19-19",
+          "path": "raw/subagents/composites-builder.md",
+          "kind": "raw",
+          "hash": "f6586aa5ff0a19c6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "19-19",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.058Z",
+      "agent_id": "composites-builder-1",
+      "lane": "composites-builder",
+      "rationale": "harvested-from-prose"
+    },
+    {
+      "id": "ev-auto-composites-builder-11",
+      "kind": "observation",
+      "summary": "cargo test --manifest-path mythos-compiler/Cargo.toml - 45/45 pass, unaffected since no Rust files were touched.",
+      "source_ids": [
+        "raw:subagents/composites-builder.md:21-21",
+        "file:mythos-compiler/Cargo.toml:1"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/Cargo.toml:1",
+          "path": "mythos-compiler/Cargo.toml",
+          "kind": "file",
+          "hash": "cbeffba39fe09d08",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "raw:subagents/composites-builder.md:21-21",
+          "path": "raw/subagents/composites-builder.md",
+          "kind": "raw",
+          "hash": "f6586aa5ff0a19c6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "21-21",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.058Z",
+      "agent_id": "composites-builder-1",
+      "lane": "composites-builder",
+      "rationale": "harvested-from-prose"
+    },
+    {
+      "id": "ev-auto-composites-builder-12",
+      "kind": "observation",
+      "summary": "git status confirms only bin/mythos-skill.mjs modified and tests/loopcomposites.test.js added.",
+      "source_ids": [
+        "raw:subagents/composites-builder.md:24-24",
+        "file:bin/mythos-skill.mjs:1",
+        "file:tests/loop_composites.test.js:1"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:bin/mythos-skill.mjs:1",
+          "path": "bin/mythos-skill.mjs",
+          "kind": "file",
+          "hash": "a790f0d35343b0df",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "file:tests/loop_composites.test.js:1",
+          "path": "tests/loop_composites.test.js",
+          "kind": "file",
+          "hash": "f63167df7ebd3b0a",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "raw:subagents/composites-builder.md:24-24",
+          "path": "raw/subagents/composites-builder.md",
+          "kind": "raw",
+          "hash": "f6586aa5ff0a19c6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "24-24",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.058Z",
+      "agent_id": "composites-builder-1",
+      "lane": "composites-builder",
+      "rationale": "harvested-from-prose"
+    },
+    {
+      "id": "ev-subagent-session-20260712T235428Z-docs-truther",
+      "kind": "subagent-session",
+      "summary": "Captured quarantined subagent output for lane docs-truther; machine records were extracted without Prime synthesis.",
+      "source_ids": [
+        "raw:subagents/docs-truther.md"
+      ],
+      "source_refs": [
+        {
+          "source_id": "raw:subagents/docs-truther.md",
+          "path": "raw/subagents/docs-truther.md",
+          "kind": "raw",
+          "hash": "1877cd31deedd291",
+          "hash_alg": "fnv1a-64",
+          "span": null,
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.980Z",
+      "agent_id": "docs-truther-1",
+      "lane": "docs-truther"
+    },
+    {
+      "id": "ev-auto-docs-truther-1",
+      "kind": "observation",
+      "summary": "Kept verbatim: the Receipts rename banner and the Subagent output contract section (verified still accurate against scripts/ingest-subagent.mjs).",
+      "source_ids": [
+        "raw:subagents/docs-truther.md:11-11",
+        "file:scripts/ingest-subagent.mjs:1"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:scripts/ingest-subagent.mjs:1",
+          "path": "scripts/ingest-subagent.mjs",
+          "kind": "file",
+          "hash": "6af43f51eb4cb003",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        },
+        {
+          "source_id": "raw:subagents/docs-truther.md:11-11",
+          "path": "raw/subagents/docs-truther.md",
+          "kind": "raw",
+          "hash": "1877cd31deedd291",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "11-11",
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.980Z",
+      "agent_id": "docs-truther-1",
+      "lane": "docs-truther",
+      "rationale": "harvested-from-prose"
+    },
+    {
+      "id": "ev-auto-docs-truther-2",
+      "kind": "observation",
+      "summary": "Verified real run location behavior at driver.mjs:255-271 (runs live under the PROJECT cwd) and grounded the new text in that.",
+      "source_ids": [
+        "raw:subagents/docs-truther.md:14-14",
+        "file:driver.mjs:255-271"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:driver.mjs:255-271",
+          "path": "driver.mjs",
+          "kind": "file",
+          "hash": "0cf70bf51866dd78",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "255-271",
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        },
+        {
+          "source_id": "raw:subagents/docs-truther.md:14-14",
+          "path": "raw/subagents/docs-truther.md",
+          "kind": "raw",
+          "hash": "1877cd31deedd291",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "14-14",
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.980Z",
+      "agent_id": "docs-truther-1",
+      "lane": "docs-truther",
+      "rationale": "harvested-from-prose"
+    },
+    {
+      "id": "ev-auto-docs-truther-3",
+      "kind": "observation",
+      "summary": "Did not plant a schema-version claim: MYTHOSSCHEMAVERSION is 1.2.0 at mythos-compiler/src/schema.rs:7 but RECEIPTS-LEDGER.md DECISIONS still says schema stays 1.1.0 (stale) while a later checkpoint says 1.2.0 - the ledger is internally inconsistent on this point; left the number out of the README to",
+      "source_ids": [
+        "raw:subagents/docs-truther.md:15-15",
+        "file:mythos-compiler/src/schema.rs:7"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/schema.rs:7",
+          "path": "mythos-compiler/src/schema.rs",
+          "kind": "file",
+          "hash": "f1942e523bbb2b76",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "7",
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        },
+        {
+          "source_id": "raw:subagents/docs-truther.md:15-15",
+          "path": "raw/subagents/docs-truther.md",
+          "kind": "raw",
+          "hash": "1877cd31deedd291",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "15-15",
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.980Z",
+      "agent_id": "docs-truther-1",
+      "lane": "docs-truther",
+      "rationale": "harvested-from-prose"
+    },
+    {
+      "id": "ev-auto-docs-truther-4",
+      "kind": "observation",
+      "summary": "Quick start no longer implies mythos-skill init auto-nests under .mythos/runs - it does not (initrundir in mythos-compiler/src/bin/mythos.rs:551-622 takes the path literally); the README says convention is to nest it.",
+      "source_ids": [
+        "raw:subagents/docs-truther.md:16-16",
+        "file:mythos-compiler/src/bin/mythos.rs:551-622"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/bin/mythos.rs:551-622",
+          "path": "mythos-compiler/src/bin/mythos.rs",
+          "kind": "file",
+          "hash": "953021b62eb87fd3",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "551-622",
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        },
+        {
+          "source_id": "raw:subagents/docs-truther.md:16-16",
+          "path": "raw/subagents/docs-truther.md",
+          "kind": "raw",
+          "hash": "1877cd31deedd291",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "16-16",
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.980Z",
+      "agent_id": "docs-truther-1",
+      "lane": "docs-truther",
+      "rationale": "harvested-from-prose"
+    },
+    {
+      "id": "ev-auto-docs-truther-5",
+      "kind": "observation",
+      "summary": "Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re",
+      "source_ids": [
+        "raw:subagents/docs-truther.md:18-18",
+        "file:bin/mythos-skill.mjs:1",
+        "file:tests/loop_composites.test.js:1",
+        "file:bin/mythos-skill.mjs:13-25"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:bin/mythos-skill.mjs:1",
+          "path": "bin/mythos-skill.mjs",
+          "kind": "file",
+          "hash": "a790f0d35343b0df",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        },
+        {
+          "source_id": "file:tests/loop_composites.test.js:1",
+          "path": "tests/loop_composites.test.js",
+          "kind": "file",
+          "hash": "f63167df7ebd3b0a",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        },
+        {
+          "source_id": "file:bin/mythos-skill.mjs:13-25",
+          "path": "bin/mythos-skill.mjs",
+          "kind": "file",
+          "hash": "a790f0d35343b0df",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "13-25",
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        },
+        {
+          "source_id": "raw:subagents/docs-truther.md:18-18",
+          "path": "raw/subagents/docs-truther.md",
+          "kind": "raw",
+          "hash": "1877cd31deedd291",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "18-18",
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.980Z",
+      "agent_id": "docs-truther-1",
+      "lane": "docs-truther",
+      "rationale": "harvested-from-prose"
+    },
+    {
+      "id": "ev-auto-docs-truther-6",
+      "kind": "observation",
+      "summary": "Files worth spot-checking against this README: bin/mythos-skill.mjs:13-25 (COMMANDS table), mythos-compiler/src/bin/mythos.rs:95-135 (help text), RECEIPTS-LEDGER.md:66-69 (Known Gaps source of truth).",
+      "source_ids": [
+        "raw:subagents/docs-truther.md:20-20",
+        "file:bin/mythos-skill.mjs:13-25",
+        "file:mythos-compiler/src/bin/mythos.rs:95-135",
+        "file:RECEIPTS-LEDGER.md:66-69"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:bin/mythos-skill.mjs:13-25",
+          "path": "bin/mythos-skill.mjs",
+          "kind": "file",
+          "hash": "a790f0d35343b0df",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "13-25",
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        },
+        {
+          "source_id": "file:mythos-compiler/src/bin/mythos.rs:95-135",
+          "path": "mythos-compiler/src/bin/mythos.rs",
+          "kind": "file",
+          "hash": "953021b62eb87fd3",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "95-135",
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        },
+        {
+          "source_id": "file:RECEIPTS-LEDGER.md:66-69",
+          "path": "RECEIPTS-LEDGER.md",
+          "kind": "file",
+          "hash": "72f32e7f63367f0b",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "66-69",
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        },
+        {
+          "source_id": "raw:subagents/docs-truther.md:20-20",
+          "path": "raw/subagents/docs-truther.md",
+          "kind": "raw",
+          "hash": "1877cd31deedd291",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "20-20",
+          "observed_at": "2026-07-12T23:54:28.980Z"
+        }
+      ],
+      "observed_at": "2026-07-12T23:54:28.980Z",
+      "agent_id": "docs-truther-1",
+      "lane": "docs-truther",
+      "rationale": "harvested-from-prose"
+    },
+    {
+      "id": "ev-codex-synthesis-20260712T235453Z",
+      "kind": "codex-synthesis",
+      "summary": "Loop-collapse field run: composites-builder lane shipped absorb+conclude in bin/mythos-skill.mjs with 4 new tests (caught and fixed a real Windows shell-quoting trap in spawn discipline); docs-truther lane rewrote README to current reality and caught a stale ledger DECISIONS line plus the temporal gap it was asked to write into. Task-only briefs, pure prose reports, 17 claims harvested with hash-verified citations. Prime receipts: rcpt-0001 cargo 45, rcpt-0002 node 53 incl. new composites tests, rcpt-0003 readiness; work receipts rcpt-0004/0005 minted BY the new absorb command itself. Coverage floor deliberately 2 (two lanes).",
+      "source_ids": [
+        "raw:codex-synthesis-20260712T235453Z.md"
+      ],
+      "observed_at": "2026-07-12T23:54:53.603Z"
+    },
+    {
+      "id": "ev-rcpt-0001",
+      "kind": "receipt",
+      "summary": "mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 486ms [attests test:cargo-suite]",
+      "source_ids": [
+        "receipt:rcpt-0001"
+      ],
+      "observed_at": "2026-07-12T23:53:56Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "63c8d907c314e405ad389cbffd5a7596ebfd003e dirty:5aa415b946502754",
+      "span_after": "63c8d907c314e405ad389cbffd5a7596ebfd003e dirty:5aa415b946502754"
+    },
+    {
+      "id": "ev-rcpt-0002",
+      "kind": "receipt",
+      "summary": "mythos run: `node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving_ingest.test.js tests/receipts_attestation.test.js tests/worklist_resolutions.test.js tests/prime_brief.test.js tests/loop_composites.test.js` exited 0 in 7911ms [attests test:node-suites]",
+      "source_ids": [
+        "receipt:rcpt-0002"
+      ],
+      "observed_at": "2026-07-12T23:54:04Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "63c8d907c314e405ad389cbffd5a7596ebfd003e dirty:5aa415b946502754",
+      "span_after": "63c8d907c314e405ad389cbffd5a7596ebfd003e dirty:5aa415b946502754"
+    },
+    {
+      "id": "ev-rcpt-0003",
+      "kind": "receipt",
+      "summary": "mythos run: `node scripts/readiness.mjs` exited 0 in 3035ms [attests test:readiness]",
+      "source_ids": [
+        "receipt:rcpt-0003"
+      ],
+      "observed_at": "2026-07-12T23:54:07Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "63c8d907c314e405ad389cbffd5a7596ebfd003e dirty:5aa415b946502754",
+      "span_after": "63c8d907c314e405ad389cbffd5a7596ebfd003e dirty:5aa415b946502754"
+    },
+    {
+      "id": "ev-rcpt-0004",
+      "kind": "work",
+      "summary": "tree delta: 90 file(s), +503/-1234, 83 untracked [window rcpt-0001..rcpt-0003]",
+      "source_ids": [
+        "receipt:rcpt-0004"
+      ],
+      "observed_at": "2026-07-12T23:54:28Z",
+      "confidence": 1.0,
+      "rationale": "post-lane composites-builder",
+      "span_before": "63c8d907c314e405ad389cbffd5a7596ebfd003e dirty:5aa415b946502754",
+      "span_after": "63c8d907c314e405ad389cbffd5a7596ebfd003e dirty:5aa415b946502754"
+    },
+    {
+      "id": "ev-rcpt-0005",
+      "kind": "work",
+      "summary": "tree delta: 90 file(s), +503/-1234, 83 untracked [window (no exec receipts)]",
+      "source_ids": [
+        "receipt:rcpt-0005"
+      ],
+      "observed_at": "2026-07-12T23:54:29Z",
+      "confidence": 1.0,
+      "rationale": "post-lane docs-truther",
+      "span_before": "63c8d907c314e405ad389cbffd5a7596ebfd003e dirty:5aa415b946502754",
+      "span_after": "63c8d907c314e405ad389cbffd5a7596ebfd003e dirty:5aa415b946502754"
+    }
+  ],
+  "trusted_facts": [
+    {
+      "id": "fact:ev-rcpt-0001",
+      "statement": "mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 486ms [attests test:cargo-suite]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0001"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-rcpt-0002",
+      "statement": "mythos run: `node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving_ingest.test.js tests/receipts_attestation.test.js tests/worklist_resolutions.test.js tests/prime_brief.test.js tests/loop_composites.test.js` exited 0 in 7911ms [attests test:node-suites]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0002"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-rcpt-0003",
+      "statement": "mythos run: `node scripts/readiness.mjs` exited 0 in 3035ms [attests test:readiness]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0003"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-rcpt-0004",
+      "statement": "tree delta: 90 file(s), +503/-1234, 83 untracked [window rcpt-0001..rcpt-0003]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0004"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-rcpt-0005",
+      "statement": "tree delta: 90 file(s), +503/-1234, 83 untracked [window (no exec receipts)]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0005"
+      ],
+      "attestation": "attested"
+    }
+  ],
+  "active_hypotheses": [],
+  "contradictions": [
+    {
+      "id": "con:auto:ev-auto-composites-builder-10:ev-auto-docs-truther-5",
+      "summary": "Evidence ev-auto-composites-builder-10 and ev-auto-docs-truther-5 disagree on the same direct span (file:tests/loop_composites.test.js:1): \"node --test tests/loopcomposites.test.js - 4/4 pass.\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
+      "conflicting_item_ids": [
+        "ev-auto-composites-builder-10",
+        "ev-auto-docs-truther-5"
+      ],
+      "severity": "low",
+      "source_ids": [
+        "file:tests/loop_composites.test.js:1"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:tests/loop_composites.test.js:1",
+          "path": "tests/loop_composites.test.js",
+          "kind": "file",
+          "hash": "f63167df7ebd3b0a",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ]
+    },
+    {
+      "id": "con:auto:ev-auto-composites-builder-12:ev-auto-docs-truther-5",
+      "summary": "Evidence ev-auto-composites-builder-12 and ev-auto-docs-truther-5 disagree on the same direct span (file:bin/mythos-skill.mjs:1, file:tests/loop_composites.test.js:1): \"git status confirms only bin/mythos-skill.mjs modified and tests/loopcomposites.test.js added.\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
+      "conflicting_item_ids": [
+        "ev-auto-composites-builder-12",
+        "ev-auto-docs-truther-5"
+      ],
+      "severity": "low",
+      "source_ids": [
+        "file:bin/mythos-skill.mjs:1",
+        "file:tests/loop_composites.test.js:1"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:bin/mythos-skill.mjs:1",
+          "path": "bin/mythos-skill.mjs",
+          "kind": "file",
+          "hash": "a790f0d35343b0df",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "file:tests/loop_composites.test.js:1",
+          "path": "tests/loop_composites.test.js",
+          "kind": "file",
+          "hash": "f63167df7ebd3b0a",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ]
+    },
+    {
+      "id": "con:auto:ev-auto-composites-builder-1:ev-auto-docs-truther-5",
+      "summary": "Evidence ev-auto-composites-builder-1 and ev-auto-docs-truther-5 disagree on the same direct span (file:bin/mythos-skill.mjs:1, file:tests/loop_composites.test.js:1): \"Implemented both loop-composite commands in bin/mythos-skill.mjs per the binding spec, plus the new test file. No other files touched (verified via git diff --stat - only bin/mythos-skill.mjs, 214 insertions/0 deletions, plus the new tests/loopcomposites.test.js).\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
+      "conflicting_item_ids": [
+        "ev-auto-composites-builder-1",
+        "ev-auto-docs-truther-5"
+      ],
+      "severity": "low",
+      "source_ids": [
+        "file:bin/mythos-skill.mjs:1",
+        "file:tests/loop_composites.test.js:1"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:bin/mythos-skill.mjs:1",
+          "path": "bin/mythos-skill.mjs",
+          "kind": "file",
+          "hash": "a790f0d35343b0df",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        },
+        {
+          "source_id": "file:tests/loop_composites.test.js:1",
+          "path": "tests/loop_composites.test.js",
+          "kind": "file",
+          "hash": "f63167df7ebd3b0a",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ]
+    },
+    {
+      "id": "con:auto:ev-auto-composites-builder-2:ev-auto-docs-truther-5",
+      "summary": "Evidence ev-auto-composites-builder-2 and ev-auto-docs-truther-5 disagree on the same direct span (file:bin/mythos-skill.mjs:1): \"bin/mythos-skill.mjs changes at lines 13-27, 39-48, 60-263, 279-282:\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
+      "conflicting_item_ids": [
+        "ev-auto-composites-builder-2",
+        "ev-auto-docs-truther-5"
+      ],
+      "severity": "low",
+      "source_ids": [
+        "file:bin/mythos-skill.mjs:1"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:bin/mythos-skill.mjs:1",
+          "path": "bin/mythos-skill.mjs",
+          "kind": "file",
+          "hash": "a790f0d35343b0df",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ]
+    },
+    {
+      "id": "con:auto:ev-auto-composites-builder-3:ev-auto-docs-truther-1",
+      "summary": "Evidence ev-auto-composites-builder-3 and ev-auto-docs-truther-1 disagree on the same direct span (file:scripts/ingest-subagent.mjs:1): \"absorb (cmdAbsorb, bin/mythos-skill.mjs:107-188): runs scripts/ingest-subagent.mjs (fatal, propagates exit code + stderr), then mythos diff --run-dir with note \"post-lane <lane>\" unless --no-diff (non-fatal, warns to stderr and continues on failure, extracts .receipt from its JSON stdout as workrece\" vs \"Kept verbatim: the Receipts rename banner and the Subagent output contract section (verified still accurate against scripts/ingest-subagent.mjs).\"",
+      "conflicting_item_ids": [
+        "ev-auto-composites-builder-3",
+        "ev-auto-docs-truther-1"
+      ],
+      "severity": "low",
+      "source_ids": [
+        "file:scripts/ingest-subagent.mjs:1"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:scripts/ingest-subagent.mjs:1",
+          "path": "scripts/ingest-subagent.mjs",
+          "kind": "file",
+          "hash": "6af43f51eb4cb003",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ]
+    },
+    {
+      "id": "con:auto:ev-auto-composites-builder-7:ev-auto-docs-truther-5",
+      "summary": "Evidence ev-auto-composites-builder-7 and ev-auto-docs-truther-5 disagree on the same direct span (file:tests/loop_composites.test.js:1): \"tests/loopcomposites.test.js (new file, 4 tests, scaffolded off tests/worklistresolutions.test.js freshRunDir pattern):\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
+      "conflicting_item_ids": [
+        "ev-auto-composites-builder-7",
+        "ev-auto-docs-truther-5"
+      ],
+      "severity": "low",
+      "source_ids": [
+        "file:tests/loop_composites.test.js:1"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:tests/loop_composites.test.js:1",
+          "path": "tests/loop_composites.test.js",
+          "kind": "file",
+          "hash": "f63167df7ebd3b0a",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T23:54:28.058Z"
+        }
+      ]
+    }
+  ],
+  "recurring_failure_patterns": [],
+  "candidate_actions": [
+    {
+      "id": "wl:adjudicate:con:auto:ev-auto-composites-builder-10:ev-auto-docs-truther-5",
+      "title": "Adjudicate contradiction con:auto:ev-auto-composites-builder-10:ev-auto-docs-truther-5",
+      "rationale": "Evidence ev-auto-composites-builder-10 and ev-auto-docs-truther-5 disagree on the same direct span (file:tests/loop_composites.test.js:1): \"node --test tests/loopcomposites.test.js - 4/4 pass.\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
+      "actionability_score": 0.5,
+      "decision_dependency_ids": [
+        "con:auto:ev-auto-composites-builder-10:ev-auto-docs-truther-5"
+      ],
+      "source_ids": [
+        "file:tests/loop_composites.test.js:1"
+      ],
+      "category": "adjudicate",
+      "blocking": false,
+      "resolved": false
+    },
+    {
+      "id": "wl:adjudicate:con:auto:ev-auto-composites-builder-12:ev-auto-docs-truther-5",
+      "title": "Adjudicate contradiction con:auto:ev-auto-composites-builder-12:ev-auto-docs-truther-5",
+      "rationale": "Evidence ev-auto-composites-builder-12 and ev-auto-docs-truther-5 disagree on the same direct span (file:bin/mythos-skill.mjs:1, file:tests/loop_composites.test.js:1): \"git status confirms only bin/mythos-skill.mjs modified and tests/loopcomposites.test.js added.\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
+      "actionability_score": 0.5,
+      "decision_dependency_ids": [
+        "con:auto:ev-auto-composites-builder-12:ev-auto-docs-truther-5"
+      ],
+      "source_ids": [
+        "file:bin/mythos-skill.mjs:1",
+        "file:tests/loop_composites.test.js:1"
+      ],
+      "category": "adjudicate",
+      "blocking": false,
+      "resolved": false
+    },
+    {
+      "id": "wl:adjudicate:con:auto:ev-auto-composites-builder-1:ev-auto-docs-truther-5",
+      "title": "Adjudicate contradiction con:auto:ev-auto-composites-builder-1:ev-auto-docs-truther-5",
+      "rationale": "Evidence ev-auto-composites-builder-1 and ev-auto-docs-truther-5 disagree on the same direct span (file:bin/mythos-skill.mjs:1, file:tests/loop_composites.test.js:1): \"Implemented both loop-composite commands in bin/mythos-skill.mjs per the binding spec, plus the new test file. No other files touched (verified via git diff --stat - only bin/mythos-skill.mjs, 214 insertions/0 deletions, plus the new tests/loopcomposites.test.js).\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
+      "actionability_score": 0.5,
+      "decision_dependency_ids": [
+        "con:auto:ev-auto-composites-builder-1:ev-auto-docs-truther-5"
+      ],
+      "source_ids": [
+        "file:bin/mythos-skill.mjs:1",
+        "file:tests/loop_composites.test.js:1"
+      ],
+      "category": "adjudicate",
+      "blocking": false,
+      "resolved": false
+    },
+    {
+      "id": "wl:adjudicate:con:auto:ev-auto-composites-builder-2:ev-auto-docs-truther-5",
+      "title": "Adjudicate contradiction con:auto:ev-auto-composites-builder-2:ev-auto-docs-truther-5",
+      "rationale": "Evidence ev-auto-composites-builder-2 and ev-auto-docs-truther-5 disagree on the same direct span (file:bin/mythos-skill.mjs:1): \"bin/mythos-skill.mjs changes at lines 13-27, 39-48, 60-263, 279-282:\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
+      "actionability_score": 0.5,
+      "decision_dependency_ids": [
+        "con:auto:ev-auto-composites-builder-2:ev-auto-docs-truther-5"
+      ],
+      "source_ids": [
+        "file:bin/mythos-skill.mjs:1"
+      ],
+      "category": "adjudicate",
+      "blocking": false,
+      "resolved": false
+    },
+    {
+      "id": "wl:adjudicate:con:auto:ev-auto-composites-builder-3:ev-auto-docs-truther-1",
+      "title": "Adjudicate contradiction con:auto:ev-auto-composites-builder-3:ev-auto-docs-truther-1",
+      "rationale": "Evidence ev-auto-composites-builder-3 and ev-auto-docs-truther-1 disagree on the same direct span (file:scripts/ingest-subagent.mjs:1): \"absorb (cmdAbsorb, bin/mythos-skill.mjs:107-188): runs scripts/ingest-subagent.mjs (fatal, propagates exit code + stderr), then mythos diff --run-dir with note \"post-lane <lane>\" unless --no-diff (non-fatal, warns to stderr and continues on failure, extracts .receipt from its JSON stdout as workrece\" vs \"Kept verbatim: the Receipts rename banner and the Subagent output contract section (verified still accurate against scripts/ingest-subagent.mjs).\"",
+      "actionability_score": 0.5,
+      "decision_dependency_ids": [
+        "con:auto:ev-auto-composites-builder-3:ev-auto-docs-truther-1"
+      ],
+      "source_ids": [
+        "file:scripts/ingest-subagent.mjs:1"
+      ],
+      "category": "adjudicate",
+      "blocking": false,
+      "resolved": false
+    },
+    {
+      "id": "wl:adjudicate:con:auto:ev-auto-composites-builder-7:ev-auto-docs-truther-5",
+      "title": "Adjudicate contradiction con:auto:ev-auto-composites-builder-7:ev-auto-docs-truther-5",
+      "rationale": "Evidence ev-auto-composites-builder-7 and ev-auto-docs-truther-5 disagree on the same direct span (file:tests/loop_composites.test.js:1): \"tests/loopcomposites.test.js (new file, 4 tests, scaffolded off tests/worklistresolutions.test.js freshRunDir pattern):\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
+      "actionability_score": 0.5,
+      "decision_dependency_ids": [
+        "con:auto:ev-auto-composites-builder-7:ev-auto-docs-truther-5"
+      ],
+      "source_ids": [
+        "file:tests/loop_composites.test.js:1"
+      ],
+      "category": "adjudicate",
+      "blocking": false,
+      "resolved": false
+    }
+  ],
+  "verifier_findings": [
+    {
+      "id": "vf-codex-synthesis-pending",
+      "summary": "Codex synthesis consumed packet state: Loop-collapse field run: composites-builder lane shipped absorb+conclude in bin/mythos-skill.mjs with 4 new tests (caught and fixed a real Windows shell-quoting trap in spawn discipline); docs-truther lane rewrote README to current reality and caught a stale ledger DECISIONS line plus the temporal gap it was asked to write into. Task-only briefs, pure prose reports, 17 claims harvested with hash-verified citations. Prime receipts: rcpt-0001 cargo 45, rcpt-0002 node 53 incl. new composites tests, rcpt-0003 readiness; work receipts rcpt-0004/0005 minted BY the new absorb command itself. Coverage floor deliberately 2 (two lanes).",
+      "status": "passed",
+      "verifier_score": 0.9,
+      "source_ids": [
+        "raw:objective.md",
+        "raw:codex-synthesis-20260712T235453Z.md"
+      ],
+      "finding_kind": "synthesis"
+    }
+  ],
+  "open_questions": [],
+  "raw_drilldown_refs": [
+    {
+      "source_id": "raw:codex-synthesis-20260712T235453Z.md",
+      "path": "raw/codex-synthesis-20260712T235453Z.md",
+      "kind": "raw",
+      "hash": "5e288a2ea8e0435e",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T23:41:43.877Z"
+    },
+    {
+      "source_id": "raw:objective.md",
+      "path": "raw/objective.md",
+      "kind": "raw",
+      "hash": "18edbcec3c66f502",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T23:41:43.877Z"
+    },
+    {
+      "source_id": "raw:subagents/composites-builder.md",
+      "path": "raw/subagents/composites-builder.md",
+      "kind": "raw",
+      "hash": "f6586aa5ff0a19c6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T23:41:43.877Z"
+    },
+    {
+      "source_id": "raw:subagents/docs-truther.md",
+      "path": "raw/subagents/docs-truther.md",
+      "kind": "raw",
+      "hash": "1877cd31deedd291",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T23:41:43.877Z"
+    }
+  ],
+  "halt_signals": [
+    {
+      "id": "halt:2026-07-12T23:41:43.877Z:ready",
+      "kind": "ready-to-halt",
+      "contribution": 1.0,
+      "rationale": "All verifier findings passing; no unresolved blocking worklist items.",
+      "source_ids": [
+        "raw:objective.md",
+        "raw:codex-synthesis-20260712T235453Z.md"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "evidence:ev-auto-composites-builder-1",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "9b9ee8e858d3c170",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-composites-builder-1",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-composites-builder-10",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "64ce27a525dc5281",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-composites-builder-10",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-composites-builder-11",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "0f054049f36e165c",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-composites-builder-11",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-composites-builder-12",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "c922b0585f3566c9",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-composites-builder-12",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-composites-builder-2",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "7ee9b3925d905f14",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-composites-builder-2",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-composites-builder-3",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "61d5f254a7655b68",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-composites-builder-3",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-composites-builder-4",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "fac78d42a18b91c0",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-composites-builder-4",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-composites-builder-5",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "e62ba7810ffacca1",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-composites-builder-5",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-composites-builder-6",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "6f48939e3e903cc4",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-composites-builder-6",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-composites-builder-7",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "d9cf228c2bdf7761",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-composites-builder-7",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-composites-builder-9",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "3a72e0835840c9ce",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-composites-builder-9",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-docs-truther-1",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "154f028a9bf317fb",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-docs-truther-1",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-docs-truther-2",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "20ae2f79ebd51ead",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-docs-truther-2",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-docs-truther-3",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "ebcb9f08e41ff53d",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-docs-truther-3",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-docs-truther-4",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "6ffc94054173d72b",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-docs-truther-4",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-docs-truther-5",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "0ea4de0794db8d6d",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-docs-truther-5",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-docs-truther-6",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "9c1380afe7b9959f",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-docs-truther-6",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "evidence:ev-codex-synthesis-20260712T235453Z",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "codex-synthesis",
+      "hash": "3f25684aa712e81c",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-codex-synthesis-20260712T235453Z",
+      "observed_at": "2026-07-12T23:54:53.603Z"
+    },
+    {
+      "source_id": "evidence:ev-objective",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "objective",
+      "hash": "f77a0f0b24793da2",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-objective",
+      "observed_at": "2026-07-12T23:41:43.878Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0001",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "b3211b3ee5509721",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0001",
+      "observed_at": "2026-07-12T23:53:56Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0002",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "cce3d9739e186c6f",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0002",
+      "observed_at": "2026-07-12T23:54:04Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0003",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "e566d2638ed3ebac",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0003",
+      "observed_at": "2026-07-12T23:54:07Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0004",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "work",
+      "hash": "5530ab88de223837",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0004",
+      "observed_at": "2026-07-12T23:54:28Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0005",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "work",
+      "hash": "e36f726f1a542b0f",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0005",
+      "observed_at": "2026-07-12T23:54:29Z"
+    },
+    {
+      "source_id": "evidence:ev-subagent-session-20260712T235428Z-composites-builder",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "subagent-session",
+      "hash": "142e31fb8354515c",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-subagent-session-20260712T235428Z-composites-builder",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "evidence:ev-subagent-session-20260712T235428Z-docs-truther",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "subagent-session",
+      "hash": "ac1498cb87bfd2de",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-subagent-session-20260712T235428Z-docs-truther",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "file:RECEIPTS-LEDGER.md:66-69",
+      "path": "RECEIPTS-LEDGER.md",
+      "kind": "file",
+      "hash": "72f32e7f63367f0b",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "66-69",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "file:bin/mythos-skill.mjs:1",
+      "path": "bin/mythos-skill.mjs",
+      "kind": "file",
+      "hash": "a790f0d35343b0df",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "1",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "file:bin/mythos-skill.mjs:107-188",
+      "path": "bin/mythos-skill.mjs",
+      "kind": "file",
+      "hash": "a790f0d35343b0df",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "107-188",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "file:bin/mythos-skill.mjs:13-25",
+      "path": "bin/mythos-skill.mjs",
+      "kind": "file",
+      "hash": "a790f0d35343b0df",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "13-25",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "file:bin/mythos-skill.mjs:190-263",
+      "path": "bin/mythos-skill.mjs",
+      "kind": "file",
+      "hash": "a790f0d35343b0df",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "190-263",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "file:bin/mythos-skill.mjs:21-22",
+      "path": "bin/mythos-skill.mjs",
+      "kind": "file",
+      "hash": "a790f0d35343b0df",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "21-22",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "file:bin/mythos-skill.mjs:44-45",
+      "path": "bin/mythos-skill.mjs",
+      "kind": "file",
+      "hash": "a790f0d35343b0df",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "44-45",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "file:bin/mythos-skill.mjs:90-100",
+      "path": "bin/mythos-skill.mjs",
+      "kind": "file",
+      "hash": "a790f0d35343b0df",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "90-100",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "file:driver.mjs:255-271",
+      "path": "driver.mjs",
+      "kind": "file",
+      "hash": "0cf70bf51866dd78",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "255-271",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/Cargo.toml:1",
+      "path": "mythos-compiler/Cargo.toml",
+      "kind": "file",
+      "hash": "cbeffba39fe09d08",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "1",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/bin/mythos.rs:551-622",
+      "path": "mythos-compiler/src/bin/mythos.rs",
+      "kind": "file",
+      "hash": "953021b62eb87fd3",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "551-622",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/bin/mythos.rs:95-135",
+      "path": "mythos-compiler/src/bin/mythos.rs",
+      "kind": "file",
+      "hash": "953021b62eb87fd3",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "95-135",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/schema.rs:7",
+      "path": "mythos-compiler/src/schema.rs",
+      "kind": "file",
+      "hash": "f1942e523bbb2b76",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "7",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "file:scripts/ingest-subagent.mjs:1",
+      "path": "scripts/ingest-subagent.mjs",
+      "kind": "file",
+      "hash": "6af43f51eb4cb003",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "1",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "file:scripts/strict-gate.mjs:1",
+      "path": "scripts/strict-gate.mjs",
+      "kind": "file",
+      "hash": "00d3bf2f06e8af1a",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "1",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "file:tests/loop_composites.test.js:1",
+      "path": "tests/loop_composites.test.js",
+      "kind": "file",
+      "hash": "f63167df7ebd3b0a",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "1",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "file:tests/worklist_resolutions.test.js:1",
+      "path": "tests/worklist_resolutions.test.js",
+      "kind": "file",
+      "hash": "0592adf5d0a6f34d",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "1",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "log:unverifiable-files-nodejs-node-exe",
+      "path": "unverifiable-files-nodejs-node-exe",
+      "kind": "log",
+      "hash": "d24d89bdacc36c0b",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "label",
+      "span": null,
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "log:unverifiable-state-gate-report-json",
+      "path": "unverifiable-state-gate-report-json",
+      "kind": "log",
+      "hash": "44bf292be6a74527",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "label",
+      "span": null,
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "raw:codex-synthesis-20260712T235453Z.md",
+      "path": "raw/codex-synthesis-20260712T235453Z.md",
+      "kind": "raw",
+      "hash": "5e288a2ea8e0435e",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T23:41:43.877Z"
+    },
+    {
+      "source_id": "raw:objective.md",
+      "path": "raw/objective.md",
+      "kind": "raw",
+      "hash": "18edbcec3c66f502",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T23:41:43.877Z"
+    },
+    {
+      "source_id": "raw:subagents/composites-builder.md",
+      "path": "raw/subagents/composites-builder.md",
+      "kind": "raw",
+      "hash": "f6586aa5ff0a19c6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T23:41:43.877Z"
+    },
+    {
+      "source_id": "raw:subagents/composites-builder.md:10-10",
+      "path": "raw/subagents/composites-builder.md",
+      "kind": "raw",
+      "hash": "f6586aa5ff0a19c6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "10-10",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "raw:subagents/composites-builder.md:12-12",
+      "path": "raw/subagents/composites-builder.md",
+      "kind": "raw",
+      "hash": "f6586aa5ff0a19c6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "12-12",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "raw:subagents/composites-builder.md:15-15",
+      "path": "raw/subagents/composites-builder.md",
+      "kind": "raw",
+      "hash": "f6586aa5ff0a19c6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "15-15",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "raw:subagents/composites-builder.md:19-19",
+      "path": "raw/subagents/composites-builder.md",
+      "kind": "raw",
+      "hash": "f6586aa5ff0a19c6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "19-19",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "raw:subagents/composites-builder.md:21-21",
+      "path": "raw/subagents/composites-builder.md",
+      "kind": "raw",
+      "hash": "f6586aa5ff0a19c6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "21-21",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "raw:subagents/composites-builder.md:24-24",
+      "path": "raw/subagents/composites-builder.md",
+      "kind": "raw",
+      "hash": "f6586aa5ff0a19c6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "24-24",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "raw:subagents/composites-builder.md:3-3",
+      "path": "raw/subagents/composites-builder.md",
+      "kind": "raw",
+      "hash": "f6586aa5ff0a19c6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "3-3",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "raw:subagents/composites-builder.md:5-5",
+      "path": "raw/subagents/composites-builder.md",
+      "kind": "raw",
+      "hash": "f6586aa5ff0a19c6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "5-5",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "raw:subagents/composites-builder.md:6-6",
+      "path": "raw/subagents/composites-builder.md",
+      "kind": "raw",
+      "hash": "f6586aa5ff0a19c6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "6-6",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "raw:subagents/composites-builder.md:7-7",
+      "path": "raw/subagents/composites-builder.md",
+      "kind": "raw",
+      "hash": "f6586aa5ff0a19c6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "7-7",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "raw:subagents/composites-builder.md:8-8",
+      "path": "raw/subagents/composites-builder.md",
+      "kind": "raw",
+      "hash": "f6586aa5ff0a19c6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "8-8",
+      "observed_at": "2026-07-12T23:54:28.058Z"
+    },
+    {
+      "source_id": "raw:subagents/docs-truther.md",
+      "path": "raw/subagents/docs-truther.md",
+      "kind": "raw",
+      "hash": "1877cd31deedd291",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T23:41:43.877Z"
+    },
+    {
+      "source_id": "raw:subagents/docs-truther.md:11-11",
+      "path": "raw/subagents/docs-truther.md",
+      "kind": "raw",
+      "hash": "1877cd31deedd291",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "11-11",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "raw:subagents/docs-truther.md:14-14",
+      "path": "raw/subagents/docs-truther.md",
+      "kind": "raw",
+      "hash": "1877cd31deedd291",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "14-14",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "raw:subagents/docs-truther.md:15-15",
+      "path": "raw/subagents/docs-truther.md",
+      "kind": "raw",
+      "hash": "1877cd31deedd291",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "15-15",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "raw:subagents/docs-truther.md:16-16",
+      "path": "raw/subagents/docs-truther.md",
+      "kind": "raw",
+      "hash": "1877cd31deedd291",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "16-16",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "raw:subagents/docs-truther.md:18-18",
+      "path": "raw/subagents/docs-truther.md",
+      "kind": "raw",
+      "hash": "1877cd31deedd291",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "18-18",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "raw:subagents/docs-truther.md:20-20",
+      "path": "raw/subagents/docs-truther.md",
+      "kind": "raw",
+      "hash": "1877cd31deedd291",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "20-20",
+      "observed_at": "2026-07-12T23:54:28.980Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0001",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "4eb136dffb685294",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0001",
+      "observed_at": "2026-07-12T23:53:56Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0002",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "c893c4e364926175",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0002",
+      "observed_at": "2026-07-12T23:54:04Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0003",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "742c508a835fd46a",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0003",
+      "observed_at": "2026-07-12T23:54:07Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0004",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "20db56dbbe8358d6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0004",
+      "observed_at": "2026-07-12T23:54:28Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0005",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "b2c3eae695bdfad5",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0005",
+      "observed_at": "2026-07-12T23:54:29Z"
+    },
+    {
+      "source_id": "verifier:vf-codex-synthesis-pending",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "66ac32f9a1a24662",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-codex-synthesis-pending",
+      "observed_at": "2026-07-12T23:41:43.877Z"
+    }
+  ],
+  "lane_digests": [
+    {
+      "lane": "(no lane)",
+      "records": 4,
+      "attested": 0,
+      "verifier": 0,
+      "asserted": 0,
+      "warnings": 0,
+      "contradictions": 0,
+      "read_recommendation": "skip-verified"
+    },
+    {
+      "lane": "composites-builder",
+      "agent_id": "composites-builder-1",
+      "records": 12,
+      "attested": 0,
+      "verifier": 0,
+      "asserted": 11,
+      "warnings": 3,
+      "contradictions": 6,
+      "read_recommendation": "read-adjudicate",
+      "drill_down": [
+        "raw:subagents/composites-builder.md:3-3",
+        "raw:subagents/composites-builder.md:5-5",
+        "raw:subagents/composites-builder.md:6-6",
+        "raw:subagents/composites-builder.md:7-7",
+        "raw:subagents/composites-builder.md:8-8",
+        "raw:subagents/composites-builder.md:10-10",
+        "raw:subagents/composites-builder.md:12-12",
+        "raw:subagents/composites-builder.md:15-15",
+        "raw:subagents/composites-builder.md:19-19",
+        "raw:subagents/composites-builder.md:21-21",
+        "raw:subagents/composites-builder.md:24-24"
+      ]
+    },
+    {
+      "lane": "docs-truther",
+      "agent_id": "docs-truther-1",
+      "records": 7,
+      "attested": 0,
+      "verifier": 0,
+      "asserted": 6,
+      "warnings": 0,
+      "contradictions": 2,
+      "read_recommendation": "read-adjudicate",
+      "drill_down": [
+        "raw:subagents/docs-truther.md:11-11",
+        "raw:subagents/docs-truther.md:14-14",
+        "raw:subagents/docs-truther.md:15-15",
+        "raw:subagents/docs-truther.md:16-16",
+        "raw:subagents/docs-truther.md:18-18",
+        "raw:subagents/docs-truther.md:20-20"
+      ]
+    },
+    {
+      "lane": "orchestrator",
+      "agent_id": "prime",
+      "records": 3,
+      "attested": 0,
+      "verifier": 0,
+      "asserted": 0,
+      "warnings": 0,
+      "contradictions": 0,
+      "read_recommendation": "skip-verified"
+    }
+  ]
+}

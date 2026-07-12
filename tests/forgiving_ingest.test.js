@@ -374,6 +374,35 @@ test("nonexistent file citation is downgraded to log:unverifiable, lane survives
   assert.equal(driver.status, 0, `compile must succeed with downgraded citations: ${driver.stderr}`);
 });
 
+test("a demoted record (unresolvable citation) does not double-jeopardy the gate as summary-only", (t) => {
+  const runDir = freshRunDir("no-double-jeopardy");
+  t.after(() => removeDir(runDir));
+
+  // Harvested-style record whose only concrete citation cannot resolve: it
+  // must be demoted (warning, never a fact) but must NOT red the gate as
+  // summary-only - demotion is the penalty.
+  const from = writeLane(
+    runDir,
+    "demoted-lane",
+    "Checked the flow end to end. The conclusion writer lands in state/ghost-file.json:1 as expected.\n",
+  );
+  const result = ingest(runDir, "demoted-lane", from);
+  assert.equal(result.status, 0, `ingest failed: ${result.stderr}`);
+  const evidence = readJsonl(path.join(runDir, "worker-results", "evidence.jsonl"));
+  const rec = evidence.find((r) => r.rationale === "harvested-from-prose");
+  assert.ok(rec, "claim must be harvested");
+  assert.ok((rec.provenance_warnings ?? []).length > 0, "unresolvable citation must demote");
+
+  runNode(["driver.mjs", "--run-dir", runDir]);
+  const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], {
+    env: { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "1" },
+  });
+  assert.ok(
+    !gate.stdout.includes("summary-only evidence"),
+    `demoted records must not be red-carded as summary-only; got ${gate.stdout}`,
+  );
+});
+
 test("free-text citations become log: ids and the packet still compiles", (t) => {
   const runDir = freshRunDir("freeform-citation");
   t.after(() => removeDir(runDir));
