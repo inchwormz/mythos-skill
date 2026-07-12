@@ -1,5 +1,5 @@
-RECEIPTS BRIEF - collapse the prime loop ceremony and truth the docs [run-20260712T234143Z / pass-0002]
-VERDICT: GATE FAILED (1 error(s))
+RECEIPTS BRIEF - collapse the prime loop ceremony and truth the docs [run-20260712T234143Z / pass-0003]
+VERDICT: GATE PASSED
 
 WORKLIST (0 blocking, 6 advisory, 0 resolved)
   [advisory][adjudicate] wl:adjudicate:con:auto:ev-auto-composites-builder-10:ev-auto-docs-truther-5 - Adjudicate contradiction con:auto:ev-auto-composites-builder-10:ev-auto-docs-truther-5
@@ -9,27 +9,29 @@ WORKLIST (0 blocking, 6 advisory, 0 resolved)
   [advisory][adjudicate] wl:adjudicate:con:auto:ev-auto-composites-builder-3:ev-auto-docs-truther-1 - Adjudicate contradiction con:auto:ev-auto-composites-builder-3:ev-auto-docs-truther-1
   [advisory][adjudicate] wl:adjudicate:con:auto:ev-auto-composites-builder-7:ev-auto-docs-truther-5 - Adjudicate contradiction con:auto:ev-auto-composites-builder-7:ev-auto-docs-truther-5
 
-TRUSTED FACTS (5 attested, 0 verifier)
+TRUSTED FACTS (6 attested, 0 verifier)
   [attested] mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 486ms [attests test:cargo-suit...
   [attested] mythos run: `node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving...
   [attested] mythos run: `node scripts/readiness.mjs` exited 0 in 3035ms [attests test:readiness]
+  [attested] mythos run: `node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving...
   [attested] tree delta: 90 file(s), +503/-1234, 83 untracked [window rcpt-0001..rcpt-0003]
   [attested] tree delta: 90 file(s), +503/-1234, 83 untracked [window (no exec receipts)]
 
 LANES
-  (no lane) [skip-verified] 4 records (0 attested / 0 verifier / 0 asserted, 0 warnings, 0 contradictions)
+  (no lane) [skip-verified] 5 records (0 attested / 0 verifier / 0 asserted, 0 warnings, 0 contradictions)
   composites-builder [read-adjudicate] 12 records (0 attested / 0 verifier / 11 asserted, 3 warnings, 6 contradictions)
       drill: raw:subagents/composites-builder.md:3-3, raw:subagents/composites-builder.md:5-5, raw:subagents/composites-builder.md:6-6, raw:subagents/composites-builder.md:7-7
   docs-truther [read-adjudicate] 7 records (0 attested / 0 verifier / 6 asserted, 0 warnings, 2 contradictions)
       drill: raw:subagents/docs-truther.md:11-11, raw:subagents/docs-truther.md:14-14, raw:subagents/docs-truther.md:15-15, raw:subagents/docs-truther.md:16-16
-  orchestrator [skip-verified] 3 records (0 attested / 0 verifier / 0 asserted, 0 warnings, 0 contradictions)
+  orchestrator [skip-verified] 4 records (0 attested / 0 verifier / 0 asserted, 0 warnings, 0 contradictions)
 
-RECEIPTS (6)
+RECEIPTS (7)
   rcpt-0001 [test:cargo-suite] exit 0 486ms - cargo test --manifest-path mythos-compiler/Cargo.toml
   rcpt-0002 [test:node-suites] exit 0 7911ms - node --test tests/packet_shape_integrity.test.js tests/m0_trust_semant...
   rcpt-0003 [test:readiness] exit 0 3035ms - node scripts/readiness.mjs
   rcpt-0004 [work:tree] exit 0 111ms - git diff --numstat HEAD
   rcpt-0005 [work:tree] exit 0 109ms - git diff --numstat HEAD
   rcpt-0006 [test:node-suites] exit 0 7630ms - node --test tests/packet_shape_integrity.test.js tests/m0_trust_semant...
+  rcpt-0007 [test:node-suites] exit 0 7207ms - node --test tests/packet_shape_integrity.test.js tests/m0_trust_semant...
 
-DRIFT: 2 citation(s) drifted since review (post-review fixes are the usual cause)
+DRIFT: 25 citation(s) drifted since review (post-review fixes are the usual cause)

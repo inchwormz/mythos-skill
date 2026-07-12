@@ -203,6 +203,18 @@ function cmdConclude(args) {
     return 2;
   }
 
+  // Step 0: recompile FIRST. In the natural loop Prime mints receipts
+  // between the last absorb and conclude, so the packet is almost always
+  // stale here - record-synthesis fails closed on staleness by design.
+  // (Field find, 2026-07-13: the first conclude of the first field run hit
+  // exactly this; the spec missed it.) FATAL on failure.
+  const precompile = spawnScript("driver.mjs", ["--run-dir", runDir]);
+  if (precompile.error || precompile.status !== 0) {
+    if (precompile.stderr) process.stderr.write(precompile.stderr);
+    process.stderr.write("mythos-skill conclude: pre-synthesis recompile failed\n");
+    return precompile.status ?? 1;
+  }
+
   // Step 1: record synthesis + recompile. FATAL on failure. Suppress its
   // stdout (the packet dump); let stderr through.
   const synthesisResult = spawnScript("driver.mjs", ["--run-dir", runDir, "--record-synthesis", synthesis]);

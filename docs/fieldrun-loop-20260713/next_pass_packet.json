@@ -3,7 +3,7 @@
   "objective_id": "obj-20260712T234143Z",
   "run_id": "run-20260712T234143Z",
   "branch_id": "main",
-  "pass_id": "pass-0002",
+  "pass_id": "pass-0003",
   "objective": "collapse the prime loop ceremony and truth the docs",
   "evidence": [
     {
@@ -805,6 +805,15 @@
       "observed_at": "2026-07-12T23:54:53.603Z"
     },
     {
+      "id": "ev-codex-synthesis-20260712T235848Z",
+      "kind": "codex-synthesis",
+      "summary": "Third pass: conclude now recompiles before synthesis (field find: receipts minted between absorb and conclude always staled the packet; my spec missed it, the field run caught it). Double-jeopardy fix verified. Suites attested rcpt-0001/0002/0003/0006.",
+      "source_ids": [
+        "raw:codex-synthesis-20260712T235848Z.md"
+      ],
+      "observed_at": "2026-07-12T23:58:48.115Z"
+    },
+    {
       "id": "ev-rcpt-0001",
       "kind": "receipt",
       "summary": "mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 486ms [attests test:cargo-suite]",
@@ -845,6 +854,20 @@
       "confidence": 1.0,
       "span_before": "63c8d907c314e405ad389cbffd5a7596ebfd003e dirty:5aa415b946502754",
       "span_after": "63c8d907c314e405ad389cbffd5a7596ebfd003e dirty:5aa415b946502754"
+    },
+    {
+      "id": "ev-rcpt-0006",
+      "kind": "receipt",
+      "summary": "mythos run: `node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving_ingest.test.js tests/receipts_attestation.test.js tests/worklist_resolutions.test.js tests/prime_brief.test.js tests/loop_composites.test.js` exited 0 in 7630ms [attests test:node-suites]",
+      "source_ids": [
+        "receipt:rcpt-0006"
+      ],
+      "observed_at": "2026-07-12T23:56:51Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "63c8d907c314e405ad389cbffd5a7596ebfd003e dirty:31e2804cd96ae95a",
+      "span_after": "63c8d907c314e405ad389cbffd5a7596ebfd003e dirty:31e2804cd96ae95a"
     },
     {
       "id": "ev-rcpt-0004",
@@ -907,6 +930,18 @@
       "needs_raw_drilldown": false,
       "source_ids": [
         "receipt:rcpt-0003"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-rcpt-0006",
+      "statement": "mythos run: `node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving_ingest.test.js tests/receipts_attestation.test.js tests/worklist_resolutions.test.js tests/prime_brief.test.js tests/loop_composites.test.js` exited 0 in 7630ms [attests test:node-suites]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0006"
       ],
       "attestation": "attested"
     },
@@ -1202,12 +1237,13 @@
   "verifier_findings": [
     {
       "id": "vf-codex-synthesis-pending",
-      "summary": "Codex synthesis consumed packet state: Loop-collapse field run: composites-builder lane shipped absorb+conclude in bin/mythos-skill.mjs with 4 new tests (caught and fixed a real Windows shell-quoting trap in spawn discipline); docs-truther lane rewrote README to current reality and caught a stale ledger DECISIONS line plus the temporal gap it was asked to write into. Task-only briefs, pure prose reports, 17 claims harvested with hash-verified citations. Prime receipts: rcpt-0001 cargo 45, rcpt-0002 node 53 incl. new composites tests, rcpt-0003 readiness; work receipts rcpt-0004/0005 minted BY the new absorb command itself. Coverage floor deliberately 2 (two lanes).",
+      "summary": "Codex synthesis consumed packet state: Third pass: conclude now recompiles before synthesis (field find: receipts minted between absorb and conclude always staled the packet; my spec missed it, the field run caught it). Double-jeopardy fix verified. Suites attested rcpt-0001/0002/0003/0006.",
       "status": "passed",
       "verifier_score": 0.9,
       "source_ids": [
         "raw:objective.md",
-        "raw:codex-synthesis-20260712T235453Z.md"
+        "raw:codex-synthesis-20260712T235453Z.md",
+        "raw:codex-synthesis-20260712T235848Z.md"
       ],
       "finding_kind": "synthesis"
     }
@@ -1219,6 +1255,16 @@
       "path": "raw/codex-synthesis-20260712T235453Z.md",
       "kind": "raw",
       "hash": "5e288a2ea8e0435e",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T23:41:43.877Z"
+    },
+    {
+      "source_id": "raw:codex-synthesis-20260712T235848Z.md",
+      "path": "raw/codex-synthesis-20260712T235848Z.md",
+      "kind": "raw",
+      "hash": "ddda1c51db07ebce",
       "hash_alg": "fnv1a-64",
       "hash_basis": "content",
       "span": null,
@@ -1263,7 +1309,8 @@
       "rationale": "All verifier findings passing; no unresolved blocking worklist items.",
       "source_ids": [
         "raw:objective.md",
-        "raw:codex-synthesis-20260712T235453Z.md"
+        "raw:codex-synthesis-20260712T235453Z.md",
+        "raw:codex-synthesis-20260712T235848Z.md"
       ]
     }
   ],
@@ -1431,6 +1478,15 @@
       "observed_at": "2026-07-12T23:54:53.603Z"
     },
     {
+      "source_id": "evidence:ev-codex-synthesis-20260712T235848Z",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "codex-synthesis",
+      "hash": "276190b402afbfd8",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-codex-synthesis-20260712T235848Z",
+      "observed_at": "2026-07-12T23:58:48.115Z"
+    },
+    {
       "source_id": "evidence:ev-objective",
       "path": "worker-results/evidence.jsonl",
       "kind": "objective",
@@ -1483,6 +1539,15 @@
       "hash_alg": "fnv1a-64",
       "span": "ev-rcpt-0005",
       "observed_at": "2026-07-12T23:54:29Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0006",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "8d9ff33a9ca3786b",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0006",
+      "observed_at": "2026-07-12T23:56:51Z"
     },
     {
       "source_id": "evidence:ev-subagent-session-20260712T235428Z-composites-builder",
@@ -1697,6 +1762,16 @@
       "path": "raw/codex-synthesis-20260712T235453Z.md",
       "kind": "raw",
       "hash": "5e288a2ea8e0435e",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T23:41:43.877Z"
+    },
+    {
+      "source_id": "raw:codex-synthesis-20260712T235848Z.md",
+      "path": "raw/codex-synthesis-20260712T235848Z.md",
+      "kind": "raw",
+      "hash": "ddda1c51db07ebce",
       "hash_alg": "fnv1a-64",
       "hash_basis": "content",
       "span": null,
@@ -1953,10 +2028,20 @@
       "observed_at": "2026-07-12T23:54:29Z"
     },
     {
+      "source_id": "receipt:rcpt-0006",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "14e4a0febc40adb3",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0006",
+      "observed_at": "2026-07-12T23:56:51Z"
+    },
+    {
       "source_id": "verifier:vf-codex-synthesis-pending",
       "path": "verifier-results/findings.jsonl",
       "kind": "verifier",
-      "hash": "66ac32f9a1a24662",
+      "hash": "775377687e7b16ca",
       "hash_alg": "fnv1a-64",
       "span": "vf-codex-synthesis-pending",
       "observed_at": "2026-07-12T23:41:43.877Z"
@@ -1965,7 +2050,7 @@
   "lane_digests": [
     {
       "lane": "(no lane)",
-      "records": 4,
+      "records": 5,
       "attested": 0,
       "verifier": 0,
       "asserted": 0,
@@ -2019,7 +2104,7 @@
     {
       "lane": "orchestrator",
       "agent_id": "prime",
-      "records": 3,
+      "records": 4,
       "attested": 0,
       "verifier": 0,
       "asserted": 0,
