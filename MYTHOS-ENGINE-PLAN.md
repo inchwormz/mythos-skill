@@ -2,7 +2,7 @@
 
 (Product renamed **Receipts** by John, 2026-07-12; engine lineage: Mythos.)
 
-Date: 2026-07-12. Reviewed at commit `a616aaf` by Claude (Fable 5). Status: **RATIFIED 2026-07-12** (John: "Execute as written"). Live progress: `RECEIPTS-LEDGER.md`. M0 implemented and verified same day.
+Date: 2026-07-12. Reviewed at commit `a616aaf` by Claude (Fable 5). Status: **RATIFIED 2026-07-12** (John: "Execute as written"). Live progress: `RECEIPTS-LEDGER.md`. M0 implemented and verified same day; M0.5 (forgiving ingest, field post-mortem) 2026-07-12; M1 (`mythos run` receipts) + M2 core (attestation ladder, mechanical refutation) 2026-07-13.
 
 ## The one-paragraph version
 

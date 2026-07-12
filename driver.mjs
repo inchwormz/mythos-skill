@@ -82,7 +82,7 @@ function mtimeMs(file) {
 }
 
 function inputFiles(runDir) {
-  const inputDirs = ["raw", "worker-results", "verifier-results"];
+  const inputDirs = ["raw", "worker-results", "verifier-results", "receipts"];
   return [
     path.join(runDir, "manifest.json"),
     path.join(runDir, "task.md"),
@@ -252,7 +252,9 @@ function recordSynthesis(runDir, summary) {
 function createRunDir(objective) {
   const stamp = utcStamp();
   const runId = `run-${stamp}`;
-  const runDir = path.join(here, ".codex", "mythos", "runs", `${stamp}-${slugify(objective)}`);
+  // F10: runs live under the PROJECT being worked on (cwd), never inside the
+  // installed package directory.
+  const runDir = path.join(process.cwd(), ".mythos", "runs", `${stamp}-${slugify(objective)}`);
 
   mkdirp(path.join(runDir, "raw"));
   mkdirp(path.join(runDir, "worker-results"));

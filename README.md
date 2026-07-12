@@ -62,6 +62,8 @@ Prime never consumes subagent prose directly. The ingest+compile path is the onl
 
 ## What you get
 
+- **Execution receipts (M1)** — `mythos run --run-dir <d> --label test:name -- <command>` executes the command and mints a tamper-evident receipt (hash-chained journal, content-addressed output artifacts, git tree state, child exit code propagated). Receipts require ZERO agent cooperation: the orchestrator mints them, and they compile into `attested`-tier trusted facts.
+- **Mechanical refutation (M2)** — a "passed" verifier claim citing a label whose latest receipt FAILED is contradicted by ground truth at compile time and turns the strict gate red. A passing receipt upgrades label-only claims into real provenance.
 - **Deterministic compilation** — byte-identical packets from byte-identical inputs, verified by an integration test.
 - **Hash-provenanced evidence** — every `file:` source reference is re-hashed at compile time; a tampered file produces a hash mismatch.
 - **Agent attribution** — every evidence and verifier record carries `agent_id` and `lane`, stamped at ingest.
@@ -136,6 +138,10 @@ mythos-skill init my-run
 
 # 2. Ingest subagent output (after a lane writes raw/subagents/lane-a.md)
 mythos-skill ingest --run-dir my-run --lane lane-a --agent-id agent-1 --from my-run/raw/subagents/lane-a.md
+
+# 2.5 Mint execution receipts for every check you rely on (attested facts,
+#     no agent cooperation required; exit code propagates)
+mythos-skill run --run-dir my-run --label test:suite -- cargo test
 
 # 3. Compile the run into state/next_pass_packet.json
 mythos-skill compile --run-dir my-run

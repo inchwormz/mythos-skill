@@ -21,12 +21,22 @@ Do not call `claude -p`. Do not spawn nested Claude CLI sessions. Use Claude Cod
 
 ```bash
 mythos-skill init <dir>                                  # scaffold a run directory
+mythos-skill run --run-dir <dir> --label test:<name> -- <command...>
+                                                         # execute + mint a tamper-evident receipt
 mythos-skill compile --run-dir <dir>                     # recompile
 mythos-skill compile --run-dir <dir> --record-synthesis "…"  # record Prime's synthesis
 mythos-skill ingest --run-dir <dir> --lane <lane> --agent-id <id> --from <raw.md>
 mythos-skill gate --run-dir <dir>                        # strict quality gate
 mythos-skill ready                                       # end-to-end self-test
 ```
+
+**Receipts rule (M1/M2): never trust a command/test claim - mint the receipt
+yourself.** Prime runs every check it relies on through `mythos-skill run`
+with a `--label` matching the claim's cited id (e.g. `test:cargo-suite`).
+Receipts compile into `attested` facts with zero lane cooperation; a passing
+receipt upgrades lane claims citing that label; a FAILING receipt mechanically
+refutes any "passed" claim citing it and turns the gate red. Lanes cannot
+mint, fake, or edit receipts (hash-chained journal, verified at compile).
 
 Readiness means `mythos-skill ready` passes.
 

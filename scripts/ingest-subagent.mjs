@@ -394,6 +394,7 @@ const ALLOWED_SOURCE_KINDS = new Set([
   "verifier",
   "evidence",
   "objective",
+  "receipt",
 ]);
 
 const MAX_OBSERVED_AT_DRIFT_DAYS = 7;
@@ -468,7 +469,34 @@ const SUMMARY_ALIASES = ["summary", "text", "note", "claim", "description", "fin
 const SOURCE_ALIASES = ["source_ids", "sources", "source", "source_id", "citations", "citation", "refs", "files", "file", "evidence_refs"];
 const OBSERVED_ALIASES = ["observed_at", "observedAt", "timestamp", "time", "when", "date"];
 const KIND_ALIASES = ["kind", "type", "category"];
-const KNOWN_ID_PREFIXES = /^(file|command|test|log|raw|packet|verifier|evidence|objective):/;
+const KNOWN_ID_PREFIXES = /^(file|command|test|log|raw|packet|verifier|evidence|objective|receipt):/;
+
+// M1 trust boundary: only `mythos run` mints receipts. Agent-authored records
+// claiming to BE receipts are downgraded to observations; agent citations of
+// receipt ids are kept only when the id exists in the verified journal.
+function loadReceiptIds(runDir) {
+  try {
+    const file = path.join(runDir, "receipts", "receipts.jsonl");
+    if (!fs.existsSync(file)) return new Set();
+    return new Set(
+      fs
+        .readFileSync(file, "utf8")
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => {
+          try {
+            return JSON.parse(line).id;
+          } catch {
+            return null;
+          }
+        })
+        .filter(Boolean),
+    );
+  } catch {
+    return new Set();
+  }
+}
 
 function slugifyCitation(input) {
   return (
@@ -525,7 +553,7 @@ function coerceSourceId(rawInput, warnings) {
 // source_ids): ingest synthesizes and hashes refs itself, so agent-authored
 // refs carry zero information and were the single biggest rejection source in
 // the field test.
-function normalizeRecordShape(record, { blockType, laneSlug, index, observedAt, runDir, repoRoot }) {
+function normalizeRecordShape(record, { blockType, laneSlug, index, observedAt, runDir, repoRoot, receiptIds }) {
   const warnings = Array.isArray(record.provenance_warnings) ? [...record.provenance_warnings] : [];
   const repairs = [];
   const next = { ...record };
@@ -590,6 +618,23 @@ function normalizeRecordShape(record, { blockType, laneSlug, index, observedAt, 
     warnings.push(`unverifiable-citation: ${id} (path not found under run dir or repo_root) -> ${downgraded}`);
     return downgraded;
   });
+
+  // Receipt citations: keep only ids that exist in the runtime journal.
+  // Claiming a receipt that was never minted is the oldest trick in the book.
+  next.source_ids = next.source_ids.map((id) => {
+    if (!id.startsWith("receipt:")) return id;
+    const receiptId = id.slice("receipt:".length);
+    if (receiptIds && receiptIds.has(receiptId)) return id;
+    const downgraded = `log:unminted-receipt-${slugifyCitation(receiptId)}`;
+    warnings.push(`unminted-receipt-claim: ${id} is not in receipts/receipts.jsonl -> ${downgraded}`);
+    return downgraded;
+  });
+
+  // Receipt impersonation: only `mythos run` writes kind:"receipt".
+  if (blockType !== "verifier" && String(next.kind ?? "").toLowerCase() === "receipt") {
+    next.kind = "observation";
+    warnings.push("receipt-impersonation: only mythos run mints receipt records; demoted to observation");
+  }
 
   // Timestamps: invalid or missing -> ingest time plus a note, never a
   // rejection.
@@ -853,20 +898,20 @@ function normalizeSourceRefs(record, observedAt, runCreatedAt, runDir, repoRoot)
       );
     }
     if (next.kind === "file") {
-      // Block self-referential state/ files: the compiler regenerates
-      // <run-dir>/state/next_pass_packet.json, snapshot.json, and
-      // decision_log.jsonl on every recompile, so hashing them at ingest
-      // guarantees a drift-mismatch on the next recurrence. Evidence must cite
-      // stable inputs (source code, raw/*, worker-results/*, verifier-results/*)
-      // not compiler outputs.
-      const normalizedPath = String(next.path ?? "").replace(/\\/g, "/");
-      if (/\.codex\/mythos\/runs\/[^/]+\/state\//.test(normalizedPath)) {
-        // H5: tell the agent what to cite instead, not just what not to.
-        throw new Error(
-          `source_ref ${next.source_id ?? "<unknown>"} points at compiler-generated state/ file (${normalizedPath}); evidence must cite stable inputs — try the run's raw/ or worker-results/ files, or the original source code, not derived compiler outputs`,
-        );
-      }
       const resolved = resolveSourcePath(next.path, runDir, repoRoot);
+      // Block self-referential state/ files by MECHANISM (path identity
+      // against THIS run's state dir, not a layout-coupled regex): the
+      // compiler regenerates <run-dir>/state/* on every recompile, so hashing
+      // them at ingest guarantees a drift-mismatch on the next recurrence.
+      if (resolved && runDir) {
+        const stateDir = path.resolve(runDir, "state") + path.sep;
+        if ((path.resolve(resolved) + path.sep).startsWith(stateDir)) {
+          // H5: tell the agent what to cite instead, not just what not to.
+          throw new Error(
+            `source_ref ${next.source_id ?? "<unknown>"} points at compiler-generated state/ file (${next.path}); evidence must cite stable inputs — try the run's raw/ or worker-results/ files, or the original source code, not derived compiler outputs`,
+          );
+        }
+      }
       if (!resolved || !fs.existsSync(resolved)) {
         throw new Error(
           `source_ref ${next.source_id ?? "<unknown>"} file path does not exist: ${next.path}` +
@@ -970,6 +1015,7 @@ function main() {
   const stamp = utcStamp();
   const observedAt = new Date().toISOString();
   const { createdAt: runCreatedAt, repoRoot } = readRunManifest(args.runDir);
+  const receiptIds = loadReceiptIds(args.runDir);
   const rawDir = path.join(args.runDir, "raw", "subagents");
   fs.mkdirSync(rawDir, { recursive: true });
   const directRaw = isInsideDir(args.from, rawDir);
@@ -1063,6 +1109,7 @@ function main() {
         observedAt,
         runDir: args.runDir,
         repoRoot,
+        receiptIds,
       });
       recordIndex += 1;
       repairNotes.push(...shaped.repairs.map((note) => `${shaped.record.id}: ${note}`));

@@ -5,6 +5,7 @@ pub mod journal;
 pub mod lookup;
 pub mod packets;
 pub mod promotion;
+pub mod receipts;
 pub mod run_dir;
 pub mod signals;
 pub mod snapshot;

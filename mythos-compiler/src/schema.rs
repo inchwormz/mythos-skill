@@ -231,6 +231,42 @@ pub struct Snapshot {
     pub artifact_refs: Vec<SourceRef>,
 }
 
+/// M1: a runtime-minted execution receipt. Written ONLY by `mythos run` -
+/// agents cannot author these (ingest downgrades impersonations). The journal
+/// is hash-chained: `record_hash` = fnv1a of the record serialized WITHOUT
+/// `record_hash`, and `prev_record_hash` links to the previous entry (or
+/// "GENESIS"), so any post-hoc edit breaks the chain at compile time.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ReceiptRecord {
+    pub id: String,
+    /// Optional claim label this receipt attests (e.g. "test:cargo-suite").
+    /// Passed verifier findings citing this label are upgraded by a passing
+    /// receipt and refuted by a failing one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub label: Option<String>,
+    pub cmd: Vec<String>,
+    pub cwd: String,
+    pub exit_code: i64,
+    pub duration_ms: u64,
+    pub started_at: String,
+    pub ended_at: String,
+    pub stdout_hash: String,
+    pub stderr_hash: String,
+    pub stdout_tail: String,
+    pub stderr_tail: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tree_before: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tree_after: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub lane: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub agent_id: Option<String>,
+    pub writer: String,
+    pub prev_record_hash: String,
+    pub record_hash: String,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct PromotionRecord {
     pub id: String,

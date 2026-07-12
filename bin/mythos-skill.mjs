@@ -12,6 +12,7 @@ const root = path.dirname(here);
 
 const COMMANDS = {
   init: { script: null, description: "Scaffold a minimal run directory (delegates to mythos binary)" },
+  run: { script: null, description: "Execute a command and mint a tamper-evident execution receipt (delegates to mythos binary)" },
   compile: { script: "driver.mjs", description: "Compile a run directory into state/next_pass_packet.json" },
   ingest: { script: "scripts/ingest-subagent.mjs", description: "Ingest a subagent markdown file into evidence/findings JSONL" },
   gate: { script: "scripts/strict-gate.mjs", description: "Verify a run dir passes the strict quality gate" },
@@ -63,7 +64,8 @@ function run(command, args) {
       process.stdout.write(`mythos-skill ${pkg.version}\n`);
       return 0;
     }
-    case "init": {
+    case "init":
+    case "run": {
       const mythos = which("mythos");
       if (!mythos) {
         process.stderr.write(
@@ -72,7 +74,7 @@ function run(command, args) {
         );
         return 127;
       }
-      const r = spawnSync(mythos, ["init", ...args], { stdio: "inherit" });
+      const r = spawnSync(mythos, [command, ...args], { stdio: "inherit" });
       return r.status ?? 1;
     }
   }

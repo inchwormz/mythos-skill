@@ -79,7 +79,7 @@ function walkFiles(dir) {
 }
 
 function inputFiles(runDir) {
-  const inputDirs = ["raw", "worker-results", "verifier-results"];
+  const inputDirs = ["raw", "worker-results", "verifier-results", "receipts"];
   return [
     path.join(runDir, "manifest.json"),
     path.join(runDir, "task.md"),
@@ -129,7 +129,36 @@ const ALLOWED_SOURCE_KINDS = new Set([
   "verifier",
   "evidence",
   "objective",
+  "receipt",
 ]);
+
+// M1/M2: receipt journal lookups (ids + labels whose LATEST receipt passed).
+// Chain integrity is enforced at compile time and custody by the input
+// fingerprint; the gate only needs the outcome map.
+let RECEIPTS = { ids: new Set(), passingLabels: new Set() };
+
+function loadReceiptOutcomes(runDir) {
+  const ids = new Set();
+  const latestByLabel = new Map();
+  const file = path.join(runDir, "receipts", "receipts.jsonl");
+  if (fs.existsSync(file)) {
+    for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      try {
+        const record = JSON.parse(trimmed);
+        if (record.id) ids.add(record.id);
+        if (record.label) latestByLabel.set(record.label, record);
+      } catch {
+        // compile already validated; a bad line here just doesn't count
+      }
+    }
+  }
+  const passingLabels = new Set(
+    [...latestByLabel.entries()].filter(([, record]) => record.exit_code === 0).map(([label]) => label),
+  );
+  return { ids, passingLabels };
+}
 
 const MAX_OBSERVED_AT_DRIFT_DAYS = 7;
 
@@ -288,14 +317,24 @@ function checkRawSourceRef(source, runDir, errors, prefix) {
   }
 }
 
-// F2 truth-in-labeling: a "direct source" is a citation whose hash was
-// computed from CONTENT the pipeline observed (today: file refs hashed from
-// disk at ingest; from M2: runtime receipts). Label-hashed command/test/log
-// refs are identity keys, not provenance — they never satisfy this check.
+// F2 + M2 truth-in-labeling: a "direct source" is a citation whose hash was
+// computed from CONTENT the pipeline observed: file refs hashed from disk at
+// ingest, receipt citations present in the runtime journal, or command/test
+// labels whose LATEST receipt actually PASSED. Bare label-hashed refs with no
+// receipt behind them remain identity keys, never provenance.
 function hasDirectSource(record) {
-  return sourceRefs(record).some(
-    (source) => source && source.kind === "file" && source.hash_basis !== "label",
-  );
+  if (
+    sourceRefs(record).some(
+      (source) => source && source.kind === "file" && source.hash_basis !== "label",
+    )
+  ) {
+    return true;
+  }
+  return (record.source_ids ?? []).some((id) => {
+    if (typeof id !== "string") return false;
+    if (id.startsWith("receipt:")) return RECEIPTS.ids.has(id.slice("receipt:".length));
+    return RECEIPTS.passingLabels.has(id);
+  });
 }
 
 function packetSourceIds(packet) {
@@ -420,7 +459,9 @@ function requiresDirectEvidence(record) {
   // `unstructured` records are quarantined prose fallbacks: already demoted,
   // already labeled unverified — requiring provenance would just re-crash
   // lanes the forgiving parser deliberately kept alive.
-  if (["objective", "process", "subagent-session", "codex-synthesis", "blocker", "unstructured"].includes(kind)) return false;
+  // `receipt` records are runtime-authored from the verified journal - they
+  // ARE the provenance.
+  if (["objective", "process", "subagent-session", "codex-synthesis", "blocker", "unstructured", "receipt"].includes(kind)) return false;
   return true;
 }
 
@@ -481,6 +522,7 @@ const KNOWN_EVIDENCE_KINDS = new Set([
   "process-gap",
   "plan",
   "unstructured",
+  "receipt",
 ]);
 
 function checkUnknownEvidenceKinds(evidence, warnings) {
@@ -501,7 +543,7 @@ function checkUnknownEvidenceKinds(evidence, warnings) {
 // `source_ids` of a `subagent-session` record. This closes the "Prime invented
 // evidence outside any lane" laundering path.
 function checkSubagentTraceability(evidence, errors) {
-  const infrastructureKinds = new Set(["objective", "subagent-session", "codex-synthesis"]);
+  const infrastructureKinds = new Set(["objective", "subagent-session", "codex-synthesis", "receipt"]);
   const sessionSourceIds = new Set();
   for (const record of evidence) {
     if (record.kind === "subagent-session") {
@@ -573,8 +615,9 @@ function checkAgentCoverage(evidence, findings, manifest, packet, errors) {
     if (record.id === "ev-objective") continue;
     if (typeof record.id === "string" && record.id.startsWith("ev-subagent-session-")) continue;
     // Unstructured prose fallbacks are not substantive contributions — three
-    // prose-only lanes must not satisfy the diversity floor.
-    if (String(record.kind ?? "") === "unstructured") continue;
+    // prose-only lanes must not satisfy the diversity floor. Runtime receipt
+    // records are the orchestrator's, not a lane's.
+    if (["unstructured", "receipt"].includes(String(record.kind ?? ""))) continue;
     const agentId = record.agent_id;
     if (typeof agentId === "string" && agentId.trim().length > 0) {
       distinct.add(agentId.trim());
@@ -618,6 +661,7 @@ function main() {
     typeof manifest?.repo_root === "string" && manifest.repo_root.length > 0
       ? manifest.repo_root
       : null;
+  RECEIPTS = loadReceiptOutcomes(runDir);
 
   const staleness = stalePacket(runDir);
   if (staleness === "missing") {
@@ -736,6 +780,14 @@ function main() {
   const nonPassingFindings = findings.filter((record) => record.status !== "passed");
   if (nonPassingFindings.length > 0) {
     errors.push(`non-passing verifier findings remain: ${nonPassingFindings.map((record) => record.id).join(", ")}`);
+  }
+
+  // M2: receipt refutations are non-negotiable reds. The compiler detected a
+  // passed claim whose cited check actually FAILED when executed.
+  for (const contradiction of packet?.contradictions ?? []) {
+    if (String(contradiction.id ?? "").startsWith("con:receipt:")) {
+      errors.push(`refuted by execution receipt: ${contradiction.summary}`);
+    }
   }
 
   const haltKinds = (packet?.halt_signals ?? []).map((signal) => signal.kind);

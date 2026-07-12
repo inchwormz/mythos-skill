@@ -8,6 +8,9 @@ pub use compiler::journal::{JournalEvent, append_decision_log, append_event_json
 pub use compiler::lookup::lookup_sources;
 pub use compiler::packets::{CompilerInputBundle, build_next_pass_packet};
 pub use compiler::promotion::{PromotionCandidate, promotion_record_from_candidate};
+pub use compiler::receipts::{
+    append_receipt, git_tree_state, load_verified_receipts, store_artifact,
+};
 pub use compiler::signals::detect_recurring_failure_patterns;
 pub use compiler::snapshot::{SnapshotValidationError, build_snapshot};
 pub use compiler::trust::{PacketizableItem, TrustAssessment, TrustDecision, assess_packet_item};

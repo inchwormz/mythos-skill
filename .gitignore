@@ -15,3 +15,6 @@ readiness-new-packet.json
 .DS_Store
 Thumbs.db
 *.swp
+
+# Project-local Receipts run dirs (created by driver.mjs / mythos-skill compile)
+.mythos/

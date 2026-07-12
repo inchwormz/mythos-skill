@@ -3,12 +3,13 @@ use crate::compiler::contradictions::detect_auto_contradictions;
 use crate::compiler::evidence::is_direct_source_id;
 use crate::compiler::journal::append_decision_log;
 use crate::compiler::packets::{CompilerInputBundle, build_next_pass_packet};
+use crate::compiler::receipts::load_verified_receipts;
 use crate::compiler::signals::detect_recurring_failure_patterns;
 use crate::compiler::snapshot::build_snapshot;
 use crate::schema::{
     CandidateAction, CompiledFact, Contradiction, DecisionLogRecord, EvidenceRecord, HaltSignal,
-    Hypothesis, MYTHOS_HASH_ALG, SnapshotInput, SourceRef, StateDelta, VerifierFinding,
-    WorkerResult,
+    Hypothesis, MYTHOS_HASH_ALG, ReceiptRecord, SnapshotInput, SourceRef, StateDelta,
+    VerifierFinding, WorkerResult,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeSet, HashMap};
@@ -54,7 +55,17 @@ pub fn compile_run_dir(run_dir: &Path) -> Result<RunDirCompileReport, Box<dyn st
     let repo_root = manifest.repo_root.as_deref();
     verify_declared_file_refs(run_dir, repo_root, &worker_evidence, &verifier_findings)?;
 
+    // M1/M2: load the execution-receipt journal. A broken hash chain is a
+    // hard compile error - receipts are the one artifact whose integrity is
+    // non-negotiable. Each receipt becomes a packet source plus a
+    // runtime-authored evidence record, and receipt outcomes attest or refute
+    // claims below.
+    let receipts = load_verified_receipts(run_dir)?;
+    let mut worker_evidence = worker_evidence;
+    worker_evidence.extend(receipts.iter().map(receipt_evidence_record));
+
     let mut sources = raw_sources.clone();
+    sources.extend(receipts.iter().map(receipt_source_ref));
     sources.extend(evidence_declared_sources(&worker_evidence));
     sources.extend(verifier_declared_sources(&verifier_findings));
     sources.extend(evidence_sources(&worker_evidence));
@@ -96,12 +107,21 @@ pub fn compile_run_dir(run_dir: &Path) -> Result<RunDirCompileReport, Box<dyn st
     // records. This surfaces disagreement between workers that cite the same
     // direct source (file/command/test) with differing summaries or attribution
     // so Prime can see it in the recompiled packet.
-    let auto_contradictions = detect_auto_contradictions(&worker_evidence);
-    // F1: trusted_facts are GATED, not relabeled evidence. Only verifier-backed,
-    // uncontradicted, warning-free records promote; everything else stays in
-    // the evidence section.
-    let trusted_facts =
-        facts_from_evidence(&worker_evidence, &verifier_findings, &auto_contradictions);
+    let mut auto_contradictions = detect_auto_contradictions(&worker_evidence);
+    // M2: a passed verifier finding whose cited label has a FAILING latest
+    // receipt is refuted mechanically - the strongest signal this system
+    // produces, and it requires zero agent cooperation.
+    auto_contradictions.extend(detect_receipt_refutations(&verifier_findings, &receipts));
+    auto_contradictions.sort_by(|a, b| a.id.cmp(&b.id));
+    // F1 + M2: trusted_facts are GATED, not relabeled evidence. Receipt-backed
+    // records promote as "attested"; verifier-backed as "verifier"; everything
+    // else stays in the evidence section.
+    let trusted_facts = facts_from_evidence(
+        &worker_evidence,
+        &verifier_findings,
+        &auto_contradictions,
+        &receipts,
+    );
     let packet = build_next_pass_packet(CompilerInputBundle {
         objective_id: manifest.objective_id.clone(),
         run_id: manifest.run_id.clone(),
@@ -189,7 +209,7 @@ fn write_input_fingerprint(
             files.push(candidate);
         }
     }
-    for dir in ["raw", "worker-results", "verifier-results"] {
+    for dir in ["raw", "worker-results", "verifier-results", "receipts"] {
         collect_files_recursive(&run_dir.join(dir), &mut files)?;
     }
     files.sort_by_key(|path| path.to_string_lossy().to_string());
@@ -525,20 +545,133 @@ const NON_FACT_KINDS: &[&str] = &[
     "blocker",
 ];
 
-/// F1: the attestation ladder, tier "verifier". A record becomes a trusted
-/// fact only when (a) a PASSED verifier finding backs it — by sharing one of
-/// its direct source ids or by citing `evidence:<its id>` explicitly, (b) no
-/// auto-contradiction names it, and (c) ingest attached no provenance
-/// warnings. Everything else stays in the evidence section. Tier "attested"
-/// (runtime receipts) lands in M2.
+/// One packet source per receipt: content-hashed (the record_hash covers the
+/// receipt's full content), span = receipt id inside the journal.
+fn receipt_source_ref(receipt: &ReceiptRecord) -> SourceRef {
+    SourceRef {
+        source_id: format!("receipt:{}", receipt.id),
+        path: "receipts/receipts.jsonl".to_string(),
+        kind: "receipt".to_string(),
+        hash: receipt.record_hash.clone(),
+        hash_alg: MYTHOS_HASH_ALG.to_string(),
+        hash_basis: Some("content".to_string()),
+        span: Some(receipt.id.clone()),
+        observed_at: receipt.ended_at.clone(),
+    }
+}
+
+/// One runtime-authored evidence record per receipt. Agents cannot write
+/// these (ingest downgrades impersonations); they enter the packet straight
+/// from the verified journal.
+fn receipt_evidence_record(receipt: &ReceiptRecord) -> EvidenceRecord {
+    let label_note = receipt
+        .label
+        .as_deref()
+        .map(|label| format!(" [attests {label}]"))
+        .unwrap_or_default();
+    EvidenceRecord {
+        id: format!("ev-{}", receipt.id),
+        kind: "receipt".to_string(),
+        summary: format!(
+            "mythos run: `{}` exited {} in {}ms{}",
+            receipt.cmd.join(" "),
+            receipt.exit_code,
+            receipt.duration_ms,
+            label_note
+        ),
+        source_ids: vec![format!("receipt:{}", receipt.id)],
+        source_refs: vec![],
+        observed_at: receipt.ended_at.clone(),
+        agent_id: receipt.agent_id.clone(),
+        lane: receipt.lane.clone(),
+        confidence: Some(1.0),
+        rationale: None,
+        diff_ref: None,
+        span_before: receipt.tree_before.clone(),
+        span_after: receipt.tree_after.clone(),
+        claimed_agent_id: None,
+        claimed_lane: None,
+        provenance_warnings: vec![],
+    }
+}
+
+/// Latest receipt per label wins (retries are legitimate; the final state of
+/// a check is its state).
+fn latest_receipt_per_label(receipts: &[ReceiptRecord]) -> HashMap<&str, &ReceiptRecord> {
+    let mut latest: HashMap<&str, &ReceiptRecord> = HashMap::new();
+    for receipt in receipts {
+        if let Some(label) = receipt.label.as_deref() {
+            latest.insert(label, receipt);
+        }
+    }
+    latest
+}
+
+/// M2: mechanical refutation. A PASSED verifier finding citing a label whose
+/// latest receipt FAILED is contradicted by ground truth - no judgment, no
+/// agent cooperation involved.
+fn detect_receipt_refutations(
+    findings: &[VerifierFinding],
+    receipts: &[ReceiptRecord],
+) -> Vec<Contradiction> {
+    let latest = latest_receipt_per_label(receipts);
+    let mut out = Vec::new();
+    for finding in findings.iter().filter(|finding| finding.status == "passed") {
+        for source_id in &finding.source_ids {
+            let Some(receipt) = latest.get(source_id.as_str()) else {
+                continue;
+            };
+            if receipt.exit_code == 0 {
+                continue;
+            }
+            out.push(Contradiction {
+                id: format!("con:receipt:{}:{}", finding.id, receipt.id),
+                summary: format!(
+                    "Verifier finding {} claims \"{}\" passed, but receipt {} ran `{}` and it exited {} - the claim is refuted by execution",
+                    finding.id,
+                    source_id,
+                    receipt.id,
+                    receipt.cmd.join(" "),
+                    receipt.exit_code
+                ),
+                conflicting_item_ids: vec![finding.id.clone()],
+                severity: "high".to_string(),
+                source_ids: vec![
+                    format!("receipt:{}", receipt.id),
+                    format!("verifier:{}", finding.id),
+                ],
+                source_refs: None,
+            });
+        }
+    }
+    out
+}
+
+/// F1 + M2: the attestation ladder. Tier "attested": the record cites a
+/// verified receipt directly, or cites a label whose latest receipt PASSED.
+/// Tier "verifier": a passed verifier finding backs it (shared direct source
+/// or explicit `evidence:<id>` citation). Both tiers still require: no
+/// contradiction naming the record, no provenance warnings, non-infrastructure
+/// kind - except runtime receipt records, which are attested by construction.
 fn facts_from_evidence(
     evidence: &[EvidenceRecord],
     findings: &[VerifierFinding],
     contradictions: &[Contradiction],
+    receipts: &[ReceiptRecord],
 ) -> Vec<CompiledFact> {
     let contradicted: BTreeSet<&str> = contradictions
         .iter()
         .flat_map(|item| item.conflicting_item_ids.iter().map(String::as_str))
+        .collect();
+
+    let valid_receipt_ids: BTreeSet<String> = receipts
+        .iter()
+        .map(|receipt| format!("receipt:{}", receipt.id))
+        .collect();
+    let passing_labels: BTreeSet<&str> = latest_receipt_per_label(receipts)
+        .into_iter()
+        .filter(|(_, receipt)| receipt.exit_code == 0)
+        .map(|(label, _)| label)
         .collect();
 
     let mut passing_direct_sources: BTreeSet<&str> = BTreeSet::new();
@@ -555,25 +688,36 @@ fn facts_from_evidence(
 
     evidence
         .iter()
-        .filter(|item| !NON_FACT_KINDS.contains(&item.kind.as_str()))
+        .filter(|item| item.kind == "receipt" || !NON_FACT_KINDS.contains(&item.kind.as_str()))
         .filter(|item| item.provenance_warnings.is_empty())
         .filter(|item| !contradicted.contains(item.id.as_str()))
-        .filter(|item| {
-            verified_evidence_ids.contains(item.id.as_str())
+        .filter_map(|item| {
+            let attested = item.kind == "receipt"
+                || item.source_ids.iter().any(|id| {
+                    valid_receipt_ids.contains(id) || passing_labels.contains(id.as_str())
+                });
+            let verifier_backed = verified_evidence_ids.contains(item.id.as_str())
                 || item
                     .source_ids
                     .iter()
-                    .any(|id| passing_direct_sources.contains(id.as_str()))
-        })
-        .map(|item| CompiledFact {
-            id: format!("fact:{}", item.id),
-            statement: item.summary.clone(),
-            confidence: item.confidence.map(|value| value as f32).unwrap_or(0.7),
-            objective_relevance: 0.8,
-            novelty_gain: 0.3,
-            needs_raw_drilldown: false,
-            source_ids: item.source_ids.clone(),
-            attestation: Some("verifier".to_string()),
+                    .any(|id| passing_direct_sources.contains(id.as_str()));
+            let attestation = if attested {
+                "attested"
+            } else if verifier_backed {
+                "verifier"
+            } else {
+                return None;
+            };
+            Some(CompiledFact {
+                id: format!("fact:{}", item.id),
+                statement: item.summary.clone(),
+                confidence: item.confidence.map(|value| value as f32).unwrap_or(0.7),
+                objective_relevance: 0.8,
+                novelty_gain: 0.3,
+                needs_raw_drilldown: false,
+                source_ids: item.source_ids.clone(),
+                attestation: Some(attestation.to_string()),
+            })
         })
         .collect()
 }

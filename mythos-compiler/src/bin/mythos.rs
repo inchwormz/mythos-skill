@@ -1,4 +1,6 @@
+use mythos_skill::compiler::receipts::{append_receipt, git_tree_state, store_artifact};
 use mythos_skill::compiler::run_dir::compile_run_dir;
+use mythos_skill::schema::ReceiptRecord;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -38,6 +40,10 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 .unwrap_or(std::env::current_dir()?);
             init_run_dir(&dir, &repo_root)
         }
+        "run" => {
+            let rest: Vec<String> = args.collect();
+            run_with_receipt(rest)
+        }
         "compile" => {
             let run_dir = parse_run_dir(args.collect())?;
             preflight_run_dir(&run_dir)?;
@@ -65,7 +71,10 @@ USAGE:
     mythos <COMMAND> [ARGS]
 
 COMMANDS:
-    init <dir>              Scaffold a minimal run directory (manifest, task, empty input dirs)
+    init <dir> [--repo-root <path>]   Scaffold a run directory (repo_root defaults to cwd)
+    run --run-dir <dir> [--lane L] [--agent-id A] [--label test:name] -- <command...>
+                            Execute a command and mint a tamper-evident execution
+                            receipt in receipts/receipts.jsonl (exit code = child's)
     compile --run-dir <dir> Compile a run directory into state/next_pass_packet.json
     --version, -V           Print version
     --help, -h              Print this help
@@ -115,6 +124,103 @@ fn parse_path_arg(args: Vec<String>, cmd: &str) -> Result<PathBuf, Box<dyn std::
 fn parse_flag_value(args: &[String], flag: &str) -> Option<String> {
     let index = args.iter().position(|arg| arg == flag)?;
     args.get(index + 1).cloned()
+}
+
+/// M1: execute a command and mint an execution receipt the agent cannot
+/// author. Exits with the CHILD's exit code so orchestrator scripting sees
+/// reality; the receipt is minted either way.
+fn run_with_receipt(args: Vec<String>) -> Result<(), Box<dyn std::error::Error>> {
+    let separator = args
+        .iter()
+        .position(|arg| arg == "--")
+        .ok_or("`run` usage: mythos run --run-dir <dir> [--lane L] [--agent-id A] [--label test:name] -- <command...>")?;
+    let (flags, command_line) = args.split_at(separator);
+    let command_line = &command_line[1..];
+    if command_line.is_empty() {
+        return Err("`run` requires a command after `--`".into());
+    }
+    let flags: Vec<String> = flags.to_vec();
+    let run_dir = PathBuf::from(
+        parse_flag_value(&flags, "--run-dir").ok_or("`run` requires --run-dir <dir>")?,
+    );
+    preflight_run_dir(&run_dir)?;
+    let lane = parse_flag_value(&flags, "--lane");
+    let agent_id = parse_flag_value(&flags, "--agent-id");
+    let label = parse_flag_value(&flags, "--label");
+
+    let repo_root: Option<String> = fs::read_to_string(run_dir.join("manifest.json"))
+        .ok()
+        .and_then(|text| serde_json::from_str::<serde_json::Value>(&text).ok())
+        .and_then(|value| value["repo_root"].as_str().map(str::to_string));
+
+    let cwd = std::env::current_dir()?;
+    let tree_before = git_tree_state(repo_root.as_deref());
+    let started_at = iso_now();
+    let start = std::time::Instant::now();
+    let output = std::process::Command::new(&command_line[0])
+        .args(&command_line[1..])
+        .current_dir(&cwd)
+        .output()
+        .map_err(|err| {
+            format!(
+                "failed to launch `{}`: {err}. Note: shell builtins and .cmd scripts need an explicit shell, e.g. mythos run ... -- bash -lc \"<line>\"",
+                command_line[0]
+            )
+        })?;
+    let duration_ms = start.elapsed().as_millis() as u64;
+    let ended_at = iso_now();
+    let tree_after = git_tree_state(repo_root.as_deref());
+    let exit_code = i64::from(output.status.code().unwrap_or(-1));
+
+    let (stdout_hash, stdout_artifact) = store_artifact(&run_dir, &output.stdout)?;
+    let (stderr_hash, stderr_artifact) = store_artifact(&run_dir, &output.stderr)?;
+    let tail = |bytes: &[u8]| -> String {
+        let text = String::from_utf8_lossy(bytes);
+        let chars: Vec<char> = text.chars().collect();
+        let start = chars.len().saturating_sub(2000);
+        chars[start..].iter().collect()
+    };
+
+    let record = append_receipt(
+        &run_dir,
+        ReceiptRecord {
+            id: String::new(),
+            label,
+            cmd: command_line.to_vec(),
+            cwd: cwd.to_string_lossy().to_string(),
+            exit_code,
+            duration_ms,
+            started_at,
+            ended_at,
+            stdout_hash,
+            stderr_hash,
+            stdout_tail: tail(&output.stdout),
+            stderr_tail: tail(&output.stderr),
+            tree_before,
+            tree_after,
+            lane,
+            agent_id,
+            writer: format!("mythos/{VERSION}"),
+            prev_record_hash: String::new(),
+            record_hash: String::new(),
+        },
+    )?;
+
+    println!(
+        "{}",
+        serde_json::json!({
+            "ok": true,
+            "receipt": record.id,
+            "record_hash": record.record_hash,
+            "label": record.label,
+            "exit_code": exit_code,
+            "duration_ms": duration_ms,
+            "stdout_artifact": stdout_artifact,
+            "stderr_artifact": stderr_artifact,
+            "cite_as": format!("receipt:{}", record.id),
+        })
+    );
+    std::process::exit(exit_code as i32);
 }
 
 fn preflight_run_dir(run_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
