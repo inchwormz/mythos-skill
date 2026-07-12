@@ -25,6 +25,12 @@ pub struct SourceRef {
     pub hash: String,
     #[serde(default = "default_hash_alg")]
     pub hash_alg: String,
+    /// "content" when the hash was computed from on-disk bytes, "label" when it
+    /// was derived from the source_id string (command/test/log refs before
+    /// receipts exist). Label-hashed refs are identity keys, NOT provenance:
+    /// they never satisfy direct-anchor requirements.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub hash_basis: Option<String>,
     pub span: Option<String>,
     pub observed_at: String,
 }
@@ -38,6 +44,11 @@ pub struct CompiledFact {
     pub novelty_gain: f32,
     pub needs_raw_drilldown: bool,
     pub source_ids: Vec<String>,
+    /// How this fact earned trusted status: "verifier" (passed verifier
+    /// finding backs it) today; "attested" (runtime receipt) from M2.
+    /// Absent only on packets predating the attestation ladder.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub attestation: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -63,6 +74,16 @@ pub struct EvidenceRecord {
     pub span_before: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub span_after: Option<String>,
+    /// Identity the record claimed for itself when it differed from the
+    /// caller's ingest stamp. The stamped agent_id/lane always win (F4).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub claimed_agent_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub claimed_lane: Option<String>,
+    /// Non-empty when ingest had to repair the record (e.g. span clipped to
+    /// the file's real line count). Demoted records are never fact-eligible.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub provenance_warnings: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -127,6 +148,17 @@ pub struct VerifierFinding {
     /// ("AUDIT-SCOPE PASSED:" etc.) Prime used in Pass 1/2 becomes typed.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub closure_reason: Option<String>,
+    /// Typed role for infrastructure findings ("synthesis", "subagent-session",
+    /// "bootstrap"). The strict gate keys exemptions on this field, never on
+    /// free text in ids/summaries (F6).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub finding_kind: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub claimed_agent_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub claimed_lane: Option<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub provenance_warnings: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

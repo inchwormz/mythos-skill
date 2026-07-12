@@ -270,6 +270,9 @@ mod tests {
             diff_ref: None,
             span_before: None,
             span_after: None,
+            claimed_agent_id: None,
+            claimed_lane: None,
+            provenance_warnings: vec![],
         }
     }
 

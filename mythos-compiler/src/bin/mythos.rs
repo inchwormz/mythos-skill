@@ -31,8 +31,12 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             Ok(())
         }
         "init" => {
-            let dir = parse_path_arg(args.collect(), "init")?;
-            init_run_dir(&dir)
+            let rest: Vec<String> = args.collect();
+            let dir = parse_path_arg(rest.clone(), "init")?;
+            let repo_root = parse_flag_value(&rest, "--repo-root")
+                .map(PathBuf::from)
+                .unwrap_or(std::env::current_dir()?);
+            init_run_dir(&dir, &repo_root)
         }
         "compile" => {
             let run_dir = parse_run_dir(args.collect())?;
@@ -93,12 +97,24 @@ fn parse_run_dir(args: Vec<String>) -> Result<PathBuf, Box<dyn std::error::Error
 }
 
 fn parse_path_arg(args: Vec<String>, cmd: &str) -> Result<PathBuf, Box<dyn std::error::Error>> {
-    args.into_iter()
-        .find(|a| !a.starts_with("--"))
-        .map(PathBuf::from)
-        .ok_or_else(|| {
-            format!("`{cmd}` requires a directory path — try `mythos {cmd} my-run`").into()
-        })
+    let mut skip_next = false;
+    for arg in args {
+        if skip_next {
+            skip_next = false;
+            continue;
+        }
+        if arg.starts_with("--") {
+            skip_next = true; // flags in init take a value
+            continue;
+        }
+        return Ok(PathBuf::from(arg));
+    }
+    Err(format!("`{cmd}` requires a directory path — try `mythos {cmd} my-run`").into())
+}
+
+fn parse_flag_value(args: &[String], flag: &str) -> Option<String> {
+    let index = args.iter().position(|arg| arg == flag)?;
+    args.get(index + 1).cloned()
 }
 
 fn preflight_run_dir(run_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
@@ -122,7 +138,7 @@ fn preflight_run_dir(run_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn init_run_dir(dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
+fn init_run_dir(dir: &Path, repo_root: &Path) -> Result<(), Box<dyn std::error::Error>> {
     if dir.exists() && fs::read_dir(dir)?.next().is_some() {
         return Err(format!(
             "`{}` exists and is not empty — refusing to overwrite. Pick a new path.",
@@ -143,11 +159,12 @@ fn init_run_dir(dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
         .to_string();
 
     let manifest = format!(
-        "{{\n  \"run_id\": \"{}\",\n  \"objective_id\": \"obj-{}\",\n  \"objective\": \"{}\",\n  \"branch_id\": \"main\",\n  \"pass_id\": \"pass-0001\",\n  \"created_at\": \"{}\"\n}}\n",
+        "{{\n  \"run_id\": \"{}\",\n  \"objective_id\": \"obj-{}\",\n  \"objective\": \"{}\",\n  \"branch_id\": \"main\",\n  \"pass_id\": \"pass-0001\",\n  \"created_at\": \"{}\",\n  \"repo_root\": {}\n}}\n",
         run_id,
         chrono_like_stamp(),
         objective.replace('"', "\\\""),
-        iso_now()
+        iso_now(),
+        json_escape_string(&repo_root.to_string_lossy())
     );
     fs::write(dir.join("manifest.json"), manifest)?;
 
@@ -171,9 +188,10 @@ fn init_run_dir(dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
     );
     fs::write(dir.join("worker-results/evidence.jsonl"), seed_evidence)?;
 
-    let seed_finding = format!(
-        "{{\"id\":\"vf-synthesis-pending\",\"summary\":\"Synthesis has not consumed this packet yet\",\"status\":\"pending\",\"verifier_score\":0.0,\"source_ids\":[\"raw:objective.md\"]}}\n"
-    );
+    // F5: this id MUST match what the synthesis recorder consumes
+    // (`vf-codex-synthesis-pending`) — the Rust and JS halves shipping
+    // different ids made every Rust-scaffolded run permanently gate-red.
+    let seed_finding = "{\"id\":\"vf-codex-synthesis-pending\",\"summary\":\"Codex synthesis has not consumed this packet yet\",\"status\":\"pending\",\"verifier_score\":0.0,\"source_ids\":[\"raw:objective.md\"],\"finding_kind\":\"synthesis\"}\n".to_string();
     fs::write(dir.join("verifier-results/findings.jsonl"), seed_finding)?;
 
     println!(

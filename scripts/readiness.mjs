@@ -287,6 +287,7 @@ function addSyntheticSubagentEvidence(runDir) {
         status: "passed",
         verifier_score: 0.9,
         source_ids: ["raw:objective.md"],
+        finding_kind: "bootstrap",
       }),
       "```",
       "",

@@ -85,6 +85,7 @@
         "kind": { "type": "string", "minLength": 1 },
         "hash": { "type": "string", "pattern": "^[0-9a-f]{16}$" },
         "hash_alg": { "type": "string", "enum": ["fnv1a-64"] },
+        "hash_basis": { "type": "string", "enum": ["content", "label"] },
         "span": { "type": ["string", "null"] },
         "observed_at": { "type": "string", "minLength": 1 }
       },
@@ -116,7 +117,8 @@
         "source_refs": {
           "type": "array",
           "items": { "$ref": "#/$defs/sourceRef" }
-        }
+        },
+        "attestation": { "type": "string", "enum": ["verifier", "attested"] }
       },
       "additionalProperties": false
     },
@@ -143,7 +145,13 @@
         "rationale": { "type": "string" },
         "diff_ref": { "type": "string" },
         "span_before": { "type": "string" },
-        "span_after": { "type": "string" }
+        "span_after": { "type": "string" },
+        "claimed_agent_id": { "type": "string" },
+        "claimed_lane": { "type": "string" },
+        "provenance_warnings": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
       },
       "additionalProperties": false
     },
@@ -253,7 +261,14 @@
         },
         "agent_id": { "type": "string" },
         "lane": { "type": "string" },
-        "closure_reason": { "type": "string", "minLength": 1 }
+        "closure_reason": { "type": "string", "minLength": 1 },
+        "finding_kind": { "type": "string", "enum": ["synthesis", "subagent-session", "bootstrap"] },
+        "claimed_agent_id": { "type": "string" },
+        "claimed_lane": { "type": "string" },
+        "provenance_warnings": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
       },
       "additionalProperties": false
     },

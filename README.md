@@ -1,5 +1,7 @@
 # mythos-skill
 
+> **This engine is becoming [Receipts](./MYTHOS-ENGINE-PLAN.md)** — proof-of-work for AI agent claims. Product renamed 2026-07-12; the binary/crate/package renames land with milestone M3 of the plan. Campaign state: [RECEIPTS-LEDGER.md](./RECEIPTS-LEDGER.md).
+
 Explicit-state recurrent synthesis for AI agent orchestration. A deterministic packet compiler that takes raw subagent output and compiles a schema-validated, hash-provenanced next-pass packet that Prime can reason over without consuming raw subagent prose.
 
 [![crates.io](https://img.shields.io/crates/v/mythos-skill)](https://crates.io/crates/mythos-skill) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)

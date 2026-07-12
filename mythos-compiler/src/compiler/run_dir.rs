@@ -1,12 +1,14 @@
 use crate::compiler::artifacts::ArtifactRef;
 use crate::compiler::contradictions::detect_auto_contradictions;
+use crate::compiler::evidence::is_direct_source_id;
 use crate::compiler::journal::append_decision_log;
 use crate::compiler::packets::{CompilerInputBundle, build_next_pass_packet};
 use crate::compiler::signals::detect_recurring_failure_patterns;
 use crate::compiler::snapshot::build_snapshot;
 use crate::schema::{
-    CandidateAction, CompiledFact, DecisionLogRecord, EvidenceRecord, HaltSignal, Hypothesis,
-    MYTHOS_HASH_ALG, SnapshotInput, SourceRef, StateDelta, VerifierFinding, WorkerResult,
+    CandidateAction, CompiledFact, Contradiction, DecisionLogRecord, EvidenceRecord, HaltSignal,
+    Hypothesis, MYTHOS_HASH_ALG, SnapshotInput, SourceRef, StateDelta, VerifierFinding,
+    WorkerResult,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeSet, HashMap};
@@ -21,6 +23,12 @@ pub struct RunManifest {
     pub branch_id: String,
     pub pass_id: String,
     pub created_at: String,
+    /// F3: the project root that `file:` citations resolve against. Recorded
+    /// at run creation; without it, file refs outside the run dir cannot be
+    /// verified (there is deliberately no fallback to any build-time or
+    /// package-relative root).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub repo_root: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -43,7 +51,8 @@ pub fn compile_run_dir(run_dir: &Path) -> Result<RunDirCompileReport, Box<dyn st
     let verifier_findings =
         read_jsonl::<VerifierFinding>(&run_dir.join("verifier-results/findings.jsonl"))?;
 
-    verify_declared_file_refs(run_dir, &worker_evidence, &verifier_findings)?;
+    let repo_root = manifest.repo_root.as_deref();
+    verify_declared_file_refs(run_dir, repo_root, &worker_evidence, &verifier_findings)?;
 
     let mut sources = raw_sources.clone();
     sources.extend(evidence_declared_sources(&worker_evidence));
@@ -88,6 +97,11 @@ pub fn compile_run_dir(run_dir: &Path) -> Result<RunDirCompileReport, Box<dyn st
     // direct source (file/command/test) with differing summaries or attribution
     // so Prime can see it in the recompiled packet.
     let auto_contradictions = detect_auto_contradictions(&worker_evidence);
+    // F1: trusted_facts are GATED, not relabeled evidence. Only verifier-backed,
+    // uncontradicted, warning-free records promote; everything else stays in
+    // the evidence section.
+    let trusted_facts =
+        facts_from_evidence(&worker_evidence, &verifier_findings, &auto_contradictions);
     let packet = build_next_pass_packet(CompilerInputBundle {
         objective_id: manifest.objective_id.clone(),
         run_id: manifest.run_id.clone(),
@@ -95,7 +109,7 @@ pub fn compile_run_dir(run_dir: &Path) -> Result<RunDirCompileReport, Box<dyn st
         pass_id: manifest.pass_id.clone(),
         objective,
         evidence: worker_evidence.clone(),
-        trusted_facts: facts_from_evidence(&worker_evidence),
+        trusted_facts,
         active_hypotheses: hypotheses_from_failures(&verifier_findings),
         contradictions: auto_contradictions,
         recurring_failure_patterns: recurring_patterns,
@@ -139,6 +153,11 @@ pub fn compile_run_dir(run_dir: &Path) -> Result<RunDirCompileReport, Box<dyn st
         },
     )?;
 
+    // F12: the compiler is the single writer of the input fingerprint. The
+    // strict gate refuses to run without it (no mtime fallback), so staleness
+    // is always judged against content hashes of the actual inputs.
+    write_input_fingerprint(run_dir, &state_dir)?;
+
     Ok(RunDirCompileReport {
         snapshot_path,
         packet_path,
@@ -146,6 +165,66 @@ pub fn compile_run_dir(run_dir: &Path) -> Result<RunDirCompileReport, Box<dyn st
         evidence_count: packet.evidence.len(),
         verifier_finding_count: packet.verifier_findings.len(),
     })
+}
+
+#[derive(Serialize)]
+struct FingerprintEntry {
+    path: String,
+    size: u64,
+    hash: String,
+}
+
+/// Mirrors the JS `inputFingerprint` shape exactly: manifest.json, task.md,
+/// and every file under raw/, worker-results/, verifier-results/, sorted by
+/// absolute path string, each entry carrying run-dir-relative forward-slash
+/// path, byte size, and fnv1a-64 content hash.
+fn write_input_fingerprint(
+    run_dir: &Path,
+    state_dir: &Path,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let mut files: Vec<PathBuf> = Vec::new();
+    for name in ["manifest.json", "task.md"] {
+        let candidate = run_dir.join(name);
+        if candidate.exists() {
+            files.push(candidate);
+        }
+    }
+    for dir in ["raw", "worker-results", "verifier-results"] {
+        collect_files_recursive(&run_dir.join(dir), &mut files)?;
+    }
+    files.sort_by_key(|path| path.to_string_lossy().to_string());
+
+    let mut entries: Vec<FingerprintEntry> = Vec::new();
+    for file in files {
+        let bytes = fs::read(&file)?;
+        entries.push(FingerprintEntry {
+            path: file
+                .strip_prefix(run_dir)?
+                .to_string_lossy()
+                .replace('\\', "/"),
+            size: bytes.len() as u64,
+            hash: fnv1a_hash(&bytes),
+        });
+    }
+    write_json(&state_dir.join("input_fingerprint.json"), &entries)
+}
+
+fn collect_files_recursive(
+    dir: &Path,
+    files: &mut Vec<PathBuf>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    if !dir.exists() {
+        return Ok(());
+    }
+    for entry in fs::read_dir(dir)? {
+        let path = entry?.path();
+        if path.is_dir() {
+            collect_files_recursive(&path, files)?;
+        } else if path.is_file() {
+            files.push(path);
+        }
+    }
+    Ok(())
 }
 
 fn read_json<T>(path: &Path) -> Result<T, Box<dyn std::error::Error>>
@@ -231,6 +310,7 @@ fn collect_raw_sources(
                 kind: "raw".to_string(),
                 hash: fnv1a_hash(&bytes),
                 hash_alg: MYTHOS_HASH_ALG.to_string(),
+                hash_basis: Some("content".to_string()),
                 span: None,
                 observed_at: observed_at.to_string(),
             });
@@ -248,6 +328,7 @@ fn evidence_sources(evidence: &[EvidenceRecord]) -> Vec<SourceRef> {
             kind: item.kind.clone(),
             hash: fnv1a_hash(item.summary.as_bytes()),
             hash_alg: MYTHOS_HASH_ALG.to_string(),
+            hash_basis: None,
             span: Some(item.id.clone()),
             observed_at: item.observed_at.clone(),
         })
@@ -270,6 +351,7 @@ fn verifier_sources(findings: &[VerifierFinding], observed_at: &str) -> Vec<Sour
             kind: "verifier".to_string(),
             hash: fnv1a_hash(finding.summary.as_bytes()),
             hash_alg: MYTHOS_HASH_ALG.to_string(),
+            hash_basis: None,
             span: Some(finding.id.clone()),
             observed_at: observed_at.to_string(),
         })
@@ -310,15 +392,23 @@ fn dedupe_sources_strict(sources: &mut Vec<SourceRef>) -> Result<(), Box<dyn std
 
 fn verify_declared_file_refs(
     run_dir: &Path,
+    repo_root: Option<&str>,
     evidence: &[EvidenceRecord],
     findings: &[VerifierFinding],
 ) -> Result<(), Box<dyn std::error::Error>> {
     for record in evidence {
-        verify_record_file_refs(run_dir, "evidence", &record.id, &record.source_refs)?;
+        verify_record_file_refs(
+            run_dir,
+            repo_root,
+            "evidence",
+            &record.id,
+            &record.source_refs,
+        )?;
     }
     for finding in findings {
         verify_record_file_refs(
             run_dir,
+            repo_root,
             "verifier_finding",
             &finding.id,
             &finding.source_refs,
@@ -329,6 +419,7 @@ fn verify_declared_file_refs(
 
 fn verify_record_file_refs(
     run_dir: &Path,
+    repo_root: Option<&str>,
     label: &str,
     id: &str,
     refs: &[SourceRef],
@@ -344,10 +435,12 @@ fn verify_record_file_refs(
         if source.kind != "file" {
             continue;
         }
-        let resolved = resolve_source_path(run_dir, &source.path);
+        let resolved = resolve_source_path(run_dir, repo_root, &source.path);
         let bytes = fs::read(&resolved).map_err(|err| {
             format!(
-                "{label} `{id}` source_ref `{}` file path not readable: {} ({err})",
+                "{label} `{id}` source_ref `{}` file path not readable: {} ({err}). \
+                 File refs resolve against the run dir, then manifest.repo_root — \
+                 if this citation targets the project tree, ensure repo_root is set in manifest.json",
                 source.source_id,
                 resolved.display()
             )
@@ -397,7 +490,7 @@ fn verify_line_span(
     Ok(())
 }
 
-fn resolve_source_path(run_dir: &Path, source_path: &str) -> PathBuf {
+fn resolve_source_path(run_dir: &Path, repo_root: Option<&str>, source_path: &str) -> PathBuf {
     let candidate = PathBuf::from(source_path);
     if candidate.is_absolute() {
         return candidate;
@@ -409,11 +502,12 @@ fn resolve_source_path(run_dir: &Path, source_path: &str) -> PathBuf {
         return inside_run;
     }
 
-    // Fall back to repo-root resolution so file:/test:/command: refs that live
-    // outside run_dir (e.g. the source tree) still verify.
-    let repo_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    if let Some(parent) = repo_root.parent() {
-        let candidate_abs = parent.join(&candidate);
+    // F3: project-tree refs resolve ONLY against the manifest's recorded
+    // repo_root. There is deliberately no build-time or package-relative
+    // fallback — that class of fallback made citations verify against the
+    // wrong repository.
+    if let Some(root) = repo_root {
+        let candidate_abs = Path::new(root).join(&candidate);
         if candidate_abs.exists() {
             return candidate_abs;
         }
@@ -421,21 +515,63 @@ fn resolve_source_path(run_dir: &Path, source_path: &str) -> PathBuf {
     candidate
 }
 
-fn facts_from_evidence(evidence: &[EvidenceRecord]) -> Vec<CompiledFact> {
+/// Evidence kinds that are infrastructure, never candidate facts.
+const NON_FACT_KINDS: &[&str] = &[
+    "objective",
+    "subagent-session",
+    "codex-synthesis",
+    "blocker",
+];
+
+/// F1: the attestation ladder, tier "verifier". A record becomes a trusted
+/// fact only when (a) a PASSED verifier finding backs it — by sharing one of
+/// its direct source ids or by citing `evidence:<its id>` explicitly, (b) no
+/// auto-contradiction names it, and (c) ingest attached no provenance
+/// warnings. Everything else stays in the evidence section. Tier "attested"
+/// (runtime receipts) lands in M2.
+fn facts_from_evidence(
+    evidence: &[EvidenceRecord],
+    findings: &[VerifierFinding],
+    contradictions: &[Contradiction],
+) -> Vec<CompiledFact> {
+    let contradicted: BTreeSet<&str> = contradictions
+        .iter()
+        .flat_map(|item| item.conflicting_item_ids.iter().map(String::as_str))
+        .collect();
+
+    let mut passing_direct_sources: BTreeSet<&str> = BTreeSet::new();
+    let mut verified_evidence_ids: BTreeSet<&str> = BTreeSet::new();
+    for finding in findings.iter().filter(|finding| finding.status == "passed") {
+        for source_id in &finding.source_ids {
+            if is_direct_source_id(source_id) {
+                passing_direct_sources.insert(source_id.as_str());
+            } else if let Some(evidence_id) = source_id.strip_prefix("evidence:") {
+                verified_evidence_ids.insert(evidence_id);
+            }
+        }
+    }
+
     evidence
         .iter()
+        .filter(|item| !NON_FACT_KINDS.contains(&item.kind.as_str()))
+        .filter(|item| item.provenance_warnings.is_empty())
+        .filter(|item| !contradicted.contains(item.id.as_str()))
+        .filter(|item| {
+            verified_evidence_ids.contains(item.id.as_str())
+                || item
+                    .source_ids
+                    .iter()
+                    .any(|id| passing_direct_sources.contains(id.as_str()))
+        })
         .map(|item| CompiledFact {
             id: format!("fact:{}", item.id),
             statement: item.summary.clone(),
-            // Use the upstream evidence confidence when the subagent supplied one
-            // (e.g. explicit 0.95 from a high-signal code-change record). Fall
-            // back to the legacy 0.7 default when absent so untagged records
-            // continue to compile unchanged.
             confidence: item.confidence.map(|value| value as f32).unwrap_or(0.7),
             objective_relevance: 0.8,
             novelty_gain: 0.3,
             needs_raw_drilldown: false,
             source_ids: item.source_ids.clone(),
+            attestation: Some("verifier".to_string()),
         })
         .collect()
 }
@@ -581,6 +717,27 @@ mod tests {
             serde_json::from_str(&packet_json).expect("packet is valid NextPassPacket");
         assert_eq!(packet.schema_version, MYTHOS_SCHEMA_VERSION);
         assert!(!packet.sources.is_empty(), "packet must include sources");
+
+        // F1: the fixture's vf-1 (passed) cites evidence:ev-2, so ev-2 — and
+        // ONLY ev-2 — earns trusted-fact status, stamped with its tier.
+        assert_eq!(
+            packet
+                .trusted_facts
+                .iter()
+                .map(|fact| fact.id.as_str())
+                .collect::<Vec<_>>(),
+            vec!["fact:ev-2"],
+            "only verifier-backed evidence may promote to trusted_facts"
+        );
+        assert_eq!(
+            packet.trusted_facts[0].attestation.as_deref(),
+            Some("verifier"),
+            "promoted facts must carry their attestation tier"
+        );
+        assert!(
+            run_dir.join("state/input_fingerprint.json").exists(),
+            "compiler must write the input fingerprint (F12)"
+        );
 
         for source in &packet.sources {
             assert_eq!(source.hash_alg, MYTHOS_HASH_ALG);

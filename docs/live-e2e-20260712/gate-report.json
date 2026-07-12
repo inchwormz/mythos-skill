@@ -1,0 +1,70 @@
+{
+  "ok": true,
+  "run_dir": "C:\\Users\\johnr\\Projects\\mythos-skill\\.codex\\mythos\\runs\\20260712T072030Z-map-every-fnv1a-64-implementation-in-this-repo-a",
+  "pass_id": "pass-0002",
+  "packet_pass_id": "pass-0002",
+  "evidence_count": 19,
+  "verifier_findings": [
+    {
+      "id": "vf-codex-synthesis-pending",
+      "status": "passed",
+      "verifier_score": 0.9
+    },
+    {
+      "id": "vf-verify-ev-map-1",
+      "status": "passed",
+      "verifier_score": 1
+    },
+    {
+      "id": "vf-verify-ev-map-2",
+      "status": "passed",
+      "verifier_score": 1
+    },
+    {
+      "id": "vf-verify-ev-map-3",
+      "status": "passed",
+      "verifier_score": 1
+    },
+    {
+      "id": "vf-verify-ev-map-4",
+      "status": "passed",
+      "verifier_score": 1
+    },
+    {
+      "id": "vf-verify-ev-map-5",
+      "status": "passed",
+      "verifier_score": 1
+    },
+    {
+      "id": "vf-verify-ev-map-6",
+      "status": "passed",
+      "verifier_score": 1
+    },
+    {
+      "id": "vf-verify-ev-map-7",
+      "status": "passed",
+      "verifier_score": 1
+    },
+    {
+      "id": "vf-verify-ev-map-8",
+      "status": "passed",
+      "verifier_score": 1
+    },
+    {
+      "id": "vf-verify-ev-map-9",
+      "status": "passed",
+      "verifier_score": 1
+    },
+    {
+      "id": "vf-verify-ev-map-10",
+      "status": "passed",
+      "verifier_score": 1
+    }
+  ],
+  "halt_kinds": [
+    "ready-to-halt"
+  ],
+  "candidate_actions": 0,
+  "errors": [],
+  "warnings": []
+}

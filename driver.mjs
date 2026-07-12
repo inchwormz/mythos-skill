@@ -116,10 +116,6 @@ function fingerprintPath(runDir) {
   return path.join(runDir, "state", "input_fingerprint.json");
 }
 
-function writeInputFingerprint(runDir) {
-  writeJson(fingerprintPath(runDir), inputFingerprint(runDir));
-}
-
 function readStoredInputFingerprint(runDir) {
   const file = fingerprintPath(runDir);
   return fs.existsSync(file) ? readJson(file) : null;
@@ -229,6 +225,9 @@ function recordSynthesis(runDir, summary) {
       status: "passed",
       verifier_score: 0.9,
       source_ids: [...new Set([...(finding.source_ids || []), rawSourceId])],
+      // F6: infrastructure findings carry a typed role; the strict gate keys
+      // its exemptions on this, never on free text.
+      finding_kind: "synthesis",
     };
   });
 
@@ -239,6 +238,7 @@ function recordSynthesis(runDir, summary) {
       status: "passed",
       verifier_score: 0.9,
       source_ids: [rawSourceId],
+      finding_kind: "synthesis",
     });
   }
 
@@ -264,6 +264,9 @@ function createRunDir(objective) {
     branch_id: "main",
     pass_id: "pass-0001",
     created_at: new Date().toISOString(),
+    // F3: file citations resolve against the project the run was created
+    // from — recorded here, never inferred from any package location.
+    repo_root: process.cwd(),
   });
 
   fs.writeFileSync(path.join(runDir, "task.md"), `${objective}\n`, "utf8");
@@ -351,7 +354,7 @@ function compileRunDir(runDir) {
     );
   }
 
-  writeInputFingerprint(runDir);
+  // F12: the Rust compiler is the single writer of state/input_fingerprint.json.
   return stdout;
 }
 

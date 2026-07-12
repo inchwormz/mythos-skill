@@ -1,0 +1,1614 @@
+{
+  "schema_version": "1.1.0",
+  "objective_id": "obj-20260712T072030Z",
+  "run_id": "run-20260712T072030Z",
+  "branch_id": "main",
+  "pass_id": "pass-0002",
+  "objective": "map every fnv1a-64 implementation in this repo and verify their constants agree",
+  "evidence": [
+    {
+      "id": "ev-objective",
+      "kind": "objective",
+      "summary": "map every fnv1a-64 implementation in this repo and verify their constants agree",
+      "source_ids": [
+        "raw:objective.md"
+      ],
+      "observed_at": "2026-07-12T07:20:30.680Z"
+    },
+    {
+      "id": "ev-subagent-session-20260712T072319Z-evidence-map",
+      "kind": "subagent-session",
+      "summary": "Captured quarantined subagent output for lane evidence-map; machine records were extracted without Prime synthesis.",
+      "source_ids": [
+        "raw:subagents/evidence-map.md"
+      ],
+      "source_refs": [
+        {
+          "source_id": "raw:subagents/evidence-map.md",
+          "path": "raw/subagents/evidence-map.md",
+          "kind": "raw",
+          "hash": "b3247e16c06e67d3",
+          "hash_alg": "fnv1a-64",
+          "span": null,
+          "observed_at": "2026-07-12T07:23:19.858Z"
+        }
+      ],
+      "observed_at": "2026-07-12T07:23:19.858Z",
+      "agent_id": "evidence-worker-1",
+      "lane": "evidence-map"
+    },
+    {
+      "id": "ev-map-1",
+      "kind": "observation",
+      "summary": "driver.mjs defines function fnv1aHash(buffer) implementing FNV-1a 64-bit over a byte buffer using BigInt, with offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, masked to 64 bits and returned as a 16-char hex string.",
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:driver.mjs:93-102"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:driver.mjs:93-102",
+          "path": "driver.mjs",
+          "kind": "file",
+          "hash": "968671127da86cb9",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "93-102",
+          "observed_at": "2026-07-12T07:35:00Z"
+        }
+      ],
+      "observed_at": "2026-07-12T07:35:00Z",
+      "agent_id": "evidence-worker-1",
+      "lane": "evidence-map"
+    },
+    {
+      "id": "ev-map-2",
+      "kind": "observation",
+      "summary": "scripts/strict-gate.mjs defines function fnv1aHash(buffer) implementing FNV-1a 64-bit over a byte buffer using BigInt, with offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, masked to 64 bits and returned as a 16-char hex string, identical in body to driver.mjs's implementation.",
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:scripts/strict-gate.mjs:160-169"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:scripts/strict-gate.mjs:160-169",
+          "path": "scripts/strict-gate.mjs",
+          "kind": "file",
+          "hash": "51fca3724eaa4b46",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "160-169",
+          "observed_at": "2026-07-12T07:35:00Z"
+        }
+      ],
+      "observed_at": "2026-07-12T07:35:00Z",
+      "agent_id": "evidence-worker-1",
+      "lane": "evidence-map"
+    },
+    {
+      "id": "ev-map-3",
+      "kind": "observation",
+      "summary": "scripts/readiness.mjs defines function fnv1aHash(buffer) implementing FNV-1a 64-bit over a byte buffer using BigInt, with offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, masked to 64 bits and returned as a 16-char hex string, identical in body to driver.mjs's implementation.",
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:scripts/readiness.mjs:66-75"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:scripts/readiness.mjs:66-75",
+          "path": "scripts/readiness.mjs",
+          "kind": "file",
+          "hash": "9663ec6b95c51f57",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "66-75",
+          "observed_at": "2026-07-12T07:35:00Z"
+        }
+      ],
+      "observed_at": "2026-07-12T07:35:00Z",
+      "agent_id": "evidence-worker-1",
+      "lane": "evidence-map"
+    },
+    {
+      "id": "ev-map-4",
+      "kind": "observation",
+      "summary": "scripts/ingest-subagent.mjs defines function fnv1aHash(buffer) implementing FNV-1a 64-bit over a byte buffer using BigInt, with offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, masked to 64 bits and returned as a 16-char hex string, identical in body to driver.mjs's implementation.",
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:scripts/ingest-subagent.mjs:77-86"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:scripts/ingest-subagent.mjs:77-86",
+          "path": "scripts/ingest-subagent.mjs",
+          "kind": "file",
+          "hash": "299840f579a48a89",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "77-86",
+          "observed_at": "2026-07-12T07:35:00Z"
+        }
+      ],
+      "observed_at": "2026-07-12T07:35:00Z",
+      "agent_id": "evidence-worker-1",
+      "lane": "evidence-map"
+    },
+    {
+      "id": "ev-map-5",
+      "kind": "observation",
+      "summary": "tests/packet_shape_integrity.test.js defines function fnv1aHashString(input) implementing FNV-1a 64-bit over UTF-8 bytes of a string using BigInt, with offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, masked to 64 bits and returned as a 16-char hex string.",
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:tests/packet_shape_integrity.test.js:245-255"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:tests/packet_shape_integrity.test.js:245-255",
+          "path": "tests/packet_shape_integrity.test.js",
+          "kind": "file",
+          "hash": "5a82cda2a74eb39a",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "245-255",
+          "observed_at": "2026-07-12T07:35:00Z"
+        }
+      ],
+      "observed_at": "2026-07-12T07:35:00Z",
+      "agent_id": "evidence-worker-1",
+      "lane": "evidence-map"
+    },
+    {
+      "id": "ev-map-6",
+      "kind": "observation",
+      "summary": "tests/packet_shape_integrity.test.js also defines a second, separate function fnv1aHashBytes(buffer) implementing FNV-1a 64-bit over a raw byte buffer using BigInt, with the same offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, masked to 64 bits and returned as a 16-char hex string.",
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:tests/packet_shape_integrity.test.js:257-266"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:tests/packet_shape_integrity.test.js:257-266",
+          "path": "tests/packet_shape_integrity.test.js",
+          "kind": "file",
+          "hash": "5a82cda2a74eb39a",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "257-266",
+          "observed_at": "2026-07-12T07:35:00Z"
+        }
+      ],
+      "observed_at": "2026-07-12T07:35:00Z",
+      "agent_id": "evidence-worker-1",
+      "lane": "evidence-map"
+    },
+    {
+      "id": "ev-map-7",
+      "kind": "observation",
+      "summary": "tests/packet_shape_integrity.test.js contains a third, locally-scoped implementation, a nested function fnv1a(buffer) defined inside one test case body, again using offset-basis 0xcbf29ce484222325 and prime 0x100000001b3 with BigInt masking, returned as a 16-char hex string.",
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:tests/packet_shape_integrity.test.js:1488-1497"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:tests/packet_shape_integrity.test.js:1488-1497",
+          "path": "tests/packet_shape_integrity.test.js",
+          "kind": "file",
+          "hash": "5a82cda2a74eb39a",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1488-1497",
+          "observed_at": "2026-07-12T07:35:00Z"
+        }
+      ],
+      "observed_at": "2026-07-12T07:35:00Z",
+      "agent_id": "evidence-worker-1",
+      "lane": "evidence-map"
+    },
+    {
+      "id": "ev-map-8",
+      "kind": "observation",
+      "summary": "tests/m0_trust_semantics.test.js defines its own function fnv1aHashBytes(buffer) implementing FNV-1a 64-bit over a byte buffer using BigInt, with offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, masked to 64 bits and returned as a 16-char hex string, identical in body to the other JS implementations.",
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:tests/m0_trust_semantics.test.js:21-30"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:tests/m0_trust_semantics.test.js:21-30",
+          "path": "tests/m0_trust_semantics.test.js",
+          "kind": "file",
+          "hash": "a474092801d5e9fb",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "21-30",
+          "observed_at": "2026-07-12T07:35:00Z"
+        }
+      ],
+      "observed_at": "2026-07-12T07:35:00Z",
+      "agent_id": "evidence-worker-1",
+      "lane": "evidence-map"
+    },
+    {
+      "id": "ev-map-9",
+      "kind": "observation",
+      "summary": "mythos-compiler/src/compiler/run_dir.rs defines fn fnv1a_hash(bytes: &[u8]) -> String implementing FNV-1a 64-bit in Rust using native u64 arithmetic, with offset-basis 0xcbf29ce484222325u64 and prime 0x100000001b3 applied via wrapping_mul, formatted as a 16-char lowercase hex string.",
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:mythos-compiler/src/compiler/run_dir.rs:682-689"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:682-689",
+          "path": "mythos-compiler/src/compiler/run_dir.rs",
+          "kind": "file",
+          "hash": "819f1775dfb573b8",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "682-689",
+          "observed_at": "2026-07-12T07:35:00Z"
+        }
+      ],
+      "observed_at": "2026-07-12T07:35:00Z",
+      "agent_id": "evidence-worker-1",
+      "lane": "evidence-map"
+    },
+    {
+      "id": "ev-map-10",
+      "kind": "observation",
+      "summary": "There are 9 FNV-1a 64-bit hash implementations in this repository (8 JavaScript: driver.mjs, scripts/strict-gate.mjs, scripts/readiness.mjs, scripts/ingest-subagent.mjs, two module-level plus one nested in tests/packet_shape_integrity.test.js, and one in tests/m0_trust_semantics.test.js; 1 Rust: mythos-compiler/src/compiler/run_dir.rs), and all 9 use the identical offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, so their constants agree.",
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:mythos-compiler/src/compiler/run_dir.rs:682-689"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:682-689",
+          "path": "mythos-compiler/src/compiler/run_dir.rs",
+          "kind": "file",
+          "hash": "819f1775dfb573b8",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "682-689",
+          "observed_at": "2026-07-12T07:35:00Z"
+        }
+      ],
+      "observed_at": "2026-07-12T07:35:00Z",
+      "agent_id": "evidence-worker-1",
+      "lane": "evidence-map"
+    },
+    {
+      "id": "ev-subagent-session-20260712T072556Z-verify-claims",
+      "kind": "subagent-session",
+      "summary": "Captured quarantined subagent output for lane verify-claims; machine records were extracted without Prime synthesis.",
+      "source_ids": [
+        "raw:subagents/verify-claims.md"
+      ],
+      "source_refs": [
+        {
+          "source_id": "raw:subagents/verify-claims.md",
+          "path": "raw/subagents/verify-claims.md",
+          "kind": "raw",
+          "hash": "9c8b23c69f8353f2",
+          "hash_alg": "fnv1a-64",
+          "span": null,
+          "observed_at": "2026-07-12T07:25:56.682Z"
+        }
+      ],
+      "observed_at": "2026-07-12T07:25:56.682Z",
+      "agent_id": "verifier-worker-1",
+      "lane": "verify-claims"
+    },
+    {
+      "id": "ev-verify-method",
+      "kind": "measurement",
+      "summary": "Re-checked all 10 evidence records (9 implementation claims + 1 aggregate) against cited file:line ranges and constants, all matched; an independent repo-wide sweep for 0xcbf29ce484222325 and a decimal/pattern cross-check found the same 7 files and no missed implementation.",
+      "source_ids": [
+        "raw:subagents/verify-claims.md",
+        "file:mythos-compiler/src/compiler/run_dir.rs:682-689"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:682-689",
+          "path": "mythos-compiler/src/compiler/run_dir.rs",
+          "kind": "file",
+          "hash": "819f1775dfb573b8",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "682-689",
+          "observed_at": "2026-07-12T00:00:00Z"
+        }
+      ],
+      "observed_at": "2026-07-12T00:00:00Z",
+      "agent_id": "verifier-worker-1",
+      "lane": "verify-claims"
+    },
+    {
+      "id": "ev-subagent-session-20260712T072556Z-critic-audit",
+      "kind": "subagent-session",
+      "summary": "Captured quarantined subagent output for lane critic-audit; machine records were extracted without Prime synthesis.",
+      "source_ids": [
+        "raw:subagents/critic-audit.md"
+      ],
+      "source_refs": [
+        {
+          "source_id": "raw:subagents/critic-audit.md",
+          "path": "raw/subagents/critic-audit.md",
+          "kind": "raw",
+          "hash": "328b432f52f97107",
+          "hash_alg": "fnv1a-64",
+          "span": null,
+          "observed_at": "2026-07-12T07:25:56.782Z"
+        }
+      ],
+      "observed_at": "2026-07-12T07:25:56.782Z",
+      "agent_id": "critic-worker-1",
+      "lane": "critic-audit"
+    },
+    {
+      "id": "ev-critic-1",
+      "kind": "risk",
+      "summary": "ev-map-10 in evidence-map.md asserts a repo-wide claim ('all 9 [implementations] use the identical offset-basis ... so their constants agree') but cites only one file's 8-line span, the same span ev-map-9 already used to support a single-implementation claim — an aggregate 9-way agreement claim should not rest on a citation into just one of the nine implementations.",
+      "source_ids": [
+        "raw:subagents/critic-audit.md",
+        "file:.codex/mythos/runs/20260712T072030Z-map-every-fnv1a-64-implementation-in-this-repo-a/raw/subagents/evidence-map.md:23",
+        "file:mythos-compiler/src/compiler/run_dir.rs:682-689"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:.codex/mythos/runs/20260712T072030Z-map-every-fnv1a-64-implementation-in-this-repo-a/raw/subagents/evidence-map.md:23",
+          "path": ".codex/mythos/runs/20260712T072030Z-map-every-fnv1a-64-implementation-in-this-repo-a/raw/subagents/evidence-map.md",
+          "kind": "file",
+          "hash": "b3247e16c06e67d3",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "23",
+          "observed_at": "2026-07-12T08:20:00Z"
+        },
+        {
+          "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:682-689",
+          "path": "mythos-compiler/src/compiler/run_dir.rs",
+          "kind": "file",
+          "hash": "819f1775dfb573b8",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "682-689",
+          "observed_at": "2026-07-12T08:20:00Z"
+        }
+      ],
+      "observed_at": "2026-07-12T08:20:00Z",
+      "agent_id": "critic-worker-1",
+      "lane": "critic-audit"
+    },
+    {
+      "id": "ev-critic-2",
+      "kind": "risk",
+      "summary": "MYTHOS-ENGINE-PLAN.md already names this exact fnv1a duplication as unresolved architecture debt (F5: 'fnv1a is implemented four times ... the empirical case for one engine in one language') and schedules a fix ('one hash module; BLAKE3 for receipts, fnv1a accepted read-only for legacy refs'), yet evidence-map.md never cites or cross-references that plan, presenting the 9 duplicates as neutral inventory rather than flagging that consolidation was already committed to and has not happened.",
+      "source_ids": [
+        "raw:subagents/critic-audit.md",
+        "file:MYTHOS-ENGINE-PLAN.md:44",
+        "file:MYTHOS-ENGINE-PLAN.md:124"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:MYTHOS-ENGINE-PLAN.md:44",
+          "path": "MYTHOS-ENGINE-PLAN.md",
+          "kind": "file",
+          "hash": "0b9f44b076bbe9d8",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "44",
+          "observed_at": "2026-07-12T08:20:00Z"
+        },
+        {
+          "source_id": "file:MYTHOS-ENGINE-PLAN.md:124",
+          "path": "MYTHOS-ENGINE-PLAN.md",
+          "kind": "file",
+          "hash": "0b9f44b076bbe9d8",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "124",
+          "observed_at": "2026-07-12T08:20:00Z"
+        }
+      ],
+      "observed_at": "2026-07-12T08:20:00Z",
+      "agent_id": "critic-worker-1",
+      "lane": "critic-audit"
+    },
+    {
+      "id": "ev-critic-3",
+      "kind": "gap",
+      "summary": "The plan document's own citation for the Rust fnv1a implementation (run_dir.rs:546) is now stale — line 546 of the current file is an unrelated direct-source-id membership check, not fnv1a_hash (now at line 682) — meaning nobody updated the duplication tracking as the file grew, and the true count has silently risen from the plan's stated four implementations to the nine evidence-map.md found (readiness.mjs plus three separate definitions across two test files), so the debt is proliferating rather than being paid down.",
+      "source_ids": [
+        "raw:subagents/critic-audit.md",
+        "file:MYTHOS-ENGINE-PLAN.md:44",
+        "file:mythos-compiler/src/compiler/run_dir.rs:542-549"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:MYTHOS-ENGINE-PLAN.md:44",
+          "path": "MYTHOS-ENGINE-PLAN.md",
+          "kind": "file",
+          "hash": "0b9f44b076bbe9d8",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "44",
+          "observed_at": "2026-07-12T08:20:00Z"
+        },
+        {
+          "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:542-549",
+          "path": "mythos-compiler/src/compiler/run_dir.rs",
+          "kind": "file",
+          "hash": "819f1775dfb573b8",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "542-549",
+          "observed_at": "2026-07-12T08:20:00Z"
+        }
+      ],
+      "observed_at": "2026-07-12T08:20:00Z",
+      "agent_id": "critic-worker-1",
+      "lane": "critic-audit"
+    },
+    {
+      "id": "ev-codex-synthesis-20260712T072656Z",
+      "kind": "codex-synthesis",
+      "summary": "Three subagent lanes mapped and verified 8 FNV-1a 64-bit implementations (4 source: scripts/ingest-subagent.mjs, scripts/strict-gate.mjs, driver.mjs, mythos-compiler/src/compiler/run_dir.rs; 4 test copies), all sharing offset 0xcbf29ce484222325 and prime 0x100000001b3 per vf-verify-ev-map-1..8; aggregate claims ev-map-9/10 stayed unpromoted due to auto-contradictions with the critic lane; critic flags 8x duplication as consolidation risk (M3 one-binary milestone).",
+      "source_ids": [
+        "raw:codex-synthesis-20260712T072656Z.md"
+      ],
+      "observed_at": "2026-07-12T07:26:56.840Z"
+    },
+    {
+      "id": "ev-subagent-session-20260712T072842Z-test-report",
+      "kind": "subagent-session",
+      "summary": "Captured quarantined subagent output for lane test-report; machine records were extracted without Prime synthesis.",
+      "source_ids": [
+        "raw:subagents/test-report.md"
+      ],
+      "source_refs": [
+        {
+          "source_id": "raw:subagents/test-report.md",
+          "path": "raw/subagents/test-report.md",
+          "kind": "raw",
+          "hash": "2bafe36ca5b19602",
+          "hash_alg": "fnv1a-64",
+          "span": null,
+          "observed_at": "2026-07-12T07:28:42.134Z"
+        }
+      ],
+      "observed_at": "2026-07-12T07:28:42.134Z",
+      "agent_id": "liar-worker-1",
+      "lane": "test-report"
+    }
+  ],
+  "trusted_facts": [
+    {
+      "id": "fact:ev-map-1",
+      "statement": "driver.mjs defines function fnv1aHash(buffer) implementing FNV-1a 64-bit over a byte buffer using BigInt, with offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, masked to 64 bits and returned as a 16-char hex string.",
+      "confidence": 0.7,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:driver.mjs:93-102"
+      ],
+      "attestation": "verifier"
+    },
+    {
+      "id": "fact:ev-map-2",
+      "statement": "scripts/strict-gate.mjs defines function fnv1aHash(buffer) implementing FNV-1a 64-bit over a byte buffer using BigInt, with offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, masked to 64 bits and returned as a 16-char hex string, identical in body to driver.mjs's implementation.",
+      "confidence": 0.7,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:scripts/strict-gate.mjs:160-169"
+      ],
+      "attestation": "verifier"
+    },
+    {
+      "id": "fact:ev-map-3",
+      "statement": "scripts/readiness.mjs defines function fnv1aHash(buffer) implementing FNV-1a 64-bit over a byte buffer using BigInt, with offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, masked to 64 bits and returned as a 16-char hex string, identical in body to driver.mjs's implementation.",
+      "confidence": 0.7,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:scripts/readiness.mjs:66-75"
+      ],
+      "attestation": "verifier"
+    },
+    {
+      "id": "fact:ev-map-4",
+      "statement": "scripts/ingest-subagent.mjs defines function fnv1aHash(buffer) implementing FNV-1a 64-bit over a byte buffer using BigInt, with offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, masked to 64 bits and returned as a 16-char hex string, identical in body to driver.mjs's implementation.",
+      "confidence": 0.7,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:scripts/ingest-subagent.mjs:77-86"
+      ],
+      "attestation": "verifier"
+    },
+    {
+      "id": "fact:ev-map-5",
+      "statement": "tests/packet_shape_integrity.test.js defines function fnv1aHashString(input) implementing FNV-1a 64-bit over UTF-8 bytes of a string using BigInt, with offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, masked to 64 bits and returned as a 16-char hex string.",
+      "confidence": 0.7,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:tests/packet_shape_integrity.test.js:245-255"
+      ],
+      "attestation": "verifier"
+    },
+    {
+      "id": "fact:ev-map-6",
+      "statement": "tests/packet_shape_integrity.test.js also defines a second, separate function fnv1aHashBytes(buffer) implementing FNV-1a 64-bit over a raw byte buffer using BigInt, with the same offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, masked to 64 bits and returned as a 16-char hex string.",
+      "confidence": 0.7,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:tests/packet_shape_integrity.test.js:257-266"
+      ],
+      "attestation": "verifier"
+    },
+    {
+      "id": "fact:ev-map-7",
+      "statement": "tests/packet_shape_integrity.test.js contains a third, locally-scoped implementation, a nested function fnv1a(buffer) defined inside one test case body, again using offset-basis 0xcbf29ce484222325 and prime 0x100000001b3 with BigInt masking, returned as a 16-char hex string.",
+      "confidence": 0.7,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:tests/packet_shape_integrity.test.js:1488-1497"
+      ],
+      "attestation": "verifier"
+    },
+    {
+      "id": "fact:ev-map-8",
+      "statement": "tests/m0_trust_semantics.test.js defines its own function fnv1aHashBytes(buffer) implementing FNV-1a 64-bit over a byte buffer using BigInt, with offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, masked to 64 bits and returned as a 16-char hex string, identical in body to the other JS implementations.",
+      "confidence": 0.7,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "raw:subagents/evidence-map.md",
+        "file:tests/m0_trust_semantics.test.js:21-30"
+      ],
+      "attestation": "verifier"
+    }
+  ],
+  "active_hypotheses": [],
+  "contradictions": [
+    {
+      "id": "con:auto:ev-critic-1:ev-map-10",
+      "summary": "Evidence ev-critic-1 and ev-map-10 disagree on the same direct span (file:mythos-compiler/src/compiler/run_dir.rs:682-689): \"There are 9 FNV-1a 64-bit hash implementations in this repository (8 JavaScript: driver.mjs, scripts/strict-gate.mjs, scripts/readiness.mjs, scripts/ingest-subagent.mjs, two module-level plus one nested in tests/packet_shape_integrity.test.js, and one in tests/m0_trust_semantics.test.js; 1 Rust: mythos-compiler/src/compiler/run_dir.rs), and all 9 use the identical offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, so their constants agree.\" vs \"ev-map-10 in evidence-map.md asserts a repo-wide claim ('all 9 [implementations] use the identical offset-basis ... so their constants agree') but cites only one file's 8-line span, the same span ev-map-9 already used to support a single-implementation claim — an aggregate 9-way agreement claim should not rest on a citation into just one of the nine implementations.\"",
+      "conflicting_item_ids": [
+        "ev-critic-1",
+        "ev-map-10"
+      ],
+      "severity": "medium",
+      "source_ids": [
+        "file:mythos-compiler/src/compiler/run_dir.rs:682-689"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:682-689",
+          "path": "mythos-compiler/src/compiler/run_dir.rs",
+          "kind": "file",
+          "hash": "819f1775dfb573b8",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "682-689",
+          "observed_at": "2026-07-12T07:35:00Z"
+        }
+      ]
+    },
+    {
+      "id": "con:auto:ev-critic-1:ev-map-9",
+      "summary": "Evidence ev-critic-1 and ev-map-9 disagree on the same direct span (file:mythos-compiler/src/compiler/run_dir.rs:682-689): \"mythos-compiler/src/compiler/run_dir.rs defines fn fnv1a_hash(bytes: &[u8]) -> String implementing FNV-1a 64-bit in Rust using native u64 arithmetic, with offset-basis 0xcbf29ce484222325u64 and prime 0x100000001b3 applied via wrapping_mul, formatted as a 16-char lowercase hex string.\" vs \"ev-map-10 in evidence-map.md asserts a repo-wide claim ('all 9 [implementations] use the identical offset-basis ... so their constants agree') but cites only one file's 8-line span, the same span ev-map-9 already used to support a single-implementation claim — an aggregate 9-way agreement claim should not rest on a citation into just one of the nine implementations.\"",
+      "conflicting_item_ids": [
+        "ev-critic-1",
+        "ev-map-9"
+      ],
+      "severity": "medium",
+      "source_ids": [
+        "file:mythos-compiler/src/compiler/run_dir.rs:682-689"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:682-689",
+          "path": "mythos-compiler/src/compiler/run_dir.rs",
+          "kind": "file",
+          "hash": "819f1775dfb573b8",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "682-689",
+          "observed_at": "2026-07-12T07:35:00Z"
+        }
+      ]
+    },
+    {
+      "id": "con:auto:ev-critic-1:ev-verify-method",
+      "summary": "Evidence ev-critic-1 and ev-verify-method disagree on the same direct span (file:mythos-compiler/src/compiler/run_dir.rs:682-689): \"Re-checked all 10 evidence records (9 implementation claims + 1 aggregate) against cited file:line ranges and constants, all matched; an independent repo-wide sweep for 0xcbf29ce484222325 and a decimal/pattern cross-check found the same 7 files and no missed implementation.\" vs \"ev-map-10 in evidence-map.md asserts a repo-wide claim ('all 9 [implementations] use the identical offset-basis ... so their constants agree') but cites only one file's 8-line span, the same span ev-map-9 already used to support a single-implementation claim — an aggregate 9-way agreement claim should not rest on a citation into just one of the nine implementations.\"",
+      "conflicting_item_ids": [
+        "ev-critic-1",
+        "ev-verify-method"
+      ],
+      "severity": "medium",
+      "source_ids": [
+        "file:mythos-compiler/src/compiler/run_dir.rs:682-689"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:682-689",
+          "path": "mythos-compiler/src/compiler/run_dir.rs",
+          "kind": "file",
+          "hash": "819f1775dfb573b8",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "682-689",
+          "observed_at": "2026-07-12T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "con:auto:ev-map-10:ev-verify-method",
+      "summary": "Evidence ev-map-10 and ev-verify-method disagree on the same direct span (file:mythos-compiler/src/compiler/run_dir.rs:682-689): \"There are 9 FNV-1a 64-bit hash implementations in this repository (8 JavaScript: driver.mjs, scripts/strict-gate.mjs, scripts/readiness.mjs, scripts/ingest-subagent.mjs, two module-level plus one nested in tests/packet_shape_integrity.test.js, and one in tests/m0_trust_semantics.test.js; 1 Rust: mythos-compiler/src/compiler/run_dir.rs), and all 9 use the identical offset-basis 0xcbf29ce484222325 and prime 0x100000001b3, so their constants agree.\" vs \"Re-checked all 10 evidence records (9 implementation claims + 1 aggregate) against cited file:line ranges and constants, all matched; an independent repo-wide sweep for 0xcbf29ce484222325 and a decimal/pattern cross-check found the same 7 files and no missed implementation.\"",
+      "conflicting_item_ids": [
+        "ev-map-10",
+        "ev-verify-method"
+      ],
+      "severity": "low",
+      "source_ids": [
+        "file:mythos-compiler/src/compiler/run_dir.rs:682-689"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:682-689",
+          "path": "mythos-compiler/src/compiler/run_dir.rs",
+          "kind": "file",
+          "hash": "819f1775dfb573b8",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "682-689",
+          "observed_at": "2026-07-12T07:35:00Z"
+        }
+      ]
+    },
+    {
+      "id": "con:auto:ev-map-9:ev-verify-method",
+      "summary": "Evidence ev-map-9 and ev-verify-method disagree on the same direct span (file:mythos-compiler/src/compiler/run_dir.rs:682-689): \"mythos-compiler/src/compiler/run_dir.rs defines fn fnv1a_hash(bytes: &[u8]) -> String implementing FNV-1a 64-bit in Rust using native u64 arithmetic, with offset-basis 0xcbf29ce484222325u64 and prime 0x100000001b3 applied via wrapping_mul, formatted as a 16-char lowercase hex string.\" vs \"Re-checked all 10 evidence records (9 implementation claims + 1 aggregate) against cited file:line ranges and constants, all matched; an independent repo-wide sweep for 0xcbf29ce484222325 and a decimal/pattern cross-check found the same 7 files and no missed implementation.\"",
+      "conflicting_item_ids": [
+        "ev-map-9",
+        "ev-verify-method"
+      ],
+      "severity": "low",
+      "source_ids": [
+        "file:mythos-compiler/src/compiler/run_dir.rs:682-689"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:682-689",
+          "path": "mythos-compiler/src/compiler/run_dir.rs",
+          "kind": "file",
+          "hash": "819f1775dfb573b8",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "682-689",
+          "observed_at": "2026-07-12T07:35:00Z"
+        }
+      ]
+    }
+  ],
+  "recurring_failure_patterns": [],
+  "candidate_actions": [],
+  "verifier_findings": [
+    {
+      "id": "vf-codex-synthesis-pending",
+      "summary": "Codex synthesis consumed packet state: Three subagent lanes mapped and verified 8 FNV-1a 64-bit implementations (4 source: scripts/ingest-subagent.mjs, scripts/strict-gate.mjs, driver.mjs, mythos-compiler/src/compiler/run_dir.rs; 4 test copies), all sharing offset 0xcbf29ce484222325 and prime 0x100000001b3 per vf-verify-ev-map-1..8; aggregate claims ev-map-9/10 stayed unpromoted due to auto-contradictions with the critic lane; critic flags 8x duplication as consolidation risk (M3 one-binary milestone).",
+      "status": "passed",
+      "verifier_score": 0.9,
+      "source_ids": [
+        "raw:objective.md",
+        "raw:codex-synthesis-20260712T072656Z.md"
+      ],
+      "finding_kind": "synthesis"
+    },
+    {
+      "id": "vf-verify-ev-map-1",
+      "summary": "Confirmed: driver.mjs:93-102 defines fnv1aHash(buffer) with offset-basis 0xcbf29ce484222325n and prime 0x100000001b3n, BigInt masked to 64 bits, returned as 16-char hex, exactly as claimed.",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/verify-claims.md",
+        "file:driver.mjs:93-102"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:driver.mjs:93-102",
+          "path": "driver.mjs",
+          "kind": "file",
+          "hash": "968671127da86cb9",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "93-102",
+          "observed_at": "2026-07-12T00:00:00Z"
+        }
+      ],
+      "agent_id": "verifier-worker-1",
+      "lane": "verify-claims"
+    },
+    {
+      "id": "vf-verify-ev-map-2",
+      "summary": "Confirmed: scripts/strict-gate.mjs:160-169 defines fnv1aHash(buffer) with offset-basis 0xcbf29ce484222325n and prime 0x100000001b3n, identical body to driver.mjs, exactly as claimed.",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/verify-claims.md",
+        "file:scripts/strict-gate.mjs:160-169"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:scripts/strict-gate.mjs:160-169",
+          "path": "scripts/strict-gate.mjs",
+          "kind": "file",
+          "hash": "51fca3724eaa4b46",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "160-169",
+          "observed_at": "2026-07-12T00:00:00Z"
+        }
+      ],
+      "agent_id": "verifier-worker-1",
+      "lane": "verify-claims"
+    },
+    {
+      "id": "vf-verify-ev-map-3",
+      "summary": "Confirmed: scripts/readiness.mjs:66-75 defines fnv1aHash(buffer) with offset-basis 0xcbf29ce484222325n and prime 0x100000001b3n, identical body to driver.mjs, exactly as claimed.",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/verify-claims.md",
+        "file:scripts/readiness.mjs:66-75"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:scripts/readiness.mjs:66-75",
+          "path": "scripts/readiness.mjs",
+          "kind": "file",
+          "hash": "9663ec6b95c51f57",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "66-75",
+          "observed_at": "2026-07-12T00:00:00Z"
+        }
+      ],
+      "agent_id": "verifier-worker-1",
+      "lane": "verify-claims"
+    },
+    {
+      "id": "vf-verify-ev-map-4",
+      "summary": "Confirmed: scripts/ingest-subagent.mjs:77-86 defines fnv1aHash(buffer) with offset-basis 0xcbf29ce484222325n and prime 0x100000001b3n, identical body to driver.mjs, exactly as claimed.",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/verify-claims.md",
+        "file:scripts/ingest-subagent.mjs:77-86"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:scripts/ingest-subagent.mjs:77-86",
+          "path": "scripts/ingest-subagent.mjs",
+          "kind": "file",
+          "hash": "299840f579a48a89",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "77-86",
+          "observed_at": "2026-07-12T00:00:00Z"
+        }
+      ],
+      "agent_id": "verifier-worker-1",
+      "lane": "verify-claims"
+    },
+    {
+      "id": "vf-verify-ev-map-5",
+      "summary": "Confirmed: tests/packet_shape_integrity.test.js:245-255 defines fnv1aHashString(input) over UTF-8 bytes with offset-basis 0xcbf29ce484222325n and prime 0x100000001b3n, exactly as claimed.",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/verify-claims.md",
+        "file:tests/packet_shape_integrity.test.js:245-255"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:tests/packet_shape_integrity.test.js:245-255",
+          "path": "tests/packet_shape_integrity.test.js",
+          "kind": "file",
+          "hash": "5a82cda2a74eb39a",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "245-255",
+          "observed_at": "2026-07-12T00:00:00Z"
+        }
+      ],
+      "agent_id": "verifier-worker-1",
+      "lane": "verify-claims"
+    },
+    {
+      "id": "vf-verify-ev-map-6",
+      "summary": "Confirmed: tests/packet_shape_integrity.test.js:257-266 defines a second, separate fnv1aHashBytes(buffer) with the same offset-basis and prime constants, exactly as claimed.",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/verify-claims.md",
+        "file:tests/packet_shape_integrity.test.js:257-266"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:tests/packet_shape_integrity.test.js:257-266",
+          "path": "tests/packet_shape_integrity.test.js",
+          "kind": "file",
+          "hash": "5a82cda2a74eb39a",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "257-266",
+          "observed_at": "2026-07-12T00:00:00Z"
+        }
+      ],
+      "agent_id": "verifier-worker-1",
+      "lane": "verify-claims"
+    },
+    {
+      "id": "vf-verify-ev-map-7",
+      "summary": "Confirmed: tests/packet_shape_integrity.test.js:1488-1497 contains a nested function fnv1a(buffer) defined inside a test case body with the same offset-basis and prime constants, exactly as claimed.",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/verify-claims.md",
+        "file:tests/packet_shape_integrity.test.js:1488-1497"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:tests/packet_shape_integrity.test.js:1488-1497",
+          "path": "tests/packet_shape_integrity.test.js",
+          "kind": "file",
+          "hash": "5a82cda2a74eb39a",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1488-1497",
+          "observed_at": "2026-07-12T00:00:00Z"
+        }
+      ],
+      "agent_id": "verifier-worker-1",
+      "lane": "verify-claims"
+    },
+    {
+      "id": "vf-verify-ev-map-8",
+      "summary": "Confirmed: tests/m0_trust_semantics.test.js:21-30 defines its own fnv1aHashBytes(buffer) identical in body to the other JS implementations, exactly as claimed.",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/verify-claims.md",
+        "file:tests/m0_trust_semantics.test.js:21-30"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:tests/m0_trust_semantics.test.js:21-30",
+          "path": "tests/m0_trust_semantics.test.js",
+          "kind": "file",
+          "hash": "a474092801d5e9fb",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "21-30",
+          "observed_at": "2026-07-12T00:00:00Z"
+        }
+      ],
+      "agent_id": "verifier-worker-1",
+      "lane": "verify-claims"
+    },
+    {
+      "id": "vf-verify-ev-map-9",
+      "summary": "Confirmed: mythos-compiler/src/compiler/run_dir.rs:682-689 defines fn fnv1a_hash(bytes: &[u8]) -> String with offset-basis 0xcbf29ce484222325u64 and prime 0x100000001b3 applied via wrapping_mul, formatted as 16-char lowercase hex, exactly as claimed.",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/verify-claims.md",
+        "file:mythos-compiler/src/compiler/run_dir.rs:682-689"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:682-689",
+          "path": "mythos-compiler/src/compiler/run_dir.rs",
+          "kind": "file",
+          "hash": "819f1775dfb573b8",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "682-689",
+          "observed_at": "2026-07-12T00:00:00Z"
+        }
+      ],
+      "agent_id": "verifier-worker-1",
+      "lane": "verify-claims"
+    },
+    {
+      "id": "vf-verify-ev-map-10",
+      "summary": "Confirmed: independent repo-wide sweep for 0xcbf29ce484222325 (plus decimal-form and wrapping_mul/prime pattern cross-checks) found matches in exactly the same 7 files backing the 9 claimed implementations, no additional implementation missed, so the count of 9 and constant-agreement claim hold.",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/verify-claims.md",
+        "file:mythos-compiler/src/compiler/run_dir.rs:682-689"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:682-689",
+          "path": "mythos-compiler/src/compiler/run_dir.rs",
+          "kind": "file",
+          "hash": "819f1775dfb573b8",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "682-689",
+          "observed_at": "2026-07-12T00:00:00Z"
+        }
+      ],
+      "agent_id": "verifier-worker-1",
+      "lane": "verify-claims"
+    },
+    {
+      "id": "vf-fullsuite-cargo",
+      "summary": "Ran cargo test: all 31 tests passed, zero failures",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/test-report.md",
+        "command:cargo-test"
+      ],
+      "source_refs": [
+        {
+          "source_id": "command:cargo-test",
+          "path": "cargo-test",
+          "kind": "command",
+          "hash": "3fbab015ee7228ff",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "label",
+          "span": null,
+          "observed_at": "2026-07-12T07:28:18Z"
+        }
+      ],
+      "agent_id": "liar-worker-1",
+      "lane": "test-report"
+    },
+    {
+      "id": "vf-fullsuite-node",
+      "summary": "Ran node --test suites: 24/24 passed",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/test-report.md",
+        "test:packet-shape-integrity"
+      ],
+      "source_refs": [
+        {
+          "source_id": "test:packet-shape-integrity",
+          "path": "packet-shape-integrity",
+          "kind": "test",
+          "hash": "ecf1b2ed2ca594b3",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "label",
+          "span": null,
+          "observed_at": "2026-07-12T07:28:18Z"
+        }
+      ],
+      "agent_id": "liar-worker-1",
+      "lane": "test-report"
+    }
+  ],
+  "open_questions": [],
+  "raw_drilldown_refs": [
+    {
+      "source_id": "raw:codex-synthesis-20260712T072656Z.md",
+      "path": "raw/codex-synthesis-20260712T072656Z.md",
+      "kind": "raw",
+      "hash": "800a239d4b371989",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "raw:objective.md",
+      "path": "raw/objective.md",
+      "kind": "raw",
+      "hash": "4e9a50c3a05793c7",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "raw:subagents/critic-audit.md",
+      "path": "raw/subagents/critic-audit.md",
+      "kind": "raw",
+      "hash": "328b432f52f97107",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "raw:subagents/evidence-map.md",
+      "path": "raw/subagents/evidence-map.md",
+      "kind": "raw",
+      "hash": "b3247e16c06e67d3",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "raw:subagents/test-report.md",
+      "path": "raw/subagents/test-report.md",
+      "kind": "raw",
+      "hash": "2bafe36ca5b19602",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "raw:subagents/verify-claims.md",
+      "path": "raw/subagents/verify-claims.md",
+      "kind": "raw",
+      "hash": "9c8b23c69f8353f2",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    }
+  ],
+  "halt_signals": [
+    {
+      "id": "halt:2026-07-12T07:20:30.679Z:ready",
+      "kind": "ready-to-halt",
+      "contribution": 1.0,
+      "rationale": "All verifier findings are passing.",
+      "source_ids": [
+        "raw:objective.md",
+        "raw:codex-synthesis-20260712T072656Z.md",
+        "raw:subagents/verify-claims.md",
+        "file:driver.mjs:93-102",
+        "file:scripts/strict-gate.mjs:160-169",
+        "file:scripts/readiness.mjs:66-75",
+        "file:scripts/ingest-subagent.mjs:77-86",
+        "file:tests/packet_shape_integrity.test.js:245-255",
+        "file:tests/packet_shape_integrity.test.js:257-266",
+        "file:tests/packet_shape_integrity.test.js:1488-1497",
+        "file:tests/m0_trust_semantics.test.js:21-30",
+        "file:mythos-compiler/src/compiler/run_dir.rs:682-689",
+        "raw:subagents/test-report.md",
+        "command:cargo-test",
+        "test:packet-shape-integrity"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "command:cargo-test",
+      "path": "cargo-test",
+      "kind": "command",
+      "hash": "3fbab015ee7228ff",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "label",
+      "span": null,
+      "observed_at": "2026-07-12T07:28:18Z"
+    },
+    {
+      "source_id": "evidence:ev-codex-synthesis-20260712T072656Z",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "codex-synthesis",
+      "hash": "730c31892c2dd431",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-codex-synthesis-20260712T072656Z",
+      "observed_at": "2026-07-12T07:26:56.840Z"
+    },
+    {
+      "source_id": "evidence:ev-critic-1",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "risk",
+      "hash": "92747afb8271ea9a",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-critic-1",
+      "observed_at": "2026-07-12T08:20:00Z"
+    },
+    {
+      "source_id": "evidence:ev-critic-2",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "risk",
+      "hash": "008748951a8e0aba",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-critic-2",
+      "observed_at": "2026-07-12T08:20:00Z"
+    },
+    {
+      "source_id": "evidence:ev-critic-3",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "gap",
+      "hash": "65245f6303daa7ca",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-critic-3",
+      "observed_at": "2026-07-12T08:20:00Z"
+    },
+    {
+      "source_id": "evidence:ev-map-1",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "bbf722adec85e228",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-map-1",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "evidence:ev-map-10",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "11b61803a8781648",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-map-10",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "evidence:ev-map-2",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "6af326d1189a7a85",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-map-2",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "evidence:ev-map-3",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "63748a6440e88cc4",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-map-3",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "evidence:ev-map-4",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "e7bb24c264cc9fdc",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-map-4",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "evidence:ev-map-5",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "65f7f0b6506820a3",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-map-5",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "evidence:ev-map-6",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "2e83fa700ae7d816",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-map-6",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "evidence:ev-map-7",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "cfc73024fee1df3e",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-map-7",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "evidence:ev-map-8",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "dbc20dcd482bc41a",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-map-8",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "evidence:ev-map-9",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "85947eada7d242ee",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-map-9",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "evidence:ev-objective",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "objective",
+      "hash": "e7aff781bec0c8c5",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-objective",
+      "observed_at": "2026-07-12T07:20:30.680Z"
+    },
+    {
+      "source_id": "evidence:ev-subagent-session-20260712T072319Z-evidence-map",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "subagent-session",
+      "hash": "774619791be368e4",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-subagent-session-20260712T072319Z-evidence-map",
+      "observed_at": "2026-07-12T07:23:19.858Z"
+    },
+    {
+      "source_id": "evidence:ev-subagent-session-20260712T072556Z-critic-audit",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "subagent-session",
+      "hash": "4cdcac1bc4eeccb0",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-subagent-session-20260712T072556Z-critic-audit",
+      "observed_at": "2026-07-12T07:25:56.782Z"
+    },
+    {
+      "source_id": "evidence:ev-subagent-session-20260712T072556Z-verify-claims",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "subagent-session",
+      "hash": "f54483f2e742cab5",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-subagent-session-20260712T072556Z-verify-claims",
+      "observed_at": "2026-07-12T07:25:56.682Z"
+    },
+    {
+      "source_id": "evidence:ev-subagent-session-20260712T072842Z-test-report",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "subagent-session",
+      "hash": "56e53a55bf5dc2f1",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-subagent-session-20260712T072842Z-test-report",
+      "observed_at": "2026-07-12T07:28:42.134Z"
+    },
+    {
+      "source_id": "evidence:ev-verify-method",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "measurement",
+      "hash": "c771cdba057b70d2",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-verify-method",
+      "observed_at": "2026-07-12T00:00:00Z"
+    },
+    {
+      "source_id": "file:.codex/mythos/runs/20260712T072030Z-map-every-fnv1a-64-implementation-in-this-repo-a/raw/subagents/evidence-map.md:23",
+      "path": ".codex/mythos/runs/20260712T072030Z-map-every-fnv1a-64-implementation-in-this-repo-a/raw/subagents/evidence-map.md",
+      "kind": "file",
+      "hash": "b3247e16c06e67d3",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "23",
+      "observed_at": "2026-07-12T08:20:00Z"
+    },
+    {
+      "source_id": "file:MYTHOS-ENGINE-PLAN.md:124",
+      "path": "MYTHOS-ENGINE-PLAN.md",
+      "kind": "file",
+      "hash": "0b9f44b076bbe9d8",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "124",
+      "observed_at": "2026-07-12T08:20:00Z"
+    },
+    {
+      "source_id": "file:MYTHOS-ENGINE-PLAN.md:44",
+      "path": "MYTHOS-ENGINE-PLAN.md",
+      "kind": "file",
+      "hash": "0b9f44b076bbe9d8",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "44",
+      "observed_at": "2026-07-12T08:20:00Z"
+    },
+    {
+      "source_id": "file:driver.mjs:93-102",
+      "path": "driver.mjs",
+      "kind": "file",
+      "hash": "968671127da86cb9",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "93-102",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:542-549",
+      "path": "mythos-compiler/src/compiler/run_dir.rs",
+      "kind": "file",
+      "hash": "819f1775dfb573b8",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "542-549",
+      "observed_at": "2026-07-12T08:20:00Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:682-689",
+      "path": "mythos-compiler/src/compiler/run_dir.rs",
+      "kind": "file",
+      "hash": "819f1775dfb573b8",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "682-689",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "file:scripts/ingest-subagent.mjs:77-86",
+      "path": "scripts/ingest-subagent.mjs",
+      "kind": "file",
+      "hash": "299840f579a48a89",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "77-86",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "file:scripts/readiness.mjs:66-75",
+      "path": "scripts/readiness.mjs",
+      "kind": "file",
+      "hash": "9663ec6b95c51f57",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "66-75",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "file:scripts/strict-gate.mjs:160-169",
+      "path": "scripts/strict-gate.mjs",
+      "kind": "file",
+      "hash": "51fca3724eaa4b46",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "160-169",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "file:tests/m0_trust_semantics.test.js:21-30",
+      "path": "tests/m0_trust_semantics.test.js",
+      "kind": "file",
+      "hash": "a474092801d5e9fb",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "21-30",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "file:tests/packet_shape_integrity.test.js:1488-1497",
+      "path": "tests/packet_shape_integrity.test.js",
+      "kind": "file",
+      "hash": "5a82cda2a74eb39a",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "1488-1497",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "file:tests/packet_shape_integrity.test.js:245-255",
+      "path": "tests/packet_shape_integrity.test.js",
+      "kind": "file",
+      "hash": "5a82cda2a74eb39a",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "245-255",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "file:tests/packet_shape_integrity.test.js:257-266",
+      "path": "tests/packet_shape_integrity.test.js",
+      "kind": "file",
+      "hash": "5a82cda2a74eb39a",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "257-266",
+      "observed_at": "2026-07-12T07:35:00Z"
+    },
+    {
+      "source_id": "raw:codex-synthesis-20260712T072656Z.md",
+      "path": "raw/codex-synthesis-20260712T072656Z.md",
+      "kind": "raw",
+      "hash": "800a239d4b371989",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "raw:objective.md",
+      "path": "raw/objective.md",
+      "kind": "raw",
+      "hash": "4e9a50c3a05793c7",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "raw:subagents/critic-audit.md",
+      "path": "raw/subagents/critic-audit.md",
+      "kind": "raw",
+      "hash": "328b432f52f97107",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "raw:subagents/evidence-map.md",
+      "path": "raw/subagents/evidence-map.md",
+      "kind": "raw",
+      "hash": "b3247e16c06e67d3",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "raw:subagents/test-report.md",
+      "path": "raw/subagents/test-report.md",
+      "kind": "raw",
+      "hash": "2bafe36ca5b19602",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "raw:subagents/verify-claims.md",
+      "path": "raw/subagents/verify-claims.md",
+      "kind": "raw",
+      "hash": "9c8b23c69f8353f2",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "test:packet-shape-integrity",
+      "path": "packet-shape-integrity",
+      "kind": "test",
+      "hash": "ecf1b2ed2ca594b3",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "label",
+      "span": null,
+      "observed_at": "2026-07-12T07:28:18Z"
+    },
+    {
+      "source_id": "verifier:vf-codex-synthesis-pending",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "fd08a66fb1dc0b77",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-codex-synthesis-pending",
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "verifier:vf-fullsuite-cargo",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "2226bbab108278fd",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-fullsuite-cargo",
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "verifier:vf-fullsuite-node",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "171081386a5b4d90",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-fullsuite-node",
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "verifier:vf-verify-ev-map-1",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "9d2f5413c2dcc364",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-verify-ev-map-1",
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "verifier:vf-verify-ev-map-10",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "7b79e10c09be36de",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-verify-ev-map-10",
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "verifier:vf-verify-ev-map-2",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "b7e42f996f8dacaf",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-verify-ev-map-2",
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "verifier:vf-verify-ev-map-3",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "7efd19130a7b79ed",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-verify-ev-map-3",
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "verifier:vf-verify-ev-map-4",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "2e1738b5bfdcaff5",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-verify-ev-map-4",
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "verifier:vf-verify-ev-map-5",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "e105478b05c0869e",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-verify-ev-map-5",
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "verifier:vf-verify-ev-map-6",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "ff5ce3420216f6e5",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-verify-ev-map-6",
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "verifier:vf-verify-ev-map-7",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "fa5745d35c70d015",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-verify-ev-map-7",
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "verifier:vf-verify-ev-map-8",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "6d6f21fa12ba27f9",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-verify-ev-map-8",
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    },
+    {
+      "source_id": "verifier:vf-verify-ev-map-9",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "3dfb3c652e169cc1",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-verify-ev-map-9",
+      "observed_at": "2026-07-12T07:20:30.679Z"
+    }
+  ]
+}

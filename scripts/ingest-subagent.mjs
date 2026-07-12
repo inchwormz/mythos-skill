@@ -205,14 +205,21 @@ const ALLOWED_SOURCE_KINDS = new Set([
 
 const MAX_OBSERVED_AT_DRIFT_DAYS = 7;
 
-function readRunCreatedAt(runDir) {
+function readRunManifest(runDir) {
   try {
     const manifestPath = path.join(runDir, "manifest.json");
-    if (!fs.existsSync(manifestPath)) return null;
+    if (!fs.existsSync(manifestPath)) return { createdAt: null, repoRoot: null };
     const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
-    return typeof manifest.created_at === "string" ? manifest.created_at : null;
+    return {
+      createdAt: typeof manifest.created_at === "string" ? manifest.created_at : null,
+      // F3: file citations resolve against the manifest's recorded project
+      // root — never against this package's own directory.
+      repoRoot: typeof manifest.repo_root === "string" && manifest.repo_root.length > 0
+        ? manifest.repo_root
+        : null,
+    };
   } catch {
-    return null;
+    return { createdAt: null, repoRoot: null };
   }
 }
 
@@ -286,24 +293,34 @@ function findBlockedSentinel(text) {
   return reason.length > 0 ? reason : null;
 }
 
-// Stamp lane + agent_id onto every extracted record so downstream consumers
-// can trace each evidence/verifier line back to the worker that produced it.
-// If the subagent already supplied explicit attribution (e.g. a co-signing
-// agent handoff), preserve that value.
+// F4: attribution is a trust boundary, not a suggestion. The caller's
+// --agent-id/--lane stamp ALWAYS wins; a record that declared a different
+// identity for itself keeps it only as claimed_agent_id/claimed_lane. This is
+// what stops one lane from impersonating three agents to beat the coverage
+// floor or to dodge/manufacture contradictions.
 function stampAttribution(record, { agentId, lane }) {
   const next = { ...record };
-  if (next.agent_id === undefined || next.agent_id === null || next.agent_id === "") {
-    next.agent_id = agentId;
+  if (typeof next.agent_id === "string" && next.agent_id !== "" && next.agent_id !== agentId) {
+    next.claimed_agent_id = next.agent_id;
   }
-  if (next.lane === undefined || next.lane === null || next.lane === "") {
-    next.lane = lane;
+  if (typeof next.lane === "string" && next.lane !== "" && next.lane !== lane) {
+    next.claimed_lane = next.lane;
   }
+  next.agent_id = agentId;
+  next.lane = lane;
   return next;
 }
 
-function resolveSourcePath(sourcePath) {
+function resolveSourcePath(sourcePath, runDir, repoRoot) {
   if (!sourcePath) return null;
-  return path.isAbsolute(sourcePath) ? sourcePath : path.resolve(root, sourcePath);
+  if (path.isAbsolute(sourcePath)) return sourcePath;
+  if (runDir) {
+    const insideRun = path.resolve(runDir, sourcePath);
+    if (fs.existsSync(insideRun)) return insideRun;
+  }
+  // F3: project-tree citations resolve ONLY against manifest.repo_root.
+  if (repoRoot) return path.resolve(repoRoot, sourcePath);
+  return null;
 }
 
 function isDirectSourceId(sourceId) {
@@ -398,30 +415,35 @@ function parseDirectSourceId(sourceId) {
   return null;
 }
 
-function normalizeSourceRefs(record, observedAt, runCreatedAt, runDir) {
+function normalizeSourceRefs(record, observedAt, runCreatedAt, runDir, repoRoot) {
   // G1+G10: normalize every source_id and source_ref.path up front so the rest
   // of the pipeline (dedupe, contradiction detection, packet sources) sees the
   // same shape regardless of whether the agent cited an absolute or
   // repo-relative path. Mutate a shallow clone so the original record stays
-  // untouched for diffability.
+  // untouched for diffability. Normalization is keyed on manifest.repo_root
+  // (F3) — when the manifest has none, absolute paths pass through untouched
+  // and the strict gate rejects them downstream.
+  const provenanceWarnings = Array.isArray(record.provenance_warnings)
+    ? [...record.provenance_warnings]
+    : [];
   const normalizedRecord = { ...record };
-  if (Array.isArray(normalizedRecord.source_ids)) {
+  if (Array.isArray(normalizedRecord.source_ids) && repoRoot) {
     normalizedRecord.source_ids = normalizedRecord.source_ids.map((id) =>
-      normalizeFileSourceId(id, root),
+      normalizeFileSourceId(id, repoRoot),
     );
   }
   if (Array.isArray(normalizedRecord.source_refs)) {
     normalizedRecord.source_refs = normalizedRecord.source_refs.map((ref) => {
       if (!ref || typeof ref !== "object") return ref;
       const next = { ...ref };
-      if (typeof next.source_id === "string") {
-        next.source_id = normalizeFileSourceId(next.source_id, root);
+      if (typeof next.source_id === "string" && repoRoot) {
+        next.source_id = normalizeFileSourceId(next.source_id, repoRoot);
       }
       // Only rewrite the path when we know this is a file-kind ref AND the
       // path is absolute-inside-repo. Raw/command/test/log paths keep their
       // declared form because they're not filesystem citations.
-      if (next.kind === "file" && typeof next.path === "string") {
-        next.path = normalizeFilePath(next.path, root);
+      if (next.kind === "file" && typeof next.path === "string" && repoRoot) {
+        next.path = normalizeFilePath(next.path, repoRoot);
       }
       return next;
     });
@@ -494,12 +516,18 @@ function normalizeSourceRefs(record, observedAt, runCreatedAt, runDir) {
           `source_ref ${next.source_id ?? "<unknown>"} points at compiler-generated state/ file (${normalizedPath}); evidence must cite stable inputs — try the run's raw/ or worker-results/ files, or the original source code, not derived compiler outputs`,
         );
       }
-      const resolved = resolveSourcePath(next.path);
+      const resolved = resolveSourcePath(next.path, runDir, repoRoot);
       if (!resolved || !fs.existsSync(resolved)) {
-        throw new Error(`source_ref ${next.source_id ?? "<unknown>"} file path does not exist: ${next.path}`);
+        throw new Error(
+          `source_ref ${next.source_id ?? "<unknown>"} file path does not exist: ${next.path}` +
+            (repoRoot
+              ? ""
+              : " (manifest.json has no repo_root — file citations cannot be resolved against the project tree)"),
+        );
       }
       const bytes = fs.readFileSync(resolved);
       next.hash = fnv1aHash(bytes);
+      next.hash_basis = "content";
       // H2: clip out-of-range spans on file refs to the actual line count
       // instead of hard-failing. Agents frequently guess end-of-range; auto-
       // clipping keeps the ingest contract useful without letting them point
@@ -520,9 +548,12 @@ function normalizeSourceRefs(record, observedAt, runCreatedAt, runDir) {
           if (start > end) start = end;
           const clipped = start === end ? String(start) : `${start}-${end}`;
           if (clipped !== String(original)) {
-            process.stderr.write(
-              `ingest: clipped source_ref ${next.source_id ?? "<unknown>"} span "${original}" -> "${clipped}" (file has ${lineCount} line(s))\n`,
-            );
+            // F7: a repaired citation is a demoted citation. The clip is
+            // recorded as a provenance warning on the record, and records
+            // carrying warnings are never fact-eligible in the compiler.
+            const warning = `span-clipped: ${next.source_id ?? "<unknown>"} "${original}" -> "${clipped}" (file has ${lineCount} line(s))`;
+            provenanceWarnings.push(warning);
+            process.stderr.write(`ingest: ${warning} — record demoted, not fact-eligible\n`);
             next.span = clipped;
           }
         }
@@ -535,17 +566,21 @@ function normalizeSourceRefs(record, observedAt, runCreatedAt, runDir) {
         : null;
       if (rawCandidate && fs.existsSync(rawCandidate)) {
         next.hash = fnv1aHash(fs.readFileSync(rawCandidate));
+        next.hash_basis = "content";
       } else if (!/^[0-9a-f]{16}$/.test(String(next.hash ?? ""))) {
         // H1 fallback for raw refs whose path didn't resolve on disk.
         next.hash = fnv1aHash(Buffer.from(String(next.source_id ?? ""), "utf8"));
+        next.hash_basis = "label";
       }
     } else if (AUTO_HASH_KINDS.has(next.kind)) {
-      // H1: command/test/log/packet/verifier/evidence/objective — there is no
-      // on-disk artifact to hash, so stable-hash the source_id bytes whenever
-      // the agent left a placeholder or forgot a valid digest.
+      // H1 + F2 truth-in-labeling: command/test/log/etc. have no on-disk
+      // artifact yet (receipts land in M2), so the digest is derived from the
+      // source_id STRING. That is an identity key, not provenance — it is
+      // stamped hash_basis:"label" and never counts as a direct anchor.
       if (!/^[0-9a-f]{16}$/.test(String(next.hash ?? ""))) {
         next.hash = fnv1aHash(Buffer.from(String(next.source_id ?? ""), "utf8"));
       }
+      next.hash_basis = "label";
     }
     return next;
   });
@@ -571,6 +606,7 @@ function normalizeSourceRefs(record, observedAt, runCreatedAt, runDir) {
     observed_at: record.observed_at ?? observedAt,
     source_ids: [...sourceIds],
     ...(normalizedRefs.length > 0 ? { source_refs: normalizedRefs } : {}),
+    ...(provenanceWarnings.length > 0 ? { provenance_warnings: provenanceWarnings } : {}),
   };
 }
 
@@ -583,7 +619,7 @@ function main() {
 
   const stamp = utcStamp();
   const observedAt = new Date().toISOString();
-  const runCreatedAt = readRunCreatedAt(args.runDir);
+  const { createdAt: runCreatedAt, repoRoot } = readRunManifest(args.runDir);
   const rawDir = path.join(args.runDir, "raw", "subagents");
   fs.mkdirSync(rawDir, { recursive: true });
   const directRaw = isInsideDir(args.from, rawDir);
@@ -648,7 +684,7 @@ function main() {
   for (const block of blocks) {
     const records = parseJsonlBlock(block).map((record) => {
       validateObservedAt(record.id, record.observed_at, runCreatedAt);
-      const normalized = normalizeSourceRefs(record, observedAt, runCreatedAt, args.runDir);
+      const normalized = normalizeSourceRefs(record, observedAt, runCreatedAt, args.runDir, repoRoot);
       const stamped = stampAttribution(normalized, { agentId: args.agentId, lane: args.lane });
       // H4: every evidence/verifier record ingested from a quarantined raw file
       // must carry that raw file's source_id so R5 traceability passes without

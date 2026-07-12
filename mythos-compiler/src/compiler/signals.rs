@@ -73,6 +73,10 @@ mod tests {
                 agent_id: None,
                 lane: None,
                 closure_reason: None,
+                finding_kind: None,
+                claimed_agent_id: None,
+                claimed_lane: None,
+                provenance_warnings: vec![],
             },
             VerifierFinding {
                 id: "v2".to_string(),
@@ -84,6 +88,10 @@ mod tests {
                 agent_id: None,
                 lane: None,
                 closure_reason: None,
+                finding_kind: None,
+                claimed_agent_id: None,
+                claimed_lane: None,
+                provenance_warnings: vec![],
             },
             VerifierFinding {
                 id: "v3".to_string(),
@@ -95,6 +103,10 @@ mod tests {
                 agent_id: None,
                 lane: None,
                 closure_reason: None,
+                finding_kind: None,
+                claimed_agent_id: None,
+                claimed_lane: None,
+                provenance_warnings: vec![],
             },
         ];
 

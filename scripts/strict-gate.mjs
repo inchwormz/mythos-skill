@@ -78,10 +78,6 @@ function walkFiles(dir) {
   return files;
 }
 
-function mtimeMs(file) {
-  return fs.existsSync(file) ? fs.statSync(file).mtimeMs : 0;
-}
-
 function inputFiles(runDir) {
   const inputDirs = ["raw", "worker-results", "verifier-results"];
   return [
@@ -102,13 +98,13 @@ function inputFingerprint(runDir) {
   });
 }
 
-function stalePacket(runDir, packetPath) {
+// F12: the input fingerprint is mandatory. No fingerprint = fail-closed;
+// the old mtime heuristic is gone (mtimes are not evidence).
+function stalePacket(runDir) {
   const fingerprintPath = path.join(runDir, "state", "input_fingerprint.json");
-  if (fs.existsSync(fingerprintPath)) {
-    return JSON.stringify(readJson(fingerprintPath, [], "input_fingerprint")) !== JSON.stringify(inputFingerprint(runDir));
-  }
-  const files = inputFiles(runDir);
-  return mtimeMs(packetPath) + 5 < Math.max(0, ...files.map(mtimeMs));
+  if (!fs.existsSync(fingerprintPath)) return "missing";
+  const stored = JSON.stringify(readJson(fingerprintPath, [], "input_fingerprint"));
+  return stored !== JSON.stringify(inputFingerprint(runDir)) ? "stale" : null;
 }
 
 function hasSourceIds(records) {
@@ -172,17 +168,19 @@ function fnv1aHash(buffer) {
   return hash.toString(16).padStart(16, "0");
 }
 
+// F3: file citations resolve against run_dir first, then the manifest's
+// recorded repo_root. There is deliberately no fallback to this package's own
+// directory — that fallback made citations verify against the wrong repo.
+let REPO_ROOT = null;
+
 function resolveSourcePath(runDir, sourcePath) {
   if (!sourcePath) return null;
   if (path.isAbsolute(sourcePath)) return sourcePath;
 
-  // raw/worker-results/verifier-results paths are run-dir-relative. Prefer
-  // resolving inside run_dir first so the integrity check follows the exact
-  // artifact the compiler just hashed.
   const insideRun = path.resolve(runDir, sourcePath);
   if (fs.existsSync(insideRun)) return insideRun;
 
-  return path.resolve(root, sourcePath);
+  return REPO_ROOT ? path.resolve(REPO_ROOT, sourcePath) : null;
 }
 
 function checkHashAlg(source, errors, prefix) {
@@ -290,9 +288,14 @@ function checkRawSourceRef(source, runDir, errors, prefix) {
   }
 }
 
+// F2 truth-in-labeling: a "direct source" is a citation whose hash was
+// computed from CONTENT the pipeline observed (today: file refs hashed from
+// disk at ingest; from M2: runtime receipts). Label-hashed command/test/log
+// refs are identity keys, not provenance — they never satisfy this check.
 function hasDirectSource(record) {
-  const declaredIds = sourceRefs(record).map((source) => source.source_id).filter(Boolean);
-  return declaredIds.some(isDirectSourceId);
+  return sourceRefs(record).some(
+    (source) => source && source.kind === "file" && source.hash_basis !== "label",
+  );
 }
 
 function packetSourceIds(packet) {
@@ -418,17 +421,23 @@ function requiresDirectEvidence(record) {
   return true;
 }
 
+// F6: exemptions are TYPED, never keyed on free text — an agent naming its
+// finding "vf-subagent-anything" must not relax requirements. Infrastructure
+// findings carry a finding_kind stamped by the driver/fixtures; a
+// closure_reason waives the direct-ref requirement only when the finding
+// cites the raw:* artifact that records the bounding decision.
+const EXEMPT_FINDING_KINDS = new Set(["synthesis", "subagent-session", "bootstrap"]);
+
 function requiresDirectVerifier(record) {
-  const id = String(record.id ?? "").toLowerCase();
-  const summary = String(record.summary ?? "").toLowerCase();
-  if (id.includes("subagent") || summary.includes("subagent")) return false;
-  if (id.includes("synthesis") || summary.includes("codex synthesis")) return false;
-  if (id.includes("smoke-not-run")) return false;
-  // H6: a closure_reason is a typed bounded-audit / bounded-investigation
-  // stamp. The finding still needs `source_ids`, but we no longer require a
-  // direct file|command|test source_ref — the closure is the provenance.
-  if (typeof record.closure_reason === "string" && record.closure_reason.trim().length > 0) return false;
-  return Number(record.verifier_score ?? 0) >= 0.9 || id.includes("syntax") || id.includes("test");
+  const findingKind = String(record.finding_kind ?? "").toLowerCase();
+  if (EXEMPT_FINDING_KINDS.has(findingKind)) return false;
+  if (typeof record.closure_reason === "string" && record.closure_reason.trim().length > 0) {
+    const citesRaw = (record.source_ids ?? []).some(
+      (id) => typeof id === "string" && id.startsWith("raw:"),
+    );
+    return !citesRaw;
+  }
+  return Number(record.verifier_score ?? 0) >= 0.9;
 }
 
 function statusSummary(records) {
@@ -513,24 +522,26 @@ function checkSubagentTraceability(evidence, errors) {
   }
 }
 
-// R6: For evidence kinds that assert concrete change/causation/tests
-// (code-change, root-cause, test-change), require at least one declared
-// source_ref with kind `file`, `command`, or `test` so the claim is anchored
-// to a direct, verifiable artifact.
+// R6 + F2: For evidence kinds that assert concrete change/causation/tests
+// (code-change, root-cause, test-change), require at least one CONTENT-hashed
+// anchor. Until receipts land (M2), that means a file ref hashed from disk;
+// command/test refs carry label-derived hashes and do not count — a claim
+// that "the tests ran" is unattested until a receipt exists.
 function checkDirectSourceRefRatio(evidence, errors) {
-  const directRefKinds = new Set(["file", "command", "test"]);
   const requiredKinds = new Set(["code-change", "root-cause", "test-change"]);
   const offenders = [];
   for (const record of evidence) {
     const kind = String(record.kind ?? "").toLowerCase();
     if (!requiredKinds.has(kind)) continue;
     const refs = Array.isArray(record.source_refs) ? record.source_refs : [];
-    const hasDirect = refs.some((ref) => ref && directRefKinds.has(ref.kind));
+    const hasDirect = refs.some(
+      (ref) => ref && ref.kind === "file" && ref.hash_basis !== "label",
+    );
     if (!hasDirect) offenders.push(record.id ?? "<unknown>");
   }
   if (offenders.length > 0) {
     errors.push(
-      `evidence records of kind code-change/root-cause/test-change lack a direct file|command|test source_ref: ${offenders.join(", ")}`,
+      `evidence records of kind code-change/root-cause/test-change lack a content-hashed file source_ref (label-hashed command/test refs are not provenance): ${offenders.join(", ")}`,
     );
   }
 }
@@ -596,7 +607,17 @@ function main() {
     errors.push("run is still pass-0001; strict gate requires at least one promoted recurrence pass");
   }
 
-  if (stalePacket(runDir, packetPath)) {
+  REPO_ROOT =
+    typeof manifest?.repo_root === "string" && manifest.repo_root.length > 0
+      ? manifest.repo_root
+      : null;
+
+  const staleness = stalePacket(runDir);
+  if (staleness === "missing") {
+    errors.push(
+      "state/input_fingerprint.json is missing; recompile with the mythos compiler (fail-closed: no fingerprint, no gate)",
+    );
+  } else if (staleness === "stale") {
     errors.push("next_pass_packet.json is stale; re-run driver.mjs --run-dir before proceeding");
   }
 
@@ -643,17 +664,9 @@ function main() {
     );
   }
 
-  const hasSubagentEvidence = evidence.some((record) => {
-    const text = `${record.id ?? ""} ${record.kind ?? ""} ${record.summary ?? ""}`.toLowerCase();
-    return text.includes("subagent") || text.includes("fanout") || text.includes("micro-lane");
-  });
-  const hasSubagentFinding = findings.some((record) => {
-    const text = `${record.id ?? ""} ${record.summary ?? ""}`.toLowerCase();
-    return text.includes("subagent") && record.status === "passed";
-  });
-  if (!hasSubagentEvidence && !hasSubagentFinding) {
-    errors.push("no passed subagent/fanout evidence found; Prime likely did work outside the compiler path");
-  }
+  // F6: the "did subagents actually run" check is typed — it counts
+  // kind:"subagent-session" records (which only mechanical ingest emits),
+  // never text that merely mentions subagents.
   const subagentSessionEvidence = evidence.filter((record) => record.kind === "subagent-session");
   const rawSubagentFiles = walkFiles(rawSubagentDir);
   const compiledSources = packetSourceIds(packet);

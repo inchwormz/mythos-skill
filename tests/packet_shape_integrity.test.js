@@ -41,6 +41,7 @@ function freshRunDir(name) {
         branch_id: "main",
         pass_id: "pass-0001",
         created_at: new Date().toISOString(),
+        repo_root: repoRoot,
       },
       null,
       2,
@@ -107,7 +108,7 @@ function readJsonl(file) {
     .map((line) => JSON.parse(line));
 }
 
-test("ingest: agent_id/lane/confidence/rationale/diff_ref survive into evidence.jsonl", (t) => {
+test("F4 ingest: caller attribution WINS; record-declared identity survives only as claimed_*", (t) => {
   const runDir = freshRunDir("ingest-fields");
   t.after(() => removeDir(runDir));
 
@@ -119,8 +120,8 @@ test("ingest: agent_id/lane/confidence/rationale/diff_ref survive into evidence.
     summary: "Patched fixture file to demonstrate field passthrough",
     source_ids: ["raw:objective.md"],
     observed_at: observedAt,
-    // Fields under test (explicit agent_id/lane OVERRIDE the --agent-id/--lane
-    // stamp so we can assert they survive rather than getting replaced).
+    // F4: a record may CLAIM any identity it likes — the caller's stamp wins,
+    // and the claim is preserved for audit as claimed_agent_id/claimed_lane.
     agent_id: "fixture-worker-alpha",
     lane: "fixture-lane",
     confidence: 0.92,
@@ -145,9 +146,9 @@ test("ingest: agent_id/lane/confidence/rationale/diff_ref survive into evidence.
     "--run-dir",
     runDir,
     "--lane",
-    "caller-lane-should-not-override",
+    "caller-lane-wins",
     "--agent-id",
-    "caller-agent-should-not-override",
+    "caller-agent-wins",
     "--from",
     subagentPath,
   ]);
@@ -160,8 +161,10 @@ test("ingest: agent_id/lane/confidence/rationale/diff_ref survive into evidence.
   const evidence = readJsonl(path.join(runDir, "worker-results", "evidence.jsonl"));
   const fixture = evidence.find((record) => record.id === "ev-fixture-fields");
   assert.ok(fixture, "fixture evidence record must be present after ingest");
-  assert.equal(fixture.agent_id, "fixture-worker-alpha");
-  assert.equal(fixture.lane, "fixture-lane");
+  assert.equal(fixture.agent_id, "caller-agent-wins", "caller agent stamp must win");
+  assert.equal(fixture.lane, "caller-lane-wins", "caller lane stamp must win");
+  assert.equal(fixture.claimed_agent_id, "fixture-worker-alpha", "claimed identity preserved");
+  assert.equal(fixture.claimed_lane, "fixture-lane", "claimed lane preserved");
   assert.equal(fixture.confidence, 0.92);
   assert.equal(fixture.rationale, "Deterministic test of field passthrough");
   assert.equal(fixture.diff_ref, "test-diff-ref-12345");
@@ -169,7 +172,7 @@ test("ingest: agent_id/lane/confidence/rationale/diff_ref survive into evidence.
   assert.equal(fixture.span_after, "new span");
 });
 
-test("driver: agent_id/lane/confidence survive compile into next_pass_packet.json evidence", (t) => {
+test("F1+F4 driver: caller attribution reaches the packet; unverified evidence is NOT a trusted fact", (t) => {
   const runDir = freshRunDir("driver-fields");
   t.after(() => removeDir(runDir));
 
@@ -222,17 +225,19 @@ test("driver: agent_id/lane/confidence survive compile into next_pass_packet.jso
   );
   const compiled = packet.evidence.find((record) => record.id === "ev-driver-fixture");
   assert.ok(compiled, "compiled packet must contain driver fixture evidence");
-  assert.equal(compiled.agent_id, "driver-worker");
-  assert.equal(compiled.lane, "driver-lane");
+  assert.equal(compiled.agent_id, "driver-agent-caller", "caller stamp must reach the packet");
+  assert.equal(compiled.lane, "driver-lane-caller");
+  assert.equal(compiled.claimed_agent_id, "driver-worker", "claimed identity must reach the packet");
   assert.equal(compiled.confidence, 0.81);
   assert.equal(compiled.rationale, "Attribution should reach the compiled packet");
 
-  // R2 side: CompiledFact.confidence should use the evidence value.
+  // F1: no passed verifier finding backs this observation, so it must stay
+  // OUT of trusted_facts — self-graded confidence is not trust.
   const fact = packet.trusted_facts.find((item) => item.id === "fact:ev-driver-fixture");
-  assert.ok(fact, "trusted fact must be present for the fixture evidence");
-  assert.ok(
-    Math.abs(fact.confidence - 0.81) < 1e-3,
-    `fact confidence should echo evidence confidence 0.81, got ${fact.confidence}`,
+  assert.equal(
+    fact,
+    undefined,
+    `unverified evidence must not be promoted to trusted_facts; got ${JSON.stringify(fact)}`,
   );
 });
 
@@ -322,6 +327,13 @@ test("H1 ingest: non-file source_refs with placeholder hash get fnv1a-hashed fro
     fnv1aHashString("test:foo/bar"),
     `H1 hash must match fnv1a(source_id); got ${ref.hash}`,
   );
+  // F2 truth-in-labeling: a digest derived from the claim's own name is an
+  // identity key, not provenance — it must be stamped hash_basis:"label".
+  assert.equal(
+    ref.hash_basis,
+    "label",
+    `H1 label-derived hash must be stamped hash_basis:"label"; got ${ref.hash_basis}`,
+  );
 });
 
 test("H2 ingest: file source_refs with out-of-range spans get clipped to actual line count", (t) => {
@@ -393,6 +405,13 @@ test("H2 ingest: file source_refs with out-of-range spans get clipped to actual 
   assert.ok(
     end <= lineCount,
     `H2 span "${ref.span}" must be clipped to <= ${lineCount}; saw end=${end}`,
+  );
+  // F7: a repaired citation is a demoted record — the clip must be recorded
+  // as a provenance warning, which bars the record from trusted_facts.
+  assert.ok(
+    Array.isArray(fixture.provenance_warnings) &&
+      fixture.provenance_warnings.some((w) => String(w).startsWith("span-clipped:")),
+    `H2 clipped record must carry a span-clipped provenance warning; got ${JSON.stringify(fixture.provenance_warnings)}`,
   );
 });
 

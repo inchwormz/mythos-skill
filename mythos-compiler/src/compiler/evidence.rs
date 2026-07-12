@@ -199,7 +199,7 @@ fn validate_record_local_source_refs(
     Ok(())
 }
 
-fn is_direct_source_id(source_id: &str) -> bool {
+pub fn is_direct_source_id(source_id: &str) -> bool {
     source_id.starts_with("file:")
         || source_id.starts_with("command:")
         || source_id.starts_with("test:")
@@ -221,6 +221,7 @@ mod tests {
             kind: "log".to_string(),
             hash: "abc".to_string(),
             hash_alg: "fnv1a-64".to_string(),
+            hash_basis: None,
             span: Some("1-4".to_string()),
             observed_at: "2026-04-21T00:00:00Z".to_string(),
         }
@@ -233,6 +234,7 @@ mod tests {
             kind: "file".to_string(),
             hash: "abc".to_string(),
             hash_alg: "fnv1a-64".to_string(),
+            hash_basis: None,
             span: Some("10".to_string()),
             observed_at: "2026-04-21T00:00:00Z".to_string(),
         }
@@ -260,6 +262,9 @@ mod tests {
                 diff_ref: None,
                 span_before: None,
                 span_after: None,
+                claimed_agent_id: None,
+                claimed_lane: None,
+                provenance_warnings: vec![],
             }],
             trusted_facts: vec![CompiledFact {
                 id: "fact-1".to_string(),
@@ -269,6 +274,7 @@ mod tests {
                 novelty_gain: 0.1,
                 needs_raw_drilldown: false,
                 source_ids: source_ids.clone(),
+                attestation: None,
             }],
             active_hypotheses: vec![Hypothesis {
                 id: "hyp-1".to_string(),
@@ -311,6 +317,10 @@ mod tests {
                 agent_id: None,
                 lane: None,
                 closure_reason: None,
+                finding_kind: None,
+                claimed_agent_id: None,
+                claimed_lane: None,
+                provenance_warnings: vec![],
             }],
             open_questions: vec![],
             raw_drilldown_refs: vec![source()],

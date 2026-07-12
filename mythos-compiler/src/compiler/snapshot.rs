@@ -118,6 +118,7 @@ mod tests {
                 kind: "document".to_string(),
                 hash: "abc".to_string(),
                 hash_alg: "fnv1a-64".to_string(),
+                hash_basis: None,
                 span: None,
                 observed_at: "2026-04-21T00:00:00Z".to_string(),
             }],

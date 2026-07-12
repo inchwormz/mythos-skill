@@ -16,6 +16,7 @@ pub fn artifact_ref(
         kind: kind.into(),
         hash: hash.into(),
         hash_alg: MYTHOS_HASH_ALG.to_string(),
+        hash_basis: None,
         span: None,
         observed_at: observed_at.into(),
     }
