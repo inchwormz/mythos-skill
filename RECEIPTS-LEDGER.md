@@ -43,6 +43,10 @@ Contract changes (deliberate, tests rewritten): attribution-forgery test now ass
 
 - GitHub repo rename mythos-skill -> receipts (or receipts-engine): needs John's GitHub.
 - crates.io + npm publishes under the new name: needs John's accounts (M5).
+- `git push` of main/receipts-m0 to origin: not pushed (John approved commit, not publish).
+- OPTIONAL user-PATH canonicalization (classifier blocked Claude from persisting env; workaround in place: mythos.exe copied to ~/.local/bin which is already on PATH). If John prefers the canonical cargo location, paste in PowerShell:
+  `[Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path","User") + ";C:\Users\johnr\.cargo\bin", "User")`
+  (then future `cargo install` updates need no ~/.local/bin copy; until then, re-copy after reinstalls).
 
 ## LIVE SUBAGENT E2E (2026-07-12, post-M0) — VERIFIED
 
@@ -65,4 +69,5 @@ Run: `.codex/mythos/runs/20260712T072030Z-map-every-fnv1a-64-implementation-in-t
 ## CHECKPOINTS
 
 - 2026-07-12: plan ratified, ledger created, M0 implementation begun. Baseline: all suites green pre-M0 (Rust 30/30, Node 19/19, readiness pass).
+- 2026-07-12 (later): **M0 + live E2E COMMITTED as `80f1f7d`** on branch receipts-m0, fast-forward merged to local main (not pushed). E2E receipts preserved in-tree at `docs/live-e2e-20260712/`. **NTM integration DONE (John's order):** runtime installed (`mythos` 0.1.1 via cargo install, exe copied to ~/.local/bin because ~/.cargo/bin is not on PATH on this box; `mythos-skill` 0.1.0 via npm link), Claude + Codex skill surfaces installed from LOCAL repo (~/.claude/skills/mythos, ~/.codex/skills/mythos - GitHub raw would fetch stale remote), `mythos-skill ready` green through the installed CLI (READY_EXIT=0), and ~/.claude/skills/ntm-revive/SKILL.md gained section 8 making the Receipts loop the DEFAULT protocol for substantive NTM pane work (incl. the proven lane-brief template and the M0-vs-M2 catch boundary). First real NTM-pane run through the loop = the remaining live verification; treat as M4's opening move.
 - 2026-07-12 (same session): **M0 COMPLETE, verified fresh.** All 8 scope items landed (F1 fact gating + attestation field, F2 interim hash_basis labeling, F3 repo_root end to end incl. Rust/JS/gate resolvers, F4 caller-wins attribution + claimed_*, F5 init seed id + binary integration test, F6 typed finding_kind exemptions + vocabulary checks deleted, F7 span-clip demotion via provenance_warnings, F12 mandatory fingerprint with Rust as single writer). Red-team tests prove each fix: forged 3-agent coverage fails the floor; a span lie with verifier backing still never becomes a fact; "vf-subagent-sneak" no longer slips the gate; missing fingerprint fails closed. Two legacy tests rewritten deliberately (they enshrined forgeable attribution and promote-everything; noted in file comments). Schemas updated additively, schema_version stays 1.1.0. Interim number: **8/8 M0 findings fixed with failing-case coverage.** Work is UNCOMMITTED on main's working tree - next session: commit before touching anything else. NEXT: M1 (`mythos run` receipt capture, in Rust).
