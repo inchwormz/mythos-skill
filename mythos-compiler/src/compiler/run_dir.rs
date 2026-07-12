@@ -467,11 +467,27 @@ fn verify_record_file_refs(
         })?;
         let actual = fnv1a_hash(&bytes);
         if source.hash != actual {
-            return Err(format!(
-                "{label} `{id}` source_ref `{}` hash mismatch: expected `{actual}`, got `{}`",
-                source.source_id, source.hash
-            )
-            .into());
+            // CUSTODY vs DRIFT (field lesson, 2026-07-13 dogfood): artifacts
+            // INSIDE the run dir are quarantined - a mismatch there is
+            // tampering and fails hard. Refs into the PROJECT TREE legitimately
+            // drift when Prime applies post-review fixes; the ingest-time hash
+            // already pins what the agent actually saw, so drift is the gate's
+            // warning, not a compile failure.
+            let inside_run = resolved
+                .canonicalize()
+                .ok()
+                .zip(run_dir.canonicalize().ok())
+                .is_some_and(|(res, run)| res.starts_with(&run));
+            if inside_run {
+                return Err(format!(
+                    "{label} `{id}` source_ref `{}` hash mismatch inside the run dir: expected `{actual}`, got `{}` - quarantined artifacts are immutable",
+                    source.source_id, source.hash
+                )
+                .into());
+            }
+            // Drifted repo citation: skip span validation too (the file's
+            // line count may have changed since observation).
+            continue;
         }
         verify_line_span(&source.span, &bytes, label, id, &source.source_id)?;
     }

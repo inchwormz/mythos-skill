@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>mythos report - run-20260712T214352Z</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #f7f7f8;
+    color: #1a1a1a;
+}
+main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+}
+h1 { font-size: 1.6rem; margin-bottom: 0.25rem; }
+h2 { font-size: 1.2rem; margin-top: 2rem; border-bottom: 1px solid #ddd; padding-bottom: 0.25rem; }
+h3 { font-size: 1rem; margin-top: 1.25rem; }
+.meta { color: #555; font-size: 0.9rem; }
+.meta code { background: #eee; padding: 0 0.3rem; border-radius: 3px; }
+section { margin-top: 1rem; }
+.empty { color: #777; font-style: italic; }
+.verdict {
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    margin: 1rem 0;
+}
+.verdict-pass { background: #e3f5e6; color: #1c6b2c; }
+.verdict-fail { background: #fbe4e4; color: #a11c1c; }
+.verdict-unknown { background: #fdf3d8; color: #8a6a00; }
+.verdict-fail ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
+.scorecard .coverage { font-size: 1.1rem; font-weight: 600; }
+.scorecard .raw { font-weight: 400; color: #555; font-size: 0.9rem; }
+.scorecard-counts { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 1rem; color: #444; }
+table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.9rem; }
+th, td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid #e2e2e2; vertical-align: top; }
+tbody tr:nth-child(even) { background: #f0f0f1; }
+.exit-ok { color: #1c6b2c; font-weight: 600; }
+.exit-fail { color: #a11c1c; font-weight: 600; }
+.status-pass { color: #1c6b2c; font-weight: 600; }
+.status-fail { color: #a11c1c; font-weight: 600; }
+.status-other { color: #8a6a00; font-weight: 600; }
+.badge {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 0.1rem 0.55rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-right: 0.3rem;
+}
+.badge-green { background: #dff3e2; color: #1c6b2c; }
+.badge-blue { background: #dde8fb; color: #1c4b9c; }
+.badge-grey { background: #e8e8e8; color: #444; }
+.badge-orange { background: #fbe8d2; color: #9c5a00; }
+.badge-purple { background: #ece0f8; color: #5c1c9c; }
+.refutations { background: #fbe4e4; padding: 1rem; border-radius: 6px; }
+.refutations ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
+.evidence-lane { list-style: none; padding: 0; }
+.evidence-lane li { padding: 0.3rem 0; border-bottom: 1px solid #eee; }
+.warnings { margin: 0.25rem 0 0 1.5rem; color: #9c5a00; font-size: 0.85rem; }
+footer { margin-top: 3rem; color: #888; font-size: 0.85rem; text-align: center; }
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>build mythos report human window over a run</h1>
+<p class="meta">run <code>run-20260712T214352Z</code> - pass <code>pass-0002</code> - generated 2026-07-12T22:11:53.683Z</p>
+</header>
+<section class="verdict verdict-pass">GATE PASSED</section>
+<section class="scorecard">
+<h2>Attestation scorecard</h2>
+<p class="coverage">28% attested <span class="raw">(9 attested, 1 verifier, 22 asserted)</span></p>
+<ul class="scorecard-counts">
+<li>Attested: 9</li>
+<li>Verifier: 1</li>
+<li>Asserted: 22</li>
+<li>Refuted: 0</li>
+<li>Unstructured: 0</li>
+</ul>
+</section>
+<section class="receipts">
+<h2>Receipts</h2>
+<table>
+<thead><tr><th>id</th><th>label</th><th>command</th><th>exit</th><th>duration_ms</th><th>output</th></tr></thead>
+<tbody>
+<tr><td>rcpt-0001</td><td>test:fmt</td><td><code>cargo fmt --manifest-path mythos-compiler/Cargo.toml --check</code></td><td class="exit-ok">0</td><td>111</td><td><a href="../receipts/artifacts/cbf29ce484222325.txt">stdout</a> / <a href="../receipts/artifacts/cbf29ce484222325.txt">stderr</a></td></tr>
+<tr><td>rcpt-0002</td><td>test:cargo-suite</td><td><code>cargo test --manifest-path mythos-compiler/Cargo.toml</code></td><td class="exit-ok">0</td><td>337</td><td><a href="../receipts/artifacts/141fb7d0babbbeaa.txt">stdout</a> / <a href="../receipts/artifacts/47bb428bdbc2366a.txt">stderr</a></td></tr>
+<tr><td>rcpt-0003</td><td>command:report-smoke</td><td><code>mythos report --run-dir C:\Users\johnr\Projects\mythos-skill\.mythos\runs\20260712T214352Z-build-mythos-report-human-window-over-a-run</code></td><td class="exit-fail">1</td><td>8</td><td><a href="../receipts/artifacts/cbf29ce484222325.txt">stdout</a> / <a href="../receipts/artifacts/598c73a98683f972.txt">stderr</a></td></tr>
+<tr><td>rcpt-0004</td><td>command:report-smoke</td><td><code>mythos report --run-dir C:\Users\johnr\Projects\mythos-skill\.mythos\runs\20260712T214352Z-build-mythos-report-human-window-over-a-run</code></td><td class="exit-ok">0</td><td>8</td><td><a href="../receipts/artifacts/1c57c1e5dc7f69ae.txt">stdout</a> / <a href="../receipts/artifacts/cbf29ce484222325.txt">stderr</a></td></tr>
+<tr><td>rcpt-0005</td><td>test:fmt</td><td><code>cargo fmt --manifest-path mythos-compiler/Cargo.toml --check</code></td><td class="exit-ok">0</td><td>128</td><td><a href="../receipts/artifacts/cbf29ce484222325.txt">stdout</a> / <a href="../receipts/artifacts/cbf29ce484222325.txt">stderr</a></td></tr>
+<tr><td>rcpt-0006</td><td>test:cargo-suite</td><td><code>cargo test --manifest-path mythos-compiler/Cargo.toml</code></td><td class="exit-ok">0</td><td>3108</td><td><a href="../receipts/artifacts/6bddb0ca44367159.txt">stdout</a> / <a href="../receipts/artifacts/c10264a7bddafade.txt">stderr</a></td></tr>
+<tr><td>rcpt-0007</td><td>test:cargo-suite</td><td><code>cargo test --manifest-path mythos-compiler/Cargo.toml</code></td><td class="exit-ok">0</td><td>2887</td><td><a href="../receipts/artifacts/a300e8aa5a472ae8.txt">stdout</a> / <a href="../receipts/artifacts/27daa94d1c094f6b.txt">stderr</a></td></tr>
+<tr><td>rcpt-0008</td><td>test:node-suites</td><td><code>node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving_ingest.test.js tests/receipts_attestation.test.js</code></td><td class="exit-ok">0</td><td>9437</td><td><a href="../receipts/artifacts/5f36db3343d081cc.txt">stdout</a> / <a href="../receipts/artifacts/cbf29ce484222325.txt">stderr</a></td></tr>
+</tbody>
+</table>
+</section>
+<section class="facts">
+<h2>Trusted facts</h2>
+<table>
+<thead><tr><th>tier</th><th>statement</th><th>source_ids</th></tr></thead>
+<tbody>
+<tr><td><span class="badge badge-green">attested</span></td><td>cargo test --manifest-path mythos-compiler/Cargo.toml (fresh run): 37 lib unit tests + 1 compile_determinism + 1 init_contract + 0 doc-tests = 39 passed, 0 failed, 0 ignored</td><td>raw:subagents/report-verifier.md, test:cargo-suite</td></tr>
+<tr><td><span class="badge badge-blue">verifier</span></td><td>Real run&#39;s report.html and both XSS fixtures each contain exactly one style block pair and zero https or http matches</td><td>raw:subagents/report-verifier.md, file:mythos-compiler/src/compiler/report.rs:342</td></tr>
+<tr><td><span class="badge badge-green">attested</span></td><td>mythos run: `cargo fmt --manifest-path mythos-compiler/Cargo.toml --check` exited 0 in 111ms [attests test:fmt]</td><td>receipt:rcpt-0001</td></tr>
+<tr><td><span class="badge badge-green">attested</span></td><td>mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 337ms [attests test:cargo-suite]</td><td>receipt:rcpt-0002</td></tr>
+<tr><td><span class="badge badge-green">attested</span></td><td>mythos run: `mythos report --run-dir C:\Users\johnr\Projects\mythos-skill\.mythos\runs\20260712T214352Z-build-mythos-report-human-window-over-a-run` exited 1 in 8ms [attests command:report-smoke]</td><td>receipt:rcpt-0003</td></tr>
+<tr><td><span class="badge badge-green">attested</span></td><td>mythos run: `mythos report --run-dir C:\Users\johnr\Projects\mythos-skill\.mythos\runs\20260712T214352Z-build-mythos-report-human-window-over-a-run` exited 0 in 8ms [attests command:report-smoke]</td><td>receipt:rcpt-0004</td></tr>
+<tr><td><span class="badge badge-green">attested</span></td><td>mythos run: `cargo fmt --manifest-path mythos-compiler/Cargo.toml --check` exited 0 in 128ms [attests test:fmt]</td><td>receipt:rcpt-0005</td></tr>
+<tr><td><span class="badge badge-green">attested</span></td><td>mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 3108ms [attests test:cargo-suite]</td><td>receipt:rcpt-0006</td></tr>
+<tr><td><span class="badge badge-green">attested</span></td><td>mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 2887ms [attests test:cargo-suite]</td><td>receipt:rcpt-0007</td></tr>
+<tr><td><span class="badge badge-green">attested</span></td><td>mythos run: `node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving_ingest.test.js tests/receipts_attestation.test.js` exited 0 in 9437ms [attests test:node-suites]</td><td>receipt:rcpt-0008</td></tr>
+</tbody>
+</table>
+</section>
+<section class="evidence">
+<h2>Evidence by lane</h2>
+<h3>(no lane)</h3>
+<ul class="evidence-lane">
+<li><code>ev-objective</code> <span class="kind">objective</span>  - build mythos report human window over a run</li>
+<li><code>ev-codex-synthesis-20260712T221153Z</code> <span class="kind">codex-synthesis</span>  - Three sonnet lanes built, adversarially verified, and critiqued the mythos report feature (report-builder implementation per spec; report-verifier XSS+section+test-quality audit all passed genuinely per vf-verify findings; report-critic ruled the asserted-badge divergence a real defect). Prime applied the ruling (is_asserted shared predicate, regression test) plus the custody-vs-drift split this run itself exposed. All checks receipt-attested at the final tree: rcpt-0005 fmt, rcpt-0007 cargo 39 tests, rcpt-0008 node 40 tests, rcpt-0004 report smoke.</li>
+</ul>
+<h3>report-builder</h3>
+<ul class="evidence-lane">
+<li><code>ev-subagent-session-20260712T215254Z-report-builder</code> <span class="kind">subagent-session</span>  - Captured quarantined subagent output for lane report-builder; machine records were extracted without Prime synthesis.</li>
+<li><code>ev-auto-report-builder-1</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - pub fn html_escape(s: &amp;str) -&gt; String escapes &amp; &lt; &gt; &quot; &#39; by replacing them with &amp;amp; &amp;lt; &amp;gt; &amp;quot; &amp;#39;</li>
+<li><code>ev-auto-report-builder-2</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - pub struct GateReport deserializes {ok, errors, warnings} with serde defaults, tolerating missing/extra fields</li>
+<li><code>ev-auto-report-builder-3</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - pub fn render_report(packet, receipts, gate) -&gt; String is the pure, unit-testable renderer with no system-time calls</li>
+<li><code>ev-auto-report-builder-4</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - pub fn generate_report(run_dir) loads next_pass_packet.json + verified receipts + optional gate-report.json and writes state/report.html</li>
+<li><code>ev-auto-report-builder-5</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - compiler/mod.rs registers the new module with pub mod report;</li>
+<li><code>ev-auto-report-builder-6</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - bin/mythos.rs imports generate_report from the new module</li>
+<li><code>ev-auto-report-builder-7</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - bin/mythos.rs adds a &quot;report&quot; command arm that parses --run-dir via parse_run_dir, preflights the run dir, calls generate_report, and prints the output path</li>
+<li><code>ev-auto-report-builder-8</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - bin/mythos.rs help text gains one line documenting `report --run-dir &lt;dir&gt;`</li>
+<li><code>ev-auto-report-builder-9</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - Five new unit tests added: html_escape (all 5 chars), XSS-in-summary escaping, con:receipt:* renders in refutations panel, receipt row shows exit code + label, coverage math 2 attested + 1 verifier + 1 asserted = 50% attested</li>
+</ul>
+<h3>report-verifier</h3>
+<ul class="evidence-lane">
+<li><code>ev-subagent-session-20260712T220656Z-report-verifier</code> <span class="kind">subagent-session</span>  - Captured quarantined subagent output for lane report-verifier; machine records were extracted without Prime synthesis.</li>
+<li><code>ev-auto-report-verifier-1</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - html_escape(s) replaces &amp; &lt; &gt; &quot; &#39; with entities and is the single escape path used by every render_* function and the badge() helper</li>
+<li><code>ev-auto-report-verifier-2</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - Synthetic fixture-a (script tags, onmouseover payloads, quote-breaking attempts, con:receipt:xss-1) rendered with zero raw &lt;script sequences and zero live on* attributes, confirmed by both grep and a real HTML tokenizer (Python html.parser)</li>
+<li><code>ev-auto-report-verifier-3</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - fixture-b (identical packet, receipts/receipts.jsonl omitted entirely) also rendered clean, confirming load_verified_receipts&#39;s no-file -&gt; Ok(vec![]) path is safe and doesn&#39;t bypass escaping</li>
+<li><code>ev-auto-report-verifier-4</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - con:receipt:xss-1 contradiction rendered inside section class=refutations with its payload fully escaped, matching spec section 4</li>
+<li><code>ev-auto-report-verifier-7</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - EXCLUDED_ASSERTED_KINDS in report.rs matches the spec&#39;s exclusion list verbatim, and the fact:&lt;id&gt; promotion-lookup convention assumed by compute_scorecard matches what the real compiler mints</li>
+<li><code>ev-auto-report-verifier-8</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - Evidence-by-lane per-row asserted badge (unpromoted test, no kind exclusion) diverges from the scorecard&#39;s stricter asserted formula for kind:objective records - a disclosed, defensible ambiguity in spec section 7 vs section 3, not a bug</li>
+<li><code>ev-auto-report-verifier-9</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - Independent probe (standalone cargo project path-depending on mythos-skill, outside the repo) reproduced receipt_row_renders_exit_code_and_label&#39;s exact fixture and found exactly one &gt;0&lt; match in the whole page, at the exit-code table cell - the test is not tautological</li>
+<li><code>ev-auto-report-verifier-10</code> <span class="kind">observation</span>  - cargo test --manifest-path mythos-compiler/Cargo.toml (fresh run): 37 lib unit tests + 1 compile_determinism + 1 init_contract + 0 doc-tests = 39 passed, 0 failed, 0 ignored</li>
+<li><code>ev-auto-report-verifier-11</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - cargo fmt --manifest-path mythos-compiler/Cargo.toml -- --check exits 0 (clean)</li>
+<li><code>ev-auto-report-verifier-12</code> <span class="kind">observation</span>  - Real run&#39;s report.html and both XSS fixtures each contain exactly one style block pair and zero https or http matches</li>
+</ul>
+<h3>report-critic</h3>
+<ul class="evidence-lane">
+<li><code>ev-subagent-session-20260712T220656Z-report-critic</code> <span class="kind">subagent-session</span>  - Captured quarantined subagent output for lane report-critic; machine records were extracted without Prime synthesis.</li>
+<li><code>ev-auto-report-critic-2</code> <span class="kind">gap</span> <span class="badge badge-grey">asserted</span> - compute_scorecard (report.rs:118-149) and render_evidence_by_lane (report.rs:255-307) each independently rebuild the fact_ids BTreeSet lookup from packet.trusted_facts and independently reimplement the fact:{id} promotion check (:134+140 vs :256+277) instead of sharing one is_promoted helper. This copy-paste duplication is the direct mechanism that let the two implementations silently diverge on the kind exclusion - nothing in the code forces them to agree. A single shared predicate would make &#39;asserted&#39; a compile-time single source of truth.</li>
+<li><code>ev-auto-report-critic-3</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - Coverage math (report.rs:151-173) is per-spec, not a builder deviation, but worth flagging for founder-readability: the denominator lumps verifier-tier facts (some evidentiary weight) with asserted evidence (no proof) as equally not-attested; the raw counts beside the percentage are the only place that distinction survives, styled as smaller secondary text. Flagging for Prime&#39;s awareness only.</li>
+<li><code>ev-auto-report-critic-4</code> <span class="kind">observation</span> <span class="badge badge-grey">asserted</span> - Verified the four correctness risk classes named in the review brief and found no defects: (1) escaping - html_escape (report.rs:35-48) applied at all ~24 call sites incl. href attributes (:221-222); (2) division by zero - denom==0 guarded at :154-156; (3) unwraps - zero .unwrap() in report.rs, Option access via as_deref/unwrap_or with safe defaults; (4) Windows paths - receipt links (:213-223) are hardcoded forward-slash literals, never Path::display, so hrefs cannot emit backslashes.</li>
+</ul>
+<h3>prime-fixes</h3>
+<ul class="evidence-lane">
+<li><code>ev-subagent-session-20260712T221057Z-prime-fixes</code> <span class="kind">subagent-session</span>  - Captured quarantined subagent output for lane prime-fixes; machine records were extracted without Prime synthesis.</li>
+<li><code>ev-prime-badge-fix</code> <span class="kind">code-change</span> <span class="badge badge-grey">asserted</span> - Extracted is_asserted() shared by compute_scorecard and render_evidence_by_lane so the asserted badge and scorecard use one definition; regression test added</li>
+<li><code>ev-prime-drift-split</code> <span class="kind">code-change</span> <span class="badge badge-grey">asserted</span> - verify_record_file_refs and gate checkFileSourceRef now distinguish custody tampering (inside run dir, fatal) from citation drift (project tree changed post-review, warning); span validation skipped on drifted files</li>
+</ul>
+<h3>orchestrator</h3>
+<ul class="evidence-lane">
+<li><code>ev-rcpt-0001</code> <span class="kind">receipt</span>  - mythos run: `cargo fmt --manifest-path mythos-compiler/Cargo.toml --check` exited 0 in 111ms [attests test:fmt]</li>
+<li><code>ev-rcpt-0002</code> <span class="kind">receipt</span>  - mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 337ms [attests test:cargo-suite]</li>
+<li><code>ev-rcpt-0003</code> <span class="kind">receipt</span>  - mythos run: `mythos report --run-dir C:\Users\johnr\Projects\mythos-skill\.mythos\runs\20260712T214352Z-build-mythos-report-human-window-over-a-run` exited 1 in 8ms [attests command:report-smoke]</li>
+<li><code>ev-rcpt-0004</code> <span class="kind">receipt</span>  - mythos run: `mythos report --run-dir C:\Users\johnr\Projects\mythos-skill\.mythos\runs\20260712T214352Z-build-mythos-report-human-window-over-a-run` exited 0 in 8ms [attests command:report-smoke]</li>
+<li><code>ev-rcpt-0005</code> <span class="kind">receipt</span>  - mythos run: `cargo fmt --manifest-path mythos-compiler/Cargo.toml --check` exited 0 in 128ms [attests test:fmt]</li>
+<li><code>ev-rcpt-0006</code> <span class="kind">receipt</span>  - mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 3108ms [attests test:cargo-suite]</li>
+<li><code>ev-rcpt-0007</code> <span class="kind">receipt</span>  - mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 2887ms [attests test:cargo-suite]</li>
+<li><code>ev-rcpt-0008</code> <span class="kind">receipt</span>  - mythos run: `node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving_ingest.test.js tests/receipts_attestation.test.js` exited 0 in 9437ms [attests test:node-suites]</li>
+</ul>
+</section>
+<section class="verifier-findings">
+<h2>Verifier findings</h2>
+<table>
+<thead><tr><th>id</th><th>status</th><th>score</th><th>summary</th><th>finding_kind</th></tr></thead>
+<tbody>
+<tr><td>vf-codex-synthesis-pending</td><td class="status-pass">passed</td><td>0.9</td><td>Codex synthesis consumed packet state: Three sonnet lanes built, adversarially verified, and critiqued the mythos report feature (report-builder implementation per spec; report-verifier XSS+section+test-quality audit all passed genuinely per vf-verify findings; report-critic ruled the asserted-badge divergence a real defect). Prime applied the ruling (is_asserted shared predicate, regression test) plus the custody-vs-drift split this run itself exposed. All checks receipt-attested at the final tree: rcpt-0005 fmt, rcpt-0007 cargo 39 tests, rcpt-0008 node 40 tests, rcpt-0004 report smoke.</td><td>synthesis</td></tr>
+<tr><td>vf-auto-report-builder-11</td><td class="status-pass">passed</td><td>1</td><td>cargo test --manifest-path mythos-compiler/Cargo.toml: 37 unit tests + 2 integration tests + doc-tests all passed, 0 failed, including the 5 new compiler::report tests</td><td>-</td></tr>
+<tr><td>vf-auto-report-builder-12</td><td class="status-pass">passed</td><td>1</td><td>mythos report --run-dir &lt;target-run-dir&gt; exited 0 and created state/report.html (confirmed by reading the file: valid self-contained HTML, no &lt;script&gt; tags, gate banner/scorecard/evidence sections render as expected for this run&#39;s data)</td><td>-</td></tr>
+<tr><td>vf-auto-report-verifier-13</td><td class="status-pass">passed</td><td>1</td><td>XSS: synthetic packets with script tags, onmouseover payloads, quote-breaking attempts, and a con:receipt: contradiction (with and without a receipts.jsonl) all render with zero raw &lt;script sequences, zero live on* attributes (verified by a real HTML tokenizer, not just grep), and the refutation renders correctly</td><td>-</td></tr>
+<tr><td>vf-auto-report-verifier-15</td><td class="status-pass">passed</td><td>1</td><td>Test quality: none of the 5 new unit tests are tautological; the borderline case (receipt_row_renders_exit_code_and_label) was independently reproduced outside the repo and confirmed to isolate the exact claimed cell, not a coincidental substring match</td><td>-</td></tr>
+<tr><td>vf-auto-report-verifier-16</td><td class="status-pass">passed</td><td>1</td><td>Suite: cargo test --manifest-path mythos-compiler/Cargo.toml run fresh by the verifier: 39 total tests passed (37 lib incl. 5 new report tests, 1 compile_determinism, 1 init_contract), 0 failed, 0 ignored - matches the builder&#39;s claim</td><td>-</td></tr>
+<tr><td>vf-auto-report-verifier-17</td><td class="status-pass">passed</td><td>1</td><td>Self-containment: exactly one style block and zero http(s) references in every generated report.html checked (real run + both XSS fixtures)</td><td>-</td></tr>
+<tr><td>vf-prime-suites</td><td class="status-pass">passed</td><td>1</td><td>cargo fmt + full cargo test green at the final tree including the new regression test</td><td>-</td></tr>
+<tr><td>vf-prime-node</td><td class="status-pass">passed</td><td>1</td><td>all four Node suites green at the final tree</td><td>-</td></tr>
+</tbody>
+</table>
+</section>
+<footer><p>Generated by mythos report - Receipts engine</p></footer>
+</main>
+</body>
+</html>

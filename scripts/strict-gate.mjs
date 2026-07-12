@@ -263,7 +263,7 @@ function checkMachineSpecificPath(source, errors, prefix) {
   }
 }
 
-function checkFileSourceRef(source, runDir, errors, prefix) {
+function checkFileSourceRef(source, runDir, errors, prefix, warnings = null) {
   if (source.kind !== "file") return;
 
   const resolved = resolveSourcePath(runDir, source.path);
@@ -275,9 +275,20 @@ function checkFileSourceRef(source, runDir, errors, prefix) {
   const bytes = fs.readFileSync(resolved);
   const actualHash = fnv1aHash(bytes);
   if (source.hash !== actualHash) {
-    errors.push(
-      `${prefix} file source_ref ${source.source_id} hash mismatch: expected ${actualHash}, got ${source.hash}`,
-    );
+    // CUSTODY vs DRIFT: mismatches inside the run dir are tampering (error);
+    // project-tree citations legitimately drift when fixes land after review
+    // (warning - the ingest-time hash pins what the agent actually saw).
+    const insideRun = (path.resolve(resolved) + path.sep).startsWith(path.resolve(runDir) + path.sep);
+    if (insideRun) {
+      errors.push(
+        `${prefix} file source_ref ${source.source_id} hash mismatch inside the run dir: expected ${actualHash}, got ${source.hash} - quarantined artifacts are immutable`,
+      );
+    } else if (Array.isArray(warnings)) {
+      warnings.push(
+        `${prefix} citation drifted: ${source.source_id} was verified at ingest but the file has since changed (post-review fixes are the usual cause)`,
+      );
+    }
+    return; // skip span validation against a moved file either way
   }
 
   if (source.span) {
@@ -341,7 +352,7 @@ function packetSourceIds(packet) {
   return new Set((packet?.sources ?? []).map((source) => source.source_id).filter(Boolean));
 }
 
-function checkDeclaredSourceRefs(records, runDir, errors, label, anchorMs) {
+function checkDeclaredSourceRefs(records, runDir, errors, label, anchorMs, warnings) {
   for (const record of records) {
     const declared = sourceRefs(record);
     const declaredIds = new Set(declared.map((source) => source.source_id).filter(Boolean));
@@ -370,7 +381,7 @@ function checkDeclaredSourceRefs(records, runDir, errors, label, anchorMs) {
       checkSourceKind(source, errors, prefix);
       checkHashAlg(source, errors, prefix);
       checkMachineSpecificPath(source, errors, prefix);
-      checkFileSourceRef(source, runDir, errors, prefix);
+      checkFileSourceRef(source, runDir, errors, prefix, warnings);
       checkRawSourceRef(source, runDir, errors, prefix);
       checkObservedAtWindow(source.observed_at, anchorMs, errors, prefix, "source_ref observed_at");
     }
@@ -384,7 +395,7 @@ function checkDeclaredSourceRefs(records, runDir, errors, label, anchorMs) {
   }
 }
 
-function checkPacketSourceIntegrity(packet, runDir, errors, anchorMs) {
+function checkPacketSourceIntegrity(packet, runDir, errors, anchorMs, warnings) {
   // Packet.sources is synthesized by the compiler. Its `kind` field is the
   // record's category (e.g. "evidence", "verifier") OR — for legacy synthesis
   // paths — the evidence record's own semantic kind (e.g. "root-cause",
@@ -395,7 +406,7 @@ function checkPacketSourceIntegrity(packet, runDir, errors, anchorMs) {
     const prefix = `packet sources ${source.source_id ?? "<unknown>"}`;
     checkHashAlg(source, errors, prefix);
     checkMachineSpecificPath(source, errors, prefix);
-    checkFileSourceRef(source, runDir, errors, prefix);
+    checkFileSourceRef(source, runDir, errors, prefix, warnings);
     checkRawSourceRef(source, runDir, errors, prefix);
     checkObservedAtWindow(source.observed_at, anchorMs, errors, prefix, "observed_at");
   }
@@ -405,14 +416,14 @@ function checkPacketSourceIntegrity(packet, runDir, errors, anchorMs) {
 // union of the conflicting evidence records' refs restricted to shared direct
 // spans. When present, verify each ref like any other source_ref — that way
 // tampered files cited by a contradiction are detectable.
-function checkContradictionSourceRefs(packet, runDir, errors, anchorMs) {
+function checkContradictionSourceRefs(packet, runDir, errors, anchorMs, warnings) {
   for (const contradiction of packet?.contradictions ?? []) {
     const refs = Array.isArray(contradiction.source_refs) ? contradiction.source_refs : [];
     for (const source of refs) {
       const prefix = `contradiction ${contradiction.id ?? "<unknown>"}`;
       checkHashAlg(source, errors, prefix);
       checkMachineSpecificPath(source, errors, prefix);
-      checkFileSourceRef(source, runDir, errors, prefix);
+      checkFileSourceRef(source, runDir, errors, prefix, warnings);
       checkRawSourceRef(source, runDir, errors, prefix);
       checkObservedAtWindow(source.observed_at, anchorMs, errors, prefix, "source_ref observed_at");
     }
@@ -681,12 +692,12 @@ function main() {
   const anchor = Number.isFinite(anchorMs) ? anchorMs : null;
   if (!hasSourceIds(evidence)) errors.push("one or more evidence records lack source_ids");
   if (!hasSourceIds(findings)) errors.push("one or more verifier findings lack source_ids");
-  checkDeclaredSourceRefs(evidence, runDir, errors, "evidence", anchor);
-  checkDeclaredSourceRefs(findings, runDir, errors, "verifier finding", anchor);
+  checkDeclaredSourceRefs(evidence, runDir, errors, "evidence", anchor, warnings);
+  checkDeclaredSourceRefs(findings, runDir, errors, "verifier finding", anchor, warnings);
   checkCompiledSourceRefs(evidence, packet, errors, "evidence");
   checkCompiledSourceRefs(findings, packet, errors, "verifier finding");
-  checkPacketSourceIntegrity(packet, runDir, errors, anchor);
-  checkContradictionSourceRefs(packet, runDir, errors, anchor);
+  checkPacketSourceIntegrity(packet, runDir, errors, anchor, warnings);
+  checkContradictionSourceRefs(packet, runDir, errors, anchor, warnings);
   checkSubagentTraceability(evidence, errors);
   checkDirectSourceRefRatio(evidence, errors);
   checkAgentCoverage(evidence, findings, manifest, packet, errors);

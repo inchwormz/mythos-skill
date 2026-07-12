@@ -1,4 +1,5 @@
 use mythos_skill::compiler::receipts::{append_receipt, git_tree_state, store_artifact};
+use mythos_skill::compiler::report::generate_report;
 use mythos_skill::compiler::run_dir::compile_run_dir;
 use mythos_skill::schema::ReceiptRecord;
 use std::fs;
@@ -59,6 +60,13 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             );
             Ok(())
         }
+        "report" => {
+            let run_dir = parse_run_dir(args.collect())?;
+            preflight_run_dir(&run_dir)?;
+            let report_path = generate_report(&run_dir)?;
+            println!("report written: {}", report_path.display());
+            Ok(())
+        }
         other => Err(format!("unknown command `{other}` — try `mythos --help`").into()),
     }
 }
@@ -76,6 +84,7 @@ COMMANDS:
                             Execute a command and mint a tamper-evident execution
                             receipt in receipts/receipts.jsonl (exit code = child's)
     compile --run-dir <dir> Compile a run directory into state/next_pass_packet.json
+    report --run-dir <dir>  Render a human-readable state/report.html for the run
     --version, -V           Print version
     --help, -h              Print this help
 

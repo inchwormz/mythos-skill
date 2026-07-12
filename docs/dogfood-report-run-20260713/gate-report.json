@@ -1,0 +1,120 @@
+{
+  "ok": true,
+  "run_dir": "C:\\Users\\johnr\\Projects\\mythos-skill\\.mythos\\runs\\20260712T214352Z-build-mythos-report-human-window-over-a-run",
+  "pass_id": "pass-0002",
+  "packet_pass_id": "pass-0002",
+  "evidence_count": 30,
+  "verifier_findings": [
+    {
+      "id": "vf-codex-synthesis-pending",
+      "status": "passed",
+      "verifier_score": 0.9
+    },
+    {
+      "id": "vf-auto-report-builder-11",
+      "status": "passed",
+      "verifier_score": 1
+    },
+    {
+      "id": "vf-auto-report-builder-12",
+      "status": "passed",
+      "verifier_score": 1
+    },
+    {
+      "id": "vf-auto-report-verifier-13",
+      "status": "passed",
+      "verifier_score": 1
+    },
+    {
+      "id": "vf-auto-report-verifier-15",
+      "status": "passed",
+      "verifier_score": 1
+    },
+    {
+      "id": "vf-auto-report-verifier-16",
+      "status": "passed",
+      "verifier_score": 1
+    },
+    {
+      "id": "vf-auto-report-verifier-17",
+      "status": "passed",
+      "verifier_score": 1
+    },
+    {
+      "id": "vf-prime-suites",
+      "status": "passed",
+      "verifier_score": 1
+    },
+    {
+      "id": "vf-prime-node",
+      "status": "passed",
+      "verifier_score": 1
+    }
+  ],
+  "halt_kinds": [
+    "ready-to-halt"
+  ],
+  "candidate_actions": 0,
+  "errors": [],
+  "warnings": [
+    "evidence ev-auto-report-builder-1 citation drifted: file:mythos-compiler/src/compiler/report.rs:35 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-builder-2 citation drifted: file:mythos-compiler/src/compiler/report.rs:22 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-builder-3 citation drifted: file:mythos-compiler/src/compiler/report.rs:408 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-builder-4 citation drifted: file:mythos-compiler/src/compiler/report.rs:439 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-builder-9 citation drifted: file:mythos-compiler/src/compiler/report.rs:562 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-builder-9 citation drifted: file:mythos-compiler/src/compiler/report.rs:567 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-builder-9 citation drifted: file:mythos-compiler/src/compiler/report.rs:586 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-builder-9 citation drifted: file:mythos-compiler/src/compiler/report.rs:605 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-builder-9 citation drifted: file:mythos-compiler/src/compiler/report.rs:616 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-verifier-1 citation drifted: file:mythos-compiler/src/compiler/report.rs:35 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-verifier-1 citation drifted: file:mythos-compiler/src/compiler/report.rs:50 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-verifier-2 citation drifted: file:mythos-compiler/src/compiler/report.rs:35 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-verifier-4 citation drifted: file:mythos-compiler/src/compiler/report.rs:175 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-verifier-7 citation drifted: file:mythos-compiler/src/compiler/report.rs:57 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-verifier-7 citation drifted: file:mythos-compiler/src/compiler/run_dir.rs:712 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-verifier-8 citation drifted: file:mythos-compiler/src/compiler/report.rs:277 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-verifier-9 citation drifted: file:mythos-compiler/src/compiler/report.rs:605 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-verifier-11 citation drifted: file:mythos-compiler/src/compiler/report.rs:1 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-verifier-12 citation drifted: file:mythos-compiler/src/compiler/report.rs:342 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-critic-2 citation drifted: file:mythos-compiler/src/compiler/report.rs:134 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-critic-2 citation drifted: file:mythos-compiler/src/compiler/report.rs:140 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-critic-2 citation drifted: file:mythos-compiler/src/compiler/report.rs:256 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-critic-2 citation drifted: file:mythos-compiler/src/compiler/report.rs:277 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-critic-3 citation drifted: file:mythos-compiler/src/compiler/report.rs:151-173 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-critic-3 citation drifted: file:mythos-compiler/src/compiler/report.rs:373-375 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-critic-4 citation drifted: file:mythos-compiler/src/compiler/report.rs:35-48 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-critic-4 citation drifted: file:mythos-compiler/src/compiler/report.rs:154-156 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "evidence ev-auto-report-critic-4 citation drifted: file:mythos-compiler/src/compiler/report.rs:213-223 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "verifier finding vf-auto-report-verifier-13 citation drifted: file:mythos-compiler/src/compiler/report.rs:35 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "verifier finding vf-auto-report-verifier-15 citation drifted: file:mythos-compiler/src/compiler/report.rs:605 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "verifier finding vf-auto-report-verifier-17 citation drifted: file:mythos-compiler/src/compiler/report.rs:342 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:1 citation drifted: file:mythos-compiler/src/compiler/report.rs:1 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:134 citation drifted: file:mythos-compiler/src/compiler/report.rs:134 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:140 citation drifted: file:mythos-compiler/src/compiler/report.rs:140 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:151-173 citation drifted: file:mythos-compiler/src/compiler/report.rs:151-173 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:154-156 citation drifted: file:mythos-compiler/src/compiler/report.rs:154-156 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:175 citation drifted: file:mythos-compiler/src/compiler/report.rs:175 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:213-223 citation drifted: file:mythos-compiler/src/compiler/report.rs:213-223 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:22 citation drifted: file:mythos-compiler/src/compiler/report.rs:22 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:256 citation drifted: file:mythos-compiler/src/compiler/report.rs:256 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:277 citation drifted: file:mythos-compiler/src/compiler/report.rs:277 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:342 citation drifted: file:mythos-compiler/src/compiler/report.rs:342 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:35 citation drifted: file:mythos-compiler/src/compiler/report.rs:35 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:35-48 citation drifted: file:mythos-compiler/src/compiler/report.rs:35-48 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:373-375 citation drifted: file:mythos-compiler/src/compiler/report.rs:373-375 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:408 citation drifted: file:mythos-compiler/src/compiler/report.rs:408 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:439 citation drifted: file:mythos-compiler/src/compiler/report.rs:439 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:50 citation drifted: file:mythos-compiler/src/compiler/report.rs:50 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:562 citation drifted: file:mythos-compiler/src/compiler/report.rs:562 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:567 citation drifted: file:mythos-compiler/src/compiler/report.rs:567 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:57 citation drifted: file:mythos-compiler/src/compiler/report.rs:57 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:586 citation drifted: file:mythos-compiler/src/compiler/report.rs:586 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:605 citation drifted: file:mythos-compiler/src/compiler/report.rs:605 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/report.rs:616 citation drifted: file:mythos-compiler/src/compiler/report.rs:616 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "packet sources file:mythos-compiler/src/compiler/run_dir.rs:712 citation drifted: file:mythos-compiler/src/compiler/run_dir.rs:712 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "contradiction con:auto:ev-auto-report-builder-1:ev-auto-report-verifier-1 citation drifted: file:mythos-compiler/src/compiler/report.rs:35 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "contradiction con:auto:ev-auto-report-builder-1:ev-auto-report-verifier-2 citation drifted: file:mythos-compiler/src/compiler/report.rs:35 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "contradiction con:auto:ev-auto-report-builder-9:ev-auto-report-verifier-9 citation drifted: file:mythos-compiler/src/compiler/report.rs:605 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
+    "contradiction con:auto:ev-auto-report-critic-2:ev-auto-report-verifier-8 citation drifted: file:mythos-compiler/src/compiler/report.rs:277 was verified at ingest but the file has since changed (post-review fixes are the usual cause)"
+  ]
+}

@@ -1,0 +1,2397 @@
+{
+  "schema_version": "1.1.0",
+  "objective_id": "obj-20260712T214352Z",
+  "run_id": "run-20260712T214352Z",
+  "branch_id": "main",
+  "pass_id": "pass-0002",
+  "objective": "build mythos report human window over a run",
+  "evidence": [
+    {
+      "id": "ev-objective",
+      "kind": "objective",
+      "summary": "build mythos report human window over a run",
+      "source_ids": [
+        "raw:objective.md"
+      ],
+      "observed_at": "2026-07-12T21:43:52.404Z"
+    },
+    {
+      "id": "ev-subagent-session-20260712T215254Z-report-builder",
+      "kind": "subagent-session",
+      "summary": "Captured quarantined subagent output for lane report-builder; machine records were extracted without Prime synthesis.",
+      "source_ids": [
+        "raw:subagents/report-builder.md"
+      ],
+      "source_refs": [
+        {
+          "source_id": "raw:subagents/report-builder.md",
+          "path": "raw/subagents/report-builder.md",
+          "kind": "raw",
+          "hash": "7073d8b33ec6c088",
+          "hash_alg": "fnv1a-64",
+          "span": null,
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        }
+      ],
+      "observed_at": "2026-07-12T21:52:54.296Z",
+      "agent_id": "report-builder-1",
+      "lane": "report-builder"
+    },
+    {
+      "id": "ev-auto-report-builder-1",
+      "kind": "observation",
+      "summary": "pub fn html_escape(s: &str) -> String escapes & < > \" ' by replacing them with &amp; &lt; &gt; &quot; &#39;",
+      "source_ids": [
+        "raw:subagents/report-builder.md",
+        "file:mythos-compiler/src/compiler/report.rs:35"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:35",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "35",
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        }
+      ],
+      "observed_at": "2026-07-12T21:52:54.296Z",
+      "agent_id": "report-builder-1",
+      "lane": "report-builder"
+    },
+    {
+      "id": "ev-auto-report-builder-2",
+      "kind": "observation",
+      "summary": "pub struct GateReport deserializes {ok, errors, warnings} with serde defaults, tolerating missing/extra fields",
+      "source_ids": [
+        "raw:subagents/report-builder.md",
+        "file:mythos-compiler/src/compiler/report.rs:22"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:22",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "22",
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        }
+      ],
+      "observed_at": "2026-07-12T21:52:54.296Z",
+      "agent_id": "report-builder-1",
+      "lane": "report-builder"
+    },
+    {
+      "id": "ev-auto-report-builder-3",
+      "kind": "observation",
+      "summary": "pub fn render_report(packet, receipts, gate) -> String is the pure, unit-testable renderer with no system-time calls",
+      "source_ids": [
+        "raw:subagents/report-builder.md",
+        "file:mythos-compiler/src/compiler/report.rs:408"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:408",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "408",
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        }
+      ],
+      "observed_at": "2026-07-12T21:52:54.296Z",
+      "agent_id": "report-builder-1",
+      "lane": "report-builder"
+    },
+    {
+      "id": "ev-auto-report-builder-4",
+      "kind": "observation",
+      "summary": "pub fn generate_report(run_dir) loads next_pass_packet.json + verified receipts + optional gate-report.json and writes state/report.html",
+      "source_ids": [
+        "raw:subagents/report-builder.md",
+        "file:mythos-compiler/src/compiler/report.rs:439"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:439",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "439",
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        }
+      ],
+      "observed_at": "2026-07-12T21:52:54.296Z",
+      "agent_id": "report-builder-1",
+      "lane": "report-builder"
+    },
+    {
+      "id": "ev-auto-report-builder-5",
+      "kind": "observation",
+      "summary": "compiler/mod.rs registers the new module with pub mod report;",
+      "source_ids": [
+        "raw:subagents/report-builder.md",
+        "file:mythos-compiler/src/compiler/mod.rs:9"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/mod.rs:9",
+          "path": "mythos-compiler/src/compiler/mod.rs",
+          "kind": "file",
+          "hash": "1ff777d0f12d6359",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "9",
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        }
+      ],
+      "observed_at": "2026-07-12T21:52:54.296Z",
+      "agent_id": "report-builder-1",
+      "lane": "report-builder"
+    },
+    {
+      "id": "ev-auto-report-builder-6",
+      "kind": "observation",
+      "summary": "bin/mythos.rs imports generate_report from the new module",
+      "source_ids": [
+        "raw:subagents/report-builder.md",
+        "file:mythos-compiler/src/bin/mythos.rs:2"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/bin/mythos.rs:2",
+          "path": "mythos-compiler/src/bin/mythos.rs",
+          "kind": "file",
+          "hash": "46a3b267a438d8fe",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "2",
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        }
+      ],
+      "observed_at": "2026-07-12T21:52:54.296Z",
+      "agent_id": "report-builder-1",
+      "lane": "report-builder"
+    },
+    {
+      "id": "ev-auto-report-builder-7",
+      "kind": "observation",
+      "summary": "bin/mythos.rs adds a \"report\" command arm that parses --run-dir via parse_run_dir, preflights the run dir, calls generate_report, and prints the output path",
+      "source_ids": [
+        "raw:subagents/report-builder.md",
+        "file:mythos-compiler/src/bin/mythos.rs:63"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/bin/mythos.rs:63",
+          "path": "mythos-compiler/src/bin/mythos.rs",
+          "kind": "file",
+          "hash": "46a3b267a438d8fe",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "63",
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        }
+      ],
+      "observed_at": "2026-07-12T21:52:54.296Z",
+      "agent_id": "report-builder-1",
+      "lane": "report-builder"
+    },
+    {
+      "id": "ev-auto-report-builder-8",
+      "kind": "observation",
+      "summary": "bin/mythos.rs help text gains one line documenting `report --run-dir <dir>`",
+      "source_ids": [
+        "raw:subagents/report-builder.md",
+        "file:mythos-compiler/src/bin/mythos.rs:87"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/bin/mythos.rs:87",
+          "path": "mythos-compiler/src/bin/mythos.rs",
+          "kind": "file",
+          "hash": "46a3b267a438d8fe",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "87",
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        }
+      ],
+      "observed_at": "2026-07-12T21:52:54.296Z",
+      "agent_id": "report-builder-1",
+      "lane": "report-builder"
+    },
+    {
+      "id": "ev-auto-report-builder-9",
+      "kind": "observation",
+      "summary": "Five new unit tests added: html_escape (all 5 chars), XSS-in-summary escaping, con:receipt:* renders in refutations panel, receipt row shows exit code + label, coverage math 2 attested + 1 verifier + 1 asserted = 50% attested",
+      "source_ids": [
+        "raw:subagents/report-builder.md",
+        "file:mythos-compiler/src/compiler/report.rs:562",
+        "file:mythos-compiler/src/compiler/report.rs:567",
+        "file:mythos-compiler/src/compiler/report.rs:586",
+        "file:mythos-compiler/src/compiler/report.rs:605",
+        "file:mythos-compiler/src/compiler/report.rs:616"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:562",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "562",
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        },
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:567",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "567",
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        },
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:586",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "586",
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        },
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:605",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "605",
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        },
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:616",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "616",
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        }
+      ],
+      "observed_at": "2026-07-12T21:52:54.296Z",
+      "agent_id": "report-builder-1",
+      "lane": "report-builder"
+    },
+    {
+      "id": "ev-subagent-session-20260712T220656Z-report-verifier",
+      "kind": "subagent-session",
+      "summary": "Captured quarantined subagent output for lane report-verifier; machine records were extracted without Prime synthesis.",
+      "source_ids": [
+        "raw:subagents/report-verifier.md"
+      ],
+      "source_refs": [
+        {
+          "source_id": "raw:subagents/report-verifier.md",
+          "path": "raw/subagents/report-verifier.md",
+          "kind": "raw",
+          "hash": "831a114f9e3df529",
+          "hash_alg": "fnv1a-64",
+          "span": null,
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:06:56.690Z",
+      "agent_id": "report-verifier-1",
+      "lane": "report-verifier"
+    },
+    {
+      "id": "ev-auto-report-verifier-1",
+      "kind": "observation",
+      "summary": "html_escape(s) replaces & < > \" ' with entities and is the single escape path used by every render_* function and the badge() helper",
+      "source_ids": [
+        "raw:subagents/report-verifier.md",
+        "file:mythos-compiler/src/compiler/report.rs:35",
+        "file:mythos-compiler/src/compiler/report.rs:50"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:35",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "35",
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        },
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:50",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "50",
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:06:56.690Z",
+      "agent_id": "report-verifier-1",
+      "lane": "report-verifier"
+    },
+    {
+      "id": "ev-auto-report-verifier-2",
+      "kind": "observation",
+      "summary": "Synthetic fixture-a (script tags, onmouseover payloads, quote-breaking attempts, con:receipt:xss-1) rendered with zero raw <script sequences and zero live on* attributes, confirmed by both grep and a real HTML tokenizer (Python html.parser)",
+      "source_ids": [
+        "raw:subagents/report-verifier.md",
+        "file:mythos-compiler/src/compiler/report.rs:35"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:35",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "35",
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:06:56.690Z",
+      "agent_id": "report-verifier-1",
+      "lane": "report-verifier"
+    },
+    {
+      "id": "ev-auto-report-verifier-3",
+      "kind": "observation",
+      "summary": "fixture-b (identical packet, receipts/receipts.jsonl omitted entirely) also rendered clean, confirming load_verified_receipts's no-file -> Ok(vec![]) path is safe and doesn't bypass escaping",
+      "source_ids": [
+        "raw:subagents/report-verifier.md",
+        "file:mythos-compiler/src/compiler/receipts.rs:44"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/receipts.rs:44",
+          "path": "mythos-compiler/src/compiler/receipts.rs",
+          "kind": "file",
+          "hash": "d9bba96a386a86a9",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "44",
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:06:56.690Z",
+      "agent_id": "report-verifier-1",
+      "lane": "report-verifier"
+    },
+    {
+      "id": "ev-auto-report-verifier-4",
+      "kind": "observation",
+      "summary": "con:receipt:xss-1 contradiction rendered inside section class=refutations with its payload fully escaped, matching spec section 4",
+      "source_ids": [
+        "raw:subagents/report-verifier.md",
+        "file:mythos-compiler/src/compiler/report.rs:175"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:175",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "175",
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:06:56.690Z",
+      "agent_id": "report-verifier-1",
+      "lane": "report-verifier"
+    },
+    {
+      "id": "ev-auto-report-verifier-7",
+      "kind": "observation",
+      "summary": "EXCLUDED_ASSERTED_KINDS in report.rs matches the spec's exclusion list verbatim, and the fact:<id> promotion-lookup convention assumed by compute_scorecard matches what the real compiler mints",
+      "source_ids": [
+        "raw:subagents/report-verifier.md",
+        "file:mythos-compiler/src/compiler/report.rs:57",
+        "file:mythos-compiler/src/compiler/run_dir.rs:712"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:57",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "57",
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        },
+        {
+          "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:712",
+          "path": "mythos-compiler/src/compiler/run_dir.rs",
+          "kind": "file",
+          "hash": "4a065268dcf94558",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "712",
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:06:56.690Z",
+      "agent_id": "report-verifier-1",
+      "lane": "report-verifier"
+    },
+    {
+      "id": "ev-auto-report-verifier-8",
+      "kind": "observation",
+      "summary": "Evidence-by-lane per-row asserted badge (unpromoted test, no kind exclusion) diverges from the scorecard's stricter asserted formula for kind:objective records - a disclosed, defensible ambiguity in spec section 7 vs section 3, not a bug",
+      "source_ids": [
+        "raw:subagents/report-verifier.md",
+        "file:mythos-compiler/src/compiler/report.rs:277"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:277",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "277",
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:06:56.690Z",
+      "agent_id": "report-verifier-1",
+      "lane": "report-verifier"
+    },
+    {
+      "id": "ev-auto-report-verifier-9",
+      "kind": "observation",
+      "summary": "Independent probe (standalone cargo project path-depending on mythos-skill, outside the repo) reproduced receipt_row_renders_exit_code_and_label's exact fixture and found exactly one >0< match in the whole page, at the exit-code table cell - the test is not tautological",
+      "source_ids": [
+        "raw:subagents/report-verifier.md",
+        "file:mythos-compiler/src/compiler/report.rs:605"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:605",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "605",
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:06:56.690Z",
+      "agent_id": "report-verifier-1",
+      "lane": "report-verifier"
+    },
+    {
+      "id": "ev-auto-report-verifier-10",
+      "kind": "observation",
+      "summary": "cargo test --manifest-path mythos-compiler/Cargo.toml (fresh run): 37 lib unit tests + 1 compile_determinism + 1 init_contract + 0 doc-tests = 39 passed, 0 failed, 0 ignored",
+      "source_ids": [
+        "raw:subagents/report-verifier.md",
+        "test:cargo-suite"
+      ],
+      "source_refs": [
+        {
+          "source_id": "test:cargo-suite",
+          "path": "cargo-suite",
+          "kind": "test",
+          "hash": "7702570d90abe4b2",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "label",
+          "span": null,
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:06:56.690Z",
+      "agent_id": "report-verifier-1",
+      "lane": "report-verifier"
+    },
+    {
+      "id": "ev-auto-report-verifier-11",
+      "kind": "observation",
+      "summary": "cargo fmt --manifest-path mythos-compiler/Cargo.toml -- --check exits 0 (clean)",
+      "source_ids": [
+        "raw:subagents/report-verifier.md",
+        "file:mythos-compiler/src/compiler/report.rs:1"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:1",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "1",
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:06:56.690Z",
+      "agent_id": "report-verifier-1",
+      "lane": "report-verifier"
+    },
+    {
+      "id": "ev-auto-report-verifier-12",
+      "kind": "observation",
+      "summary": "Real run's report.html and both XSS fixtures each contain exactly one style block pair and zero https or http matches",
+      "source_ids": [
+        "raw:subagents/report-verifier.md",
+        "file:mythos-compiler/src/compiler/report.rs:342"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:342",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "342",
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:06:56.690Z",
+      "agent_id": "report-verifier-1",
+      "lane": "report-verifier"
+    },
+    {
+      "id": "ev-subagent-session-20260712T220656Z-report-critic",
+      "kind": "subagent-session",
+      "summary": "Captured quarantined subagent output for lane report-critic; machine records were extracted without Prime synthesis.",
+      "source_ids": [
+        "raw:subagents/report-critic.md"
+      ],
+      "source_refs": [
+        {
+          "source_id": "raw:subagents/report-critic.md",
+          "path": "raw/subagents/report-critic.md",
+          "kind": "raw",
+          "hash": "74b2d6ff24678e06",
+          "hash_alg": "fnv1a-64",
+          "span": null,
+          "observed_at": "2026-07-12T22:06:56.805Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:06:56.805Z",
+      "agent_id": "report-critic-1",
+      "lane": "report-critic"
+    },
+    {
+      "id": "ev-auto-report-critic-2",
+      "kind": "gap",
+      "summary": "compute_scorecard (report.rs:118-149) and render_evidence_by_lane (report.rs:255-307) each independently rebuild the fact_ids BTreeSet lookup from packet.trusted_facts and independently reimplement the fact:{id} promotion check (:134+140 vs :256+277) instead of sharing one is_promoted helper. This copy-paste duplication is the direct mechanism that let the two implementations silently diverge on the kind exclusion - nothing in the code forces them to agree. A single shared predicate would make 'asserted' a compile-time single source of truth.",
+      "source_ids": [
+        "raw:subagents/report-critic.md",
+        "file:mythos-compiler/src/compiler/report.rs:134",
+        "file:mythos-compiler/src/compiler/report.rs:140",
+        "file:mythos-compiler/src/compiler/report.rs:256",
+        "file:mythos-compiler/src/compiler/report.rs:277"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:134",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "134",
+          "observed_at": "2026-07-12T22:06:56.805Z"
+        },
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:140",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "140",
+          "observed_at": "2026-07-12T22:06:56.805Z"
+        },
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:256",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "256",
+          "observed_at": "2026-07-12T22:06:56.805Z"
+        },
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:277",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "277",
+          "observed_at": "2026-07-12T22:06:56.805Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:06:56.805Z",
+      "agent_id": "report-critic-1",
+      "lane": "report-critic"
+    },
+    {
+      "id": "ev-auto-report-critic-3",
+      "kind": "observation",
+      "summary": "Coverage math (report.rs:151-173) is per-spec, not a builder deviation, but worth flagging for founder-readability: the denominator lumps verifier-tier facts (some evidentiary weight) with asserted evidence (no proof) as equally not-attested; the raw counts beside the percentage are the only place that distinction survives, styled as smaller secondary text. Flagging for Prime's awareness only.",
+      "source_ids": [
+        "raw:subagents/report-critic.md",
+        "file:mythos-compiler/src/compiler/report.rs:151-173",
+        "file:mythos-compiler/src/compiler/report.rs:373-375"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:151-173",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "151-173",
+          "observed_at": "2026-07-12T22:06:56.805Z"
+        },
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:373-375",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "373-375",
+          "observed_at": "2026-07-12T22:06:56.805Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:06:56.805Z",
+      "agent_id": "report-critic-1",
+      "lane": "report-critic"
+    },
+    {
+      "id": "ev-auto-report-critic-4",
+      "kind": "observation",
+      "summary": "Verified the four correctness risk classes named in the review brief and found no defects: (1) escaping - html_escape (report.rs:35-48) applied at all ~24 call sites incl. href attributes (:221-222); (2) division by zero - denom==0 guarded at :154-156; (3) unwraps - zero .unwrap() in report.rs, Option access via as_deref/unwrap_or with safe defaults; (4) Windows paths - receipt links (:213-223) are hardcoded forward-slash literals, never Path::display, so hrefs cannot emit backslashes.",
+      "source_ids": [
+        "raw:subagents/report-critic.md",
+        "file:mythos-compiler/src/compiler/report.rs:35-48",
+        "file:mythos-compiler/src/compiler/report.rs:154-156",
+        "file:mythos-compiler/src/compiler/report.rs:213-223"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:35-48",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "35-48",
+          "observed_at": "2026-07-12T22:06:56.805Z"
+        },
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:154-156",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "154-156",
+          "observed_at": "2026-07-12T22:06:56.805Z"
+        },
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:213-223",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "213-223",
+          "observed_at": "2026-07-12T22:06:56.805Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:06:56.805Z",
+      "agent_id": "report-critic-1",
+      "lane": "report-critic"
+    },
+    {
+      "id": "ev-subagent-session-20260712T221057Z-prime-fixes",
+      "kind": "subagent-session",
+      "summary": "Captured quarantined subagent output for lane prime-fixes; machine records were extracted without Prime synthesis.",
+      "source_ids": [
+        "raw:subagents/prime-fixes.md"
+      ],
+      "source_refs": [
+        {
+          "source_id": "raw:subagents/prime-fixes.md",
+          "path": "raw/subagents/prime-fixes.md",
+          "kind": "raw",
+          "hash": "55f4ad9d7e66aa49",
+          "hash_alg": "fnv1a-64",
+          "span": null,
+          "observed_at": "2026-07-12T22:10:57.044Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:10:57.044Z",
+      "agent_id": "prime-1",
+      "lane": "prime-fixes"
+    },
+    {
+      "id": "ev-prime-badge-fix",
+      "kind": "code-change",
+      "summary": "Extracted is_asserted() shared by compute_scorecard and render_evidence_by_lane so the asserted badge and scorecard use one definition; regression test added",
+      "source_ids": [
+        "raw:subagents/prime-fixes.md",
+        "file:mythos-compiler/src/compiler/report.rs:71",
+        "file:mythos-compiler/src/compiler/report.rs:148"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:71",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "8969bf22897bb2c4",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "71",
+          "observed_at": "2026-07-12T22:10:57.044Z"
+        },
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:148",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "8969bf22897bb2c4",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "148",
+          "observed_at": "2026-07-12T22:10:57.044Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:10:57.044Z",
+      "agent_id": "prime-1",
+      "lane": "prime-fixes"
+    },
+    {
+      "id": "ev-prime-drift-split",
+      "kind": "code-change",
+      "summary": "verify_record_file_refs and gate checkFileSourceRef now distinguish custody tampering (inside run dir, fatal) from citation drift (project tree changed post-review, warning); span validation skipped on drifted files",
+      "source_ids": [
+        "raw:subagents/prime-fixes.md",
+        "file:mythos-compiler/src/compiler/run_dir.rs:380",
+        "file:scripts/strict-gate.mjs:266"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:380",
+          "path": "mythos-compiler/src/compiler/run_dir.rs",
+          "kind": "file",
+          "hash": "d12539102b79a242",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "380",
+          "observed_at": "2026-07-12T22:10:57.044Z"
+        },
+        {
+          "source_id": "file:scripts/strict-gate.mjs:266",
+          "path": "scripts/strict-gate.mjs",
+          "kind": "file",
+          "hash": "8365a130c5c78906",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "266",
+          "observed_at": "2026-07-12T22:10:57.044Z"
+        }
+      ],
+      "observed_at": "2026-07-12T22:10:57.044Z",
+      "agent_id": "prime-1",
+      "lane": "prime-fixes"
+    },
+    {
+      "id": "ev-codex-synthesis-20260712T221153Z",
+      "kind": "codex-synthesis",
+      "summary": "Three sonnet lanes built, adversarially verified, and critiqued the mythos report feature (report-builder implementation per spec; report-verifier XSS+section+test-quality audit all passed genuinely per vf-verify findings; report-critic ruled the asserted-badge divergence a real defect). Prime applied the ruling (is_asserted shared predicate, regression test) plus the custody-vs-drift split this run itself exposed. All checks receipt-attested at the final tree: rcpt-0005 fmt, rcpt-0007 cargo 39 tests, rcpt-0008 node 40 tests, rcpt-0004 report smoke.",
+      "source_ids": [
+        "raw:codex-synthesis-20260712T221153Z.md"
+      ],
+      "observed_at": "2026-07-12T22:11:53.683Z"
+    },
+    {
+      "id": "ev-rcpt-0001",
+      "kind": "receipt",
+      "summary": "mythos run: `cargo fmt --manifest-path mythos-compiler/Cargo.toml --check` exited 0 in 111ms [attests test:fmt]",
+      "source_ids": [
+        "receipt:rcpt-0001"
+      ],
+      "observed_at": "2026-07-12T21:52:54Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "84f3847aaf0a8533a6a8de3dcbcb6936f56fe92d dirty:21c4ed4d488d6c3a",
+      "span_after": "84f3847aaf0a8533a6a8de3dcbcb6936f56fe92d dirty:21c4ed4d488d6c3a"
+    },
+    {
+      "id": "ev-rcpt-0002",
+      "kind": "receipt",
+      "summary": "mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 337ms [attests test:cargo-suite]",
+      "source_ids": [
+        "receipt:rcpt-0002"
+      ],
+      "observed_at": "2026-07-12T21:53:08Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "84f3847aaf0a8533a6a8de3dcbcb6936f56fe92d dirty:21c4ed4d488d6c3a",
+      "span_after": "84f3847aaf0a8533a6a8de3dcbcb6936f56fe92d dirty:21c4ed4d488d6c3a"
+    },
+    {
+      "id": "ev-rcpt-0003",
+      "kind": "receipt",
+      "summary": "mythos run: `mythos report --run-dir C:\\Users\\johnr\\Projects\\mythos-skill\\.mythos\\runs\\20260712T214352Z-build-mythos-report-human-window-over-a-run` exited 1 in 8ms [attests command:report-smoke]",
+      "source_ids": [
+        "receipt:rcpt-0003"
+      ],
+      "observed_at": "2026-07-12T21:53:08Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "84f3847aaf0a8533a6a8de3dcbcb6936f56fe92d dirty:21c4ed4d488d6c3a",
+      "span_after": "84f3847aaf0a8533a6a8de3dcbcb6936f56fe92d dirty:21c4ed4d488d6c3a"
+    },
+    {
+      "id": "ev-rcpt-0004",
+      "kind": "receipt",
+      "summary": "mythos run: `mythos report --run-dir C:\\Users\\johnr\\Projects\\mythos-skill\\.mythos\\runs\\20260712T214352Z-build-mythos-report-human-window-over-a-run` exited 0 in 8ms [attests command:report-smoke]",
+      "source_ids": [
+        "receipt:rcpt-0004"
+      ],
+      "observed_at": "2026-07-12T21:53:46Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "84f3847aaf0a8533a6a8de3dcbcb6936f56fe92d dirty:21c4ed4d488d6c3a",
+      "span_after": "84f3847aaf0a8533a6a8de3dcbcb6936f56fe92d dirty:21c4ed4d488d6c3a"
+    },
+    {
+      "id": "ev-rcpt-0005",
+      "kind": "receipt",
+      "summary": "mythos run: `cargo fmt --manifest-path mythos-compiler/Cargo.toml --check` exited 0 in 128ms [attests test:fmt]",
+      "source_ids": [
+        "receipt:rcpt-0005"
+      ],
+      "observed_at": "2026-07-12T22:08:15Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "84f3847aaf0a8533a6a8de3dcbcb6936f56fe92d dirty:21c4ed4d488d6c3a",
+      "span_after": "84f3847aaf0a8533a6a8de3dcbcb6936f56fe92d dirty:21c4ed4d488d6c3a"
+    },
+    {
+      "id": "ev-rcpt-0006",
+      "kind": "receipt",
+      "summary": "mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 3108ms [attests test:cargo-suite]",
+      "source_ids": [
+        "receipt:rcpt-0006"
+      ],
+      "observed_at": "2026-07-12T22:08:18Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "84f3847aaf0a8533a6a8de3dcbcb6936f56fe92d dirty:21c4ed4d488d6c3a",
+      "span_after": "84f3847aaf0a8533a6a8de3dcbcb6936f56fe92d dirty:21c4ed4d488d6c3a"
+    },
+    {
+      "id": "ev-rcpt-0007",
+      "kind": "receipt",
+      "summary": "mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 2887ms [attests test:cargo-suite]",
+      "source_ids": [
+        "receipt:rcpt-0007"
+      ],
+      "observed_at": "2026-07-12T22:11:00Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "84f3847aaf0a8533a6a8de3dcbcb6936f56fe92d dirty:10a571d8ff795b6e",
+      "span_after": "84f3847aaf0a8533a6a8de3dcbcb6936f56fe92d dirty:10a571d8ff795b6e"
+    },
+    {
+      "id": "ev-rcpt-0008",
+      "kind": "receipt",
+      "summary": "mythos run: `node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving_ingest.test.js tests/receipts_attestation.test.js` exited 0 in 9437ms [attests test:node-suites]",
+      "source_ids": [
+        "receipt:rcpt-0008"
+      ],
+      "observed_at": "2026-07-12T22:11:24Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "84f3847aaf0a8533a6a8de3dcbcb6936f56fe92d dirty:10a571d8ff795b6e",
+      "span_after": "84f3847aaf0a8533a6a8de3dcbcb6936f56fe92d dirty:10a571d8ff795b6e"
+    }
+  ],
+  "trusted_facts": [
+    {
+      "id": "fact:ev-auto-report-verifier-10",
+      "statement": "cargo test --manifest-path mythos-compiler/Cargo.toml (fresh run): 37 lib unit tests + 1 compile_determinism + 1 init_contract + 0 doc-tests = 39 passed, 0 failed, 0 ignored",
+      "confidence": 0.7,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "raw:subagents/report-verifier.md",
+        "test:cargo-suite"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-auto-report-verifier-12",
+      "statement": "Real run's report.html and both XSS fixtures each contain exactly one style block pair and zero https or http matches",
+      "confidence": 0.7,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "raw:subagents/report-verifier.md",
+        "file:mythos-compiler/src/compiler/report.rs:342"
+      ],
+      "attestation": "verifier"
+    },
+    {
+      "id": "fact:ev-rcpt-0001",
+      "statement": "mythos run: `cargo fmt --manifest-path mythos-compiler/Cargo.toml --check` exited 0 in 111ms [attests test:fmt]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0001"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-rcpt-0002",
+      "statement": "mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 337ms [attests test:cargo-suite]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0002"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-rcpt-0003",
+      "statement": "mythos run: `mythos report --run-dir C:\\Users\\johnr\\Projects\\mythos-skill\\.mythos\\runs\\20260712T214352Z-build-mythos-report-human-window-over-a-run` exited 1 in 8ms [attests command:report-smoke]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0003"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-rcpt-0004",
+      "statement": "mythos run: `mythos report --run-dir C:\\Users\\johnr\\Projects\\mythos-skill\\.mythos\\runs\\20260712T214352Z-build-mythos-report-human-window-over-a-run` exited 0 in 8ms [attests command:report-smoke]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0004"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-rcpt-0005",
+      "statement": "mythos run: `cargo fmt --manifest-path mythos-compiler/Cargo.toml --check` exited 0 in 128ms [attests test:fmt]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0005"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-rcpt-0006",
+      "statement": "mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 3108ms [attests test:cargo-suite]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0006"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-rcpt-0007",
+      "statement": "mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 2887ms [attests test:cargo-suite]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0007"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-rcpt-0008",
+      "statement": "mythos run: `node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving_ingest.test.js tests/receipts_attestation.test.js` exited 0 in 9437ms [attests test:node-suites]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0008"
+      ],
+      "attestation": "attested"
+    }
+  ],
+  "active_hypotheses": [],
+  "contradictions": [
+    {
+      "id": "con:auto:ev-auto-report-builder-1:ev-auto-report-verifier-1",
+      "summary": "Evidence ev-auto-report-builder-1 and ev-auto-report-verifier-1 disagree on the same direct span (file:mythos-compiler/src/compiler/report.rs:35): \"pub fn html_escape(s: &str) -> String escapes & < > \" ' by replacing them with &amp; &lt; &gt; &quot; &#39;\" vs \"html_escape(s) replaces & < > \" ' with entities and is the single escape path used by every render_* function and the badge() helper\"",
+      "conflicting_item_ids": [
+        "ev-auto-report-builder-1",
+        "ev-auto-report-verifier-1"
+      ],
+      "severity": "low",
+      "source_ids": [
+        "file:mythos-compiler/src/compiler/report.rs:35"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:35",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "35",
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        }
+      ]
+    },
+    {
+      "id": "con:auto:ev-auto-report-builder-1:ev-auto-report-verifier-2",
+      "summary": "Evidence ev-auto-report-builder-1 and ev-auto-report-verifier-2 disagree on the same direct span (file:mythos-compiler/src/compiler/report.rs:35): \"pub fn html_escape(s: &str) -> String escapes & < > \" ' by replacing them with &amp; &lt; &gt; &quot; &#39;\" vs \"Synthetic fixture-a (script tags, onmouseover payloads, quote-breaking attempts, con:receipt:xss-1) rendered with zero raw <script sequences and zero live on* attributes, confirmed by both grep and a real HTML tokenizer (Python html.parser)\"",
+      "conflicting_item_ids": [
+        "ev-auto-report-builder-1",
+        "ev-auto-report-verifier-2"
+      ],
+      "severity": "low",
+      "source_ids": [
+        "file:mythos-compiler/src/compiler/report.rs:35"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:35",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "35",
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        }
+      ]
+    },
+    {
+      "id": "con:auto:ev-auto-report-builder-9:ev-auto-report-verifier-9",
+      "summary": "Evidence ev-auto-report-builder-9 and ev-auto-report-verifier-9 disagree on the same direct span (file:mythos-compiler/src/compiler/report.rs:605): \"Five new unit tests added: html_escape (all 5 chars), XSS-in-summary escaping, con:receipt:* renders in refutations panel, receipt row shows exit code + label, coverage math 2 attested + 1 verifier + 1 asserted = 50% attested\" vs \"Independent probe (standalone cargo project path-depending on mythos-skill, outside the repo) reproduced receipt_row_renders_exit_code_and_label's exact fixture and found exactly one >0< match in the whole page, at the exit-code table cell - the test is not tautological\"",
+      "conflicting_item_ids": [
+        "ev-auto-report-builder-9",
+        "ev-auto-report-verifier-9"
+      ],
+      "severity": "low",
+      "source_ids": [
+        "file:mythos-compiler/src/compiler/report.rs:605"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:605",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "605",
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        }
+      ]
+    },
+    {
+      "id": "con:auto:ev-auto-report-critic-2:ev-auto-report-verifier-8",
+      "summary": "Evidence ev-auto-report-critic-2 and ev-auto-report-verifier-8 disagree on the same direct span (file:mythos-compiler/src/compiler/report.rs:277): \"Evidence-by-lane per-row asserted badge (unpromoted test, no kind exclusion) diverges from the scorecard's stricter asserted formula for kind:objective records - a disclosed, defensible ambiguity in spec section 7 vs section 3, not a bug\" vs \"compute_scorecard (report.rs:118-149) and render_evidence_by_lane (report.rs:255-307) each independently rebuild the fact_ids BTreeSet lookup from packet.trusted_facts and independently reimplement the fact:{id} promotion check (:134+140 vs :256+277) instead of sharing one is_promoted helper. This copy-paste duplication is the direct mechanism that let the two implementations silently diverge on the kind exclusion - nothing in the code forces them to agree. A single shared predicate would make 'asserted' a compile-time single source of truth.\"",
+      "conflicting_item_ids": [
+        "ev-auto-report-critic-2",
+        "ev-auto-report-verifier-8"
+      ],
+      "severity": "medium",
+      "source_ids": [
+        "file:mythos-compiler/src/compiler/report.rs:277"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:277",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "277",
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        }
+      ]
+    }
+  ],
+  "recurring_failure_patterns": [],
+  "candidate_actions": [],
+  "verifier_findings": [
+    {
+      "id": "vf-codex-synthesis-pending",
+      "summary": "Codex synthesis consumed packet state: Three sonnet lanes built, adversarially verified, and critiqued the mythos report feature (report-builder implementation per spec; report-verifier XSS+section+test-quality audit all passed genuinely per vf-verify findings; report-critic ruled the asserted-badge divergence a real defect). Prime applied the ruling (is_asserted shared predicate, regression test) plus the custody-vs-drift split this run itself exposed. All checks receipt-attested at the final tree: rcpt-0005 fmt, rcpt-0007 cargo 39 tests, rcpt-0008 node 40 tests, rcpt-0004 report smoke.",
+      "status": "passed",
+      "verifier_score": 0.9,
+      "source_ids": [
+        "raw:objective.md",
+        "raw:codex-synthesis-20260712T221153Z.md"
+      ],
+      "finding_kind": "synthesis"
+    },
+    {
+      "id": "vf-auto-report-builder-11",
+      "summary": "cargo test --manifest-path mythos-compiler/Cargo.toml: 37 unit tests + 2 integration tests + doc-tests all passed, 0 failed, including the 5 new compiler::report tests",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/report-builder.md",
+        "test:cargo-suite"
+      ],
+      "source_refs": [
+        {
+          "source_id": "test:cargo-suite",
+          "path": "cargo-suite",
+          "kind": "test",
+          "hash": "7702570d90abe4b2",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "label",
+          "span": null,
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        }
+      ],
+      "agent_id": "report-builder-1",
+      "lane": "report-builder"
+    },
+    {
+      "id": "vf-auto-report-builder-12",
+      "summary": "mythos report --run-dir <target-run-dir> exited 0 and created state/report.html (confirmed by reading the file: valid self-contained HTML, no <script> tags, gate banner/scorecard/evidence sections render as expected for this run's data)",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/report-builder.md",
+        "command:report-smoke"
+      ],
+      "source_refs": [
+        {
+          "source_id": "command:report-smoke",
+          "path": "report-smoke",
+          "kind": "command",
+          "hash": "8d10aafd3771385e",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "label",
+          "span": null,
+          "observed_at": "2026-07-12T21:52:54.296Z"
+        }
+      ],
+      "agent_id": "report-builder-1",
+      "lane": "report-builder"
+    },
+    {
+      "id": "vf-auto-report-verifier-13",
+      "summary": "XSS: synthetic packets with script tags, onmouseover payloads, quote-breaking attempts, and a con:receipt: contradiction (with and without a receipts.jsonl) all render with zero raw <script sequences, zero live on* attributes (verified by a real HTML tokenizer, not just grep), and the refutation renders correctly",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/report-verifier.md",
+        "file:mythos-compiler/src/compiler/report.rs:35"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:35",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "35",
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        }
+      ],
+      "agent_id": "report-verifier-1",
+      "lane": "report-verifier"
+    },
+    {
+      "id": "vf-auto-report-verifier-15",
+      "summary": "Test quality: none of the 5 new unit tests are tautological; the borderline case (receipt_row_renders_exit_code_and_label) was independently reproduced outside the repo and confirmed to isolate the exact claimed cell, not a coincidental substring match",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/report-verifier.md",
+        "file:mythos-compiler/src/compiler/report.rs:605"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:605",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "605",
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        }
+      ],
+      "agent_id": "report-verifier-1",
+      "lane": "report-verifier"
+    },
+    {
+      "id": "vf-auto-report-verifier-16",
+      "summary": "Suite: cargo test --manifest-path mythos-compiler/Cargo.toml run fresh by the verifier: 39 total tests passed (37 lib incl. 5 new report tests, 1 compile_determinism, 1 init_contract), 0 failed, 0 ignored - matches the builder's claim",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/report-verifier.md",
+        "test:cargo-suite"
+      ],
+      "source_refs": [
+        {
+          "source_id": "test:cargo-suite",
+          "path": "cargo-suite",
+          "kind": "test",
+          "hash": "7702570d90abe4b2",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "label",
+          "span": null,
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        }
+      ],
+      "agent_id": "report-verifier-1",
+      "lane": "report-verifier"
+    },
+    {
+      "id": "vf-auto-report-verifier-17",
+      "summary": "Self-containment: exactly one style block and zero http(s) references in every generated report.html checked (real run + both XSS fixtures)",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/report-verifier.md",
+        "file:mythos-compiler/src/compiler/report.rs:342"
+      ],
+      "source_refs": [
+        {
+          "source_id": "file:mythos-compiler/src/compiler/report.rs:342",
+          "path": "mythos-compiler/src/compiler/report.rs",
+          "kind": "file",
+          "hash": "58a3e1b0fedaf8b6",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "content",
+          "span": "342",
+          "observed_at": "2026-07-12T22:06:56.690Z"
+        }
+      ],
+      "agent_id": "report-verifier-1",
+      "lane": "report-verifier"
+    },
+    {
+      "id": "vf-prime-suites",
+      "summary": "cargo fmt + full cargo test green at the final tree including the new regression test",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/prime-fixes.md",
+        "test:cargo-suite"
+      ],
+      "source_refs": [
+        {
+          "source_id": "test:cargo-suite",
+          "path": "cargo-suite",
+          "kind": "test",
+          "hash": "7702570d90abe4b2",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "label",
+          "span": null,
+          "observed_at": "2026-07-12T22:10:57.044Z"
+        }
+      ],
+      "agent_id": "prime-1",
+      "lane": "prime-fixes"
+    },
+    {
+      "id": "vf-prime-node",
+      "summary": "all four Node suites green at the final tree",
+      "status": "passed",
+      "verifier_score": 1.0,
+      "source_ids": [
+        "raw:subagents/prime-fixes.md",
+        "test:node-suites"
+      ],
+      "source_refs": [
+        {
+          "source_id": "test:node-suites",
+          "path": "node-suites",
+          "kind": "test",
+          "hash": "9bbc3fd78fdb9bad",
+          "hash_alg": "fnv1a-64",
+          "hash_basis": "label",
+          "span": null,
+          "observed_at": "2026-07-12T22:10:57.044Z"
+        }
+      ],
+      "agent_id": "prime-1",
+      "lane": "prime-fixes"
+    }
+  ],
+  "open_questions": [],
+  "raw_drilldown_refs": [
+    {
+      "source_id": "raw:codex-synthesis-20260712T221153Z.md",
+      "path": "raw/codex-synthesis-20260712T221153Z.md",
+      "kind": "raw",
+      "hash": "12e8a81612fef492",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "raw:objective.md",
+      "path": "raw/objective.md",
+      "kind": "raw",
+      "hash": "543b8b7e10207990",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "raw:subagents/prime-fixes.md",
+      "path": "raw/subagents/prime-fixes.md",
+      "kind": "raw",
+      "hash": "55f4ad9d7e66aa49",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "raw:subagents/report-builder.md",
+      "path": "raw/subagents/report-builder.md",
+      "kind": "raw",
+      "hash": "7073d8b33ec6c088",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "raw:subagents/report-critic.md",
+      "path": "raw/subagents/report-critic.md",
+      "kind": "raw",
+      "hash": "74b2d6ff24678e06",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "raw:subagents/report-verifier.md",
+      "path": "raw/subagents/report-verifier.md",
+      "kind": "raw",
+      "hash": "831a114f9e3df529",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    }
+  ],
+  "halt_signals": [
+    {
+      "id": "halt:2026-07-12T21:43:52.403Z:ready",
+      "kind": "ready-to-halt",
+      "contribution": 1.0,
+      "rationale": "All verifier findings are passing.",
+      "source_ids": [
+        "raw:objective.md",
+        "raw:codex-synthesis-20260712T221153Z.md",
+        "raw:subagents/report-builder.md",
+        "test:cargo-suite",
+        "command:report-smoke",
+        "raw:subagents/report-verifier.md",
+        "file:mythos-compiler/src/compiler/report.rs:35",
+        "file:mythos-compiler/src/compiler/report.rs:605",
+        "file:mythos-compiler/src/compiler/report.rs:342",
+        "raw:subagents/prime-fixes.md",
+        "test:node-suites"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "command:report-smoke",
+      "path": "report-smoke",
+      "kind": "command",
+      "hash": "8d10aafd3771385e",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "label",
+      "span": null,
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-builder-1",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "abcab1fc903791df",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-builder-1",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-builder-2",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "2f06233d196ae4aa",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-builder-2",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-builder-3",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "e2f5dceb05b538ce",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-builder-3",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-builder-4",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "7f5281cdc5596226",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-builder-4",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-builder-5",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "9918f1ad1ec8dc17",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-builder-5",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-builder-6",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "0c565f9eeb44c3f3",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-builder-6",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-builder-7",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "c487cadb7add7c19",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-builder-7",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-builder-8",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "480ad5ee862e5ee5",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-builder-8",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-builder-9",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "9e0189d5f74f8956",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-builder-9",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-critic-2",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "gap",
+      "hash": "bae751cf1b599b0e",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-critic-2",
+      "observed_at": "2026-07-12T22:06:56.805Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-critic-3",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "5c6eaba0a0dead2b",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-critic-3",
+      "observed_at": "2026-07-12T22:06:56.805Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-critic-4",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "e1f9c3f9a384b2bb",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-critic-4",
+      "observed_at": "2026-07-12T22:06:56.805Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-verifier-1",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "dfd232adb92effa3",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-verifier-1",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-verifier-10",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "26436be3a27f5bec",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-verifier-10",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-verifier-11",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "88861f801afc5b93",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-verifier-11",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-verifier-12",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "5ee01a42f1091696",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-verifier-12",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-verifier-2",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "41326ea4846ff0a6",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-verifier-2",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-verifier-3",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "04f3efc633388f7a",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-verifier-3",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-verifier-4",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "73194ca26cb10f77",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-verifier-4",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-verifier-7",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "582bab70894a3c45",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-verifier-7",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-verifier-8",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "ee39d1c95e582846",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-verifier-8",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "evidence:ev-auto-report-verifier-9",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "observation",
+      "hash": "30c08a56cea23ae4",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-auto-report-verifier-9",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "evidence:ev-codex-synthesis-20260712T221153Z",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "codex-synthesis",
+      "hash": "bbc810c6d210d514",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-codex-synthesis-20260712T221153Z",
+      "observed_at": "2026-07-12T22:11:53.683Z"
+    },
+    {
+      "source_id": "evidence:ev-objective",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "objective",
+      "hash": "6bbe0de35cd142ac",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-objective",
+      "observed_at": "2026-07-12T21:43:52.404Z"
+    },
+    {
+      "source_id": "evidence:ev-prime-badge-fix",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "code-change",
+      "hash": "ccee52a37593c5f6",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-prime-badge-fix",
+      "observed_at": "2026-07-12T22:10:57.044Z"
+    },
+    {
+      "source_id": "evidence:ev-prime-drift-split",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "code-change",
+      "hash": "cc498f25098002d9",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-prime-drift-split",
+      "observed_at": "2026-07-12T22:10:57.044Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0001",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "a2863d52630e812d",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0001",
+      "observed_at": "2026-07-12T21:52:54Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0002",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "1186e0e7b644bc66",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0002",
+      "observed_at": "2026-07-12T21:53:08Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0003",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "e56c712b8fc00c6d",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0003",
+      "observed_at": "2026-07-12T21:53:08Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0004",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "ae88badda18f05d6",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0004",
+      "observed_at": "2026-07-12T21:53:46Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0005",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "b5c86bbc312728dd",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0005",
+      "observed_at": "2026-07-12T22:08:15Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0006",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "95567e4c893a4f83",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0006",
+      "observed_at": "2026-07-12T22:08:18Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0007",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "c6c5ace1c6c9dda6",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0007",
+      "observed_at": "2026-07-12T22:11:00Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0008",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "bcedde84379f6241",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0008",
+      "observed_at": "2026-07-12T22:11:24Z"
+    },
+    {
+      "source_id": "evidence:ev-subagent-session-20260712T215254Z-report-builder",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "subagent-session",
+      "hash": "bb7d63a59dfc6212",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-subagent-session-20260712T215254Z-report-builder",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "evidence:ev-subagent-session-20260712T220656Z-report-critic",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "subagent-session",
+      "hash": "f5039748b0cf8fd1",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-subagent-session-20260712T220656Z-report-critic",
+      "observed_at": "2026-07-12T22:06:56.805Z"
+    },
+    {
+      "source_id": "evidence:ev-subagent-session-20260712T220656Z-report-verifier",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "subagent-session",
+      "hash": "42c89d6cde57a167",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-subagent-session-20260712T220656Z-report-verifier",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "evidence:ev-subagent-session-20260712T221057Z-prime-fixes",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "subagent-session",
+      "hash": "a48cc9df45b004dd",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-subagent-session-20260712T221057Z-prime-fixes",
+      "observed_at": "2026-07-12T22:10:57.044Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/bin/mythos.rs:2",
+      "path": "mythos-compiler/src/bin/mythos.rs",
+      "kind": "file",
+      "hash": "46a3b267a438d8fe",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "2",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/bin/mythos.rs:63",
+      "path": "mythos-compiler/src/bin/mythos.rs",
+      "kind": "file",
+      "hash": "46a3b267a438d8fe",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "63",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/bin/mythos.rs:87",
+      "path": "mythos-compiler/src/bin/mythos.rs",
+      "kind": "file",
+      "hash": "46a3b267a438d8fe",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "87",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/mod.rs:9",
+      "path": "mythos-compiler/src/compiler/mod.rs",
+      "kind": "file",
+      "hash": "1ff777d0f12d6359",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "9",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/receipts.rs:44",
+      "path": "mythos-compiler/src/compiler/receipts.rs",
+      "kind": "file",
+      "hash": "d9bba96a386a86a9",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "44",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:1",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "1",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:134",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "134",
+      "observed_at": "2026-07-12T22:06:56.805Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:140",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "140",
+      "observed_at": "2026-07-12T22:06:56.805Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:148",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "8969bf22897bb2c4",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "148",
+      "observed_at": "2026-07-12T22:10:57.044Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:151-173",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "151-173",
+      "observed_at": "2026-07-12T22:06:56.805Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:154-156",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "154-156",
+      "observed_at": "2026-07-12T22:06:56.805Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:175",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "175",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:213-223",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "213-223",
+      "observed_at": "2026-07-12T22:06:56.805Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:22",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "22",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:256",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "256",
+      "observed_at": "2026-07-12T22:06:56.805Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:277",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "277",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:342",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "342",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:35",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "35",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:35-48",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "35-48",
+      "observed_at": "2026-07-12T22:06:56.805Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:373-375",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "373-375",
+      "observed_at": "2026-07-12T22:06:56.805Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:408",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "408",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:439",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "439",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:50",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "50",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:562",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "562",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:567",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "567",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:57",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "57",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:586",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "586",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:605",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "605",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:616",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "58a3e1b0fedaf8b6",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "616",
+      "observed_at": "2026-07-12T21:52:54.296Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/report.rs:71",
+      "path": "mythos-compiler/src/compiler/report.rs",
+      "kind": "file",
+      "hash": "8969bf22897bb2c4",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "71",
+      "observed_at": "2026-07-12T22:10:57.044Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:380",
+      "path": "mythos-compiler/src/compiler/run_dir.rs",
+      "kind": "file",
+      "hash": "d12539102b79a242",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "380",
+      "observed_at": "2026-07-12T22:10:57.044Z"
+    },
+    {
+      "source_id": "file:mythos-compiler/src/compiler/run_dir.rs:712",
+      "path": "mythos-compiler/src/compiler/run_dir.rs",
+      "kind": "file",
+      "hash": "4a065268dcf94558",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "712",
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "file:scripts/strict-gate.mjs:266",
+      "path": "scripts/strict-gate.mjs",
+      "kind": "file",
+      "hash": "8365a130c5c78906",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "266",
+      "observed_at": "2026-07-12T22:10:57.044Z"
+    },
+    {
+      "source_id": "raw:codex-synthesis-20260712T221153Z.md",
+      "path": "raw/codex-synthesis-20260712T221153Z.md",
+      "kind": "raw",
+      "hash": "12e8a81612fef492",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "raw:objective.md",
+      "path": "raw/objective.md",
+      "kind": "raw",
+      "hash": "543b8b7e10207990",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "raw:subagents/prime-fixes.md",
+      "path": "raw/subagents/prime-fixes.md",
+      "kind": "raw",
+      "hash": "55f4ad9d7e66aa49",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "raw:subagents/report-builder.md",
+      "path": "raw/subagents/report-builder.md",
+      "kind": "raw",
+      "hash": "7073d8b33ec6c088",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "raw:subagents/report-critic.md",
+      "path": "raw/subagents/report-critic.md",
+      "kind": "raw",
+      "hash": "74b2d6ff24678e06",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "raw:subagents/report-verifier.md",
+      "path": "raw/subagents/report-verifier.md",
+      "kind": "raw",
+      "hash": "831a114f9e3df529",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": null,
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0001",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "19043832c76e52f1",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0001",
+      "observed_at": "2026-07-12T21:52:54Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0002",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "30367c08b1d6fd37",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0002",
+      "observed_at": "2026-07-12T21:53:08Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0003",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "f95cdfafa8012ca7",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0003",
+      "observed_at": "2026-07-12T21:53:08Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0004",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "29ff381ed0973f84",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0004",
+      "observed_at": "2026-07-12T21:53:46Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0005",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "b87d1f1c65f94320",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0005",
+      "observed_at": "2026-07-12T22:08:15Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0006",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "d3469d2f8d6d093f",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0006",
+      "observed_at": "2026-07-12T22:08:18Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0007",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "8bfdce0245cebe68",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0007",
+      "observed_at": "2026-07-12T22:11:00Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0008",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "55601fc0aaa8c22d",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0008",
+      "observed_at": "2026-07-12T22:11:24Z"
+    },
+    {
+      "source_id": "test:cargo-suite",
+      "path": "cargo-suite",
+      "kind": "test",
+      "hash": "7702570d90abe4b2",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "label",
+      "span": null,
+      "observed_at": "2026-07-12T22:06:56.690Z"
+    },
+    {
+      "source_id": "test:node-suites",
+      "path": "node-suites",
+      "kind": "test",
+      "hash": "9bbc3fd78fdb9bad",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "label",
+      "span": null,
+      "observed_at": "2026-07-12T22:10:57.044Z"
+    },
+    {
+      "source_id": "verifier:vf-auto-report-builder-11",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "a26d3e60e0da051c",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-auto-report-builder-11",
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "verifier:vf-auto-report-builder-12",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "b8b1c7385d9e0c62",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-auto-report-builder-12",
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "verifier:vf-auto-report-verifier-13",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "7e97ee62ce68e7d8",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-auto-report-verifier-13",
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "verifier:vf-auto-report-verifier-15",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "700a3701cfefb16d",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-auto-report-verifier-15",
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "verifier:vf-auto-report-verifier-16",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "0da3b920f13e4e76",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-auto-report-verifier-16",
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "verifier:vf-auto-report-verifier-17",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "85507dace56f6e86",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-auto-report-verifier-17",
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "verifier:vf-codex-synthesis-pending",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "241144cff185cfd2",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-codex-synthesis-pending",
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "verifier:vf-prime-node",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "89da53ea663085a8",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-prime-node",
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    },
+    {
+      "source_id": "verifier:vf-prime-suites",
+      "path": "verifier-results/findings.jsonl",
+      "kind": "verifier",
+      "hash": "014609ddf144b78e",
+      "hash_alg": "fnv1a-64",
+      "span": "vf-prime-suites",
+      "observed_at": "2026-07-12T21:43:52.403Z"
+    }
+  ]
+}
