@@ -77,6 +77,17 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             println!("report written: {}", report_path.display());
             Ok(())
         }
+        "next" => {
+            let rest: Vec<String> = args.collect();
+            let as_json = rest.iter().any(|arg| arg == "--json");
+            let run_dir = parse_run_dir(rest)?;
+            preflight_run_dir(&run_dir)?;
+            print!(
+                "{}",
+                mythos_skill::compiler::brief::generate_brief(&run_dir, as_json)?
+            );
+            Ok(())
+        }
         other => Err(format!("unknown command `{other}` — try `mythos --help`").into()),
     }
 }
@@ -103,6 +114,10 @@ COMMANDS:
                             worklist item (recompile to apply)
     compile --run-dir <dir> Compile a run directory into state/next_pass_packet.json
     report --run-dir <dir>  Render a human-readable state/report.html for the run
+    next --run-dir <dir> [--json]
+                            Print the compressed Prime brief: worklist first,
+                            refutations, facts, lane digests with drill-down
+                            handles, receipts, drift
     --version, -V           Print version
     --help, -h              Print this help
 
@@ -361,12 +376,15 @@ fn diff_with_receipt(args: Vec<String>) -> Result<(), Box<dyn std::error::Error>
         }
     }
 
+    // Exclude-only pathspecs: git treats "-- :(exclude)..." as "everything
+    // minus the excludes". Do NOT add a positive anchor like ":(top)." - it
+    // silently suppresses all matches in status/diff (found by dogfooding:
+    // a work receipt reported 0 files while ten sat modified).
     let git = |extra: &[&str]| -> Result<std::process::Output, Box<dyn std::error::Error>> {
         let mut cmd = std::process::Command::new("git");
         cmd.arg("-C").arg(&repo_root);
         cmd.args(extra);
         cmd.arg("--");
-        cmd.arg(":(top)."); // anchor to repo top so excludes apply repo-wide
         for exclude in &excludes {
             cmd.arg(exclude);
         }
@@ -375,7 +393,7 @@ fn diff_with_receipt(args: Vec<String>) -> Result<(), Box<dyn std::error::Error>
 
     let started_at = iso_now();
     let start = std::time::Instant::now();
-    let status_out = git(&["status", "--porcelain"])?;
+    let status_out = git(&["status", "--porcelain", "--untracked-files=all"])?;
     let numstat_out = git(&["diff", "--numstat", "HEAD"])?;
     if !status_out.status.success() || !numstat_out.status.success() {
         return Err(format!(

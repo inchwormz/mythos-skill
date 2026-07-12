@@ -15,6 +15,7 @@ const COMMANDS = {
   run: { script: null, description: "Execute a command and mint a tamper-evident execution receipt (delegates to mythos binary)" },
   diff: { script: null, description: "Mint a WORK receipt of what changed in repo_root's tree (delegates to mythos binary)" },
   resolve: { script: null, description: "Record a hash-chained adjudication clearing a blocking worklist item (delegates to mythos binary)" },
+  next: { script: null, description: "Print the compressed Prime brief for a run (delegates to mythos binary)" },
   compile: { script: "driver.mjs", description: "Compile a run directory into state/next_pass_packet.json" },
   ingest: { script: "scripts/ingest-subagent.mjs", description: "Ingest a subagent markdown file into evidence/findings JSONL" },
   gate: { script: "scripts/strict-gate.mjs", description: "Verify a run dir passes the strict quality gate" },
@@ -69,7 +70,8 @@ function run(command, args) {
     case "init":
     case "run":
     case "diff":
-    case "resolve": {
+    case "resolve":
+    case "next": {
       const mythos = which("mythos");
       if (!mythos) {
         process.stderr.write(

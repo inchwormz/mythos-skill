@@ -324,11 +324,30 @@ function checkRawSourceRef(source, runDir, errors, prefix) {
     );
     return;
   }
-  const actualHash = fnv1aHash(fs.readFileSync(candidate));
+  const bytes = fs.readFileSync(candidate);
+  const actualHash = fnv1aHash(bytes);
   if (source.hash !== actualHash) {
     errors.push(
       `${prefix} raw source_ref ${source.source_id} hash mismatch: expected ${actualHash}, got ${source.hash}`,
     );
+    return;
+  }
+  // Phase 3: drill-down spans on raw refs must point at lines that exist -
+  // a wrong pointer is worse than none (review finding 9).
+  if (source.span) {
+    const match = /^(\d+)(?:-(\d+))?$/.exec(String(source.span));
+    if (!match) {
+      errors.push(`${prefix} raw source_ref ${source.source_id} span must be a line or line range`);
+      return;
+    }
+    const lineCount = bytes.toString("utf8").split(/\r?\n/).length;
+    const start = Number(match[1]);
+    const end = Number(match[2] ?? match[1]);
+    if (start < 1 || end < start || end > lineCount) {
+      errors.push(
+        `${prefix} raw source_ref ${source.source_id} span ${source.span} is outside file line range 1-${lineCount}`,
+      );
+    }
   }
 }
 

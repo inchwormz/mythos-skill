@@ -337,6 +337,7 @@ mod tests {
                 source_ids,
             }],
             sources: vec![source()],
+            lane_digests: vec![],
         }
     }
 

@@ -26,6 +26,9 @@ mythos-skill run --run-dir <dir> --label test:<name> -- <command...>
 mythos-skill compile --run-dir <dir>                     # recompile
 mythos-skill compile --run-dir <dir> --record-synthesis "…"  # record Prime's synthesis
 mythos-skill ingest --run-dir <dir> --lane <lane> --agent-id <id> --from <raw.md>
+mythos-skill diff --run-dir <dir> [--note <text>]        # WORK receipt: what changed on disk
+mythos-skill resolve --run-dir <dir> --target <id> --reason "…"  # clear a blocking worklist item
+mythos-skill next --run-dir <dir> [--json]               # the compressed Prime brief - READ THIS, not the raw packet
 mythos-skill gate --run-dir <dir>                        # strict quality gate
 mythos-skill ready                                       # end-to-end self-test
 ```

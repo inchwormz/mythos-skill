@@ -72,6 +72,10 @@
     "sources": {
       "type": "array",
       "items": { "$ref": "#/$defs/sourceRef" }
+    },
+    "lane_digests": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/laneDigest" }
     }
   },
   "additionalProperties": false,
@@ -274,6 +278,26 @@
         "claimed_agent_id": { "type": "string" },
         "claimed_lane": { "type": "string" },
         "provenance_warnings": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "laneDigest": {
+      "type": "object",
+      "required": ["lane", "records", "attested", "verifier", "asserted", "warnings", "contradictions", "read_recommendation"],
+      "properties": {
+        "lane": { "type": "string" },
+        "agent_id": { "type": "string" },
+        "records": { "type": "integer", "minimum": 0 },
+        "attested": { "type": "integer", "minimum": 0 },
+        "verifier": { "type": "integer", "minimum": 0 },
+        "asserted": { "type": "integer", "minimum": 0 },
+        "warnings": { "type": "integer", "minimum": 0 },
+        "contradictions": { "type": "integer", "minimum": 0 },
+        "read_recommendation": { "type": "string", "enum": ["skip-verified", "read-adjudicate", "read-unverified", "blocked"] },
+        "drill_down": {
           "type": "array",
           "items": { "type": "string" }
         }

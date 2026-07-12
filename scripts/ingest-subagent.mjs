@@ -175,6 +175,15 @@ function appendJsonl(file, records) {
 // verifier, otherwise by sniffing whether the content parses into records.
 // Routing is then per-RECORD by shape (status/verifier_score => verifier), so
 // an agent that dumps both kinds into one block still ingests correctly.
+// 1-based line number of a character offset.
+function lineOfOffset(text, offset) {
+  let line = 1;
+  for (let i = 0; i < offset && i < text.length; i++) {
+    if (text.charCodeAt(i) === 10) line += 1;
+  }
+  return line;
+}
+
 function parseBlocks(text) {
   const blocks = [];
   const captured = [];
@@ -182,32 +191,36 @@ function parseBlocks(text) {
   let match;
   while ((match = fence.exec(text)) !== null) {
     const label = match[2].trim().toLowerCase();
-    const body = match[3].trim();
-    if (!body) continue;
+    // Keep the body UNTRIMMED so internal line k maps to baseLine + k
+    // (Phase 3 drill-down spans).
+    const body = match[3];
+    if (!body.trim()) continue;
     captured.push([match.index, match.index + match[0].length]);
+    const bodyOffset = match.index + match[0].indexOf(body);
+    const baseLine = lineOfOffset(text, bodyOffset);
     let type = null;
     if (label.includes("verifier")) type = "verifier";
     else if (label.includes("evidence")) type = "evidence";
     if (type) {
-      blocks.push({ type, body, label });
+      blocks.push({ type, body, label, baseLine });
       continue;
     }
     // Unlabeled / generically-labeled block: accept only if the content
     // actually parses into record-shaped objects. Command output, code, and
     // tables fail this test and stay ignored.
-    const sniff = parseRecordsFromBlock({ body, label });
+    const sniff = parseRecordsFromBlock({ body, label, baseLine });
     const shaped = sniff.records.filter(
-      (record) =>
-        record &&
-        typeof record === "object" &&
-        (record.summary !== undefined ||
-          record.status !== undefined ||
-          record.source_ids !== undefined ||
-          record.text !== undefined ||
-          record.claim !== undefined),
+      (entry) =>
+        entry.value &&
+        typeof entry.value === "object" &&
+        (entry.value.summary !== undefined ||
+          entry.value.status !== undefined ||
+          entry.value.source_ids !== undefined ||
+          entry.value.text !== undefined ||
+          entry.value.claim !== undefined),
     );
     if (shaped.length > 0 && shaped.length >= sniff.records.length / 2) {
-      blocks.push({ type: "sniffed", body, label: label || "(bare)" });
+      blocks.push({ type: "sniffed", body, label: label || "(bare)", baseLine });
     }
   }
 
@@ -234,6 +247,7 @@ function parseBlocks(text) {
     );
     if (lineIdx === -1) continue;
     const collected = [];
+    const lineMap = [];
     let nonJsonRun = 0;
     for (let i = lineIdx + 1; i < lines.length; i++) {
       const stripped = lines[i].trim().replace(/^`+|`+$/g, "").trim();
@@ -251,12 +265,14 @@ function parseBlocks(text) {
         continue;
       }
       collected.push(stripped);
+      lineMap.push(i + 1); // 1-based absolute line in the quarantined file
     }
     if (collected.length > 0) {
       blocks.push({
         type: labelMatch[1].toLowerCase() === "verifier" ? "verifier" : "evidence",
         body: collected.join("\n"),
         label: `label-scan:${labelMatch[1].toLowerCase()}`,
+        lineMap,
       });
     }
   }
@@ -315,27 +331,42 @@ function repairJsonText(text) {
 
 // Extract records from a block body: JSONL lines, pretty-printed multi-line
 // objects (brace-balanced, string-aware), or a whole-block array - with the
-// repair ladder applied at each level. Returns {records, notes, skipped}.
+// repair ladder applied at each level. Returns
+// {records: [{value, lines:[startAbs,endAbs]|null}], notes, skipped}.
+// Absolute 1-based line numbers come from block.baseLine (fenced blocks) or
+// block.lineMap (label-scan blocks); null when neither is known.
 function parseRecordsFromBlock(block) {
   const records = [];
   const notes = [];
   const skipped = [];
-  const push = (value, note) => {
+  const bodyLines = block.body.split(/\r?\n/);
+  const absLine = (bodyIdx) => {
+    if (Array.isArray(block.lineMap)) return block.lineMap[bodyIdx] ?? null;
+    if (typeof block.baseLine === "number") return block.baseLine + bodyIdx;
+    return null;
+  };
+  const push = (value, lines, note) => {
     const list = Array.isArray(value) ? value : [value];
     for (const item of list) {
       if (item && typeof item === "object" && !Array.isArray(item)) {
-        records.push(item);
+        records.push({ value: item, lines });
         if (note) notes.push(note);
       }
     }
   };
 
-  const body = block.body.trim();
+  const trimmedBody = block.body.trim();
   // Whole-block array (agents love emitting one JSON array).
-  if (body.startsWith("[")) {
-    const whole = repairJsonText(body);
+  if (trimmedBody.startsWith("[")) {
+    const whole = repairJsonText(trimmedBody);
     if (whole && Array.isArray(whole.value)) {
-      push(whole.value, whole.repaired ? "repaired: whole-block array" : null);
+      const first = absLine(0);
+      const last = absLine(bodyLines.length - 1);
+      push(
+        whole.value,
+        first !== null && last !== null ? [first, last] : null,
+        whole.repaired ? "repaired: whole-block array" : null,
+      );
       return { records, notes, skipped };
     }
   }
@@ -343,27 +374,33 @@ function parseRecordsFromBlock(block) {
   // Brace-balanced assembly: handles one-per-line JSONL AND pretty-printed
   // objects spanning many lines, in the same pass.
   let acc = "";
+  let accStartIdx = 0;
   let depth = 0;
   let inString = false;
   let escaped = false;
-  const flush = () => {
+  const flush = (endIdx) => {
     const chunk = acc.trim();
     acc = "";
     if (!chunk) return;
+    const start = absLine(accStartIdx);
+    const end = absLine(endIdx);
+    const lines = start !== null && end !== null ? [start, end] : null;
     const parsed = repairJsonText(chunk);
     if (parsed) {
-      push(parsed.value, parsed.repaired ? `repaired: ${chunk.slice(0, 60)}...` : null);
+      push(parsed.value, lines, parsed.repaired ? `repaired: ${chunk.slice(0, 60)}...` : null);
     } else {
       skipped.push(chunk.slice(0, 120));
     }
   };
-  for (const line of body.split(/\r?\n/)) {
+  for (let idx = 0; idx < bodyLines.length; idx++) {
+    const line = bodyLines[idx];
     if (depth === 0 && !line.trim()) continue;
     if (depth === 0 && !line.trim().startsWith("{") && !acc) {
       // Non-JSON line between records (agents interleave commentary): skip it
       // silently rather than poisoning the accumulator.
       continue;
     }
+    if (!acc) accStartIdx = idx;
     acc += (acc ? "\n" : "") + line;
     for (const ch of line) {
       if (escaped) { escaped = false; continue; }
@@ -374,13 +411,13 @@ function parseRecordsFromBlock(block) {
       else if (ch === "}") depth -= 1;
     }
     if (depth <= 0 && acc.trim()) {
-      flush();
+      flush(idx);
       depth = 0;
       inString = false;
       escaped = false;
     }
   }
-  if (acc.trim()) flush();
+  if (acc.trim()) flush(bodyLines.length - 1);
   return { records, notes, skipped };
 }
 
@@ -711,8 +748,9 @@ const HARVEST_CAP = 40;
 function harvestProseClaims(text) {
   const claims = [];
   let inFence = false;
-  for (const rawLine of text.split(/\r?\n/)) {
-    const line = rawLine.trim();
+  const lines = text.split(/\r?\n/);
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
     if (/^(```|~~~)/.test(line)) {
       inFence = !inFence;
       continue;
@@ -727,10 +765,13 @@ function harvestProseClaims(text) {
       .slice(0, 300);
     if (summary.length < 12) continue;
     claims.push({
-      kind: "observation",
-      summary,
-      source_ids: citations,
-      rationale: "harvested-from-prose",
+      value: {
+        kind: "observation",
+        summary,
+        source_ids: citations,
+        rationale: "harvested-from-prose",
+      },
+      lines: [i + 1, i + 1],
     });
     if (claims.length >= HARVEST_CAP) break;
   }
@@ -1097,6 +1138,14 @@ function main() {
 
   const rawName = normalizeRawName(rawDir, rawPath);
   const rawSourceId = `raw:subagents/${rawName}`;
+  // Phase 3: all extraction runs against the FINAL quarantined bytes (never
+  // the pre-quarantine input - the header rewrite shifted line coordinates,
+  // review finding 9), so drill-down spans are exact and the span refs hash
+  // the same file the gate re-verifies.
+  const quarantinedBuffer = fs.readFileSync(rawPath);
+  const quarantinedText = quarantinedBuffer.toString("utf8");
+  const quarantinedHash = fnv1aHash(quarantinedBuffer);
+  const runRelativeRawPath = path.relative(args.runDir, rawPath).replace(/\\/g, "/");
 
   // G9: refuse to append a second subagent-session record for the same raw
   // file. Retrying ingest against the same --from already-quarantined file is
@@ -1126,8 +1175,8 @@ function main() {
     }
   }
 
-  const blocks = parseBlocks(rawText);
-  const blockedReason = findBlockedSentinel(rawText);
+  const blocks = parseBlocks(quarantinedText);
+  const blockedReason = findBlockedSentinel(quarantinedText);
 
   const evidence = [];
   const findings = [];
@@ -1136,19 +1185,39 @@ function main() {
   const laneSlug = slugify(args.lane);
   let recordIndex = 0;
 
-  const processOne = (record, routed) => {
+  const processOne = (record, routed, lines) => {
     validateObservedAt(record.id, record.observed_at, runCreatedAt);
     const normalized = normalizeSourceRefs(record, observedAt, runCreatedAt, args.runDir, repoRoot);
     const stamped = stampAttribution(normalized, { agentId: args.agentId, lane: args.lane });
-    // H4: every evidence/verifier record ingested from a quarantined raw file
-    // must carry that raw file's source_id so R5 traceability passes without
-    // post-ingest hand-patching. Prepend so the raw reference appears before
-    // the agent's explicit citations, and de-dupe to avoid stamping twice.
+    // H4 + Phase 3: every record carries its quarantined-raw provenance. When
+    // the extractor knows WHERE in the raw file the record came from, the id
+    // is span-suffixed (raw:subagents/<file>:<start>-<end>) with a matching
+    // hash-bearing source_ref - Prime's drill-down handle.
+    const spanId =
+      Array.isArray(lines) && lines.length === 2
+        ? `${rawSourceId}:${lines[0]}-${lines[1]}`
+        : rawSourceId;
+    const spanRef =
+      spanId === rawSourceId
+        ? null
+        : {
+            source_id: spanId,
+            path: runRelativeRawPath,
+            kind: "raw",
+            hash: quarantinedHash,
+            hash_alg: "fnv1a-64",
+            hash_basis: "content",
+            span: `${lines[0]}-${lines[1]}`,
+            observed_at: observedAt,
+          };
     const withRaw = {
       ...stamped,
-      source_ids: (stamped.source_ids ?? []).includes(rawSourceId)
+      source_ids: (stamped.source_ids ?? []).includes(spanId)
         ? stamped.source_ids
-        : [rawSourceId, ...(stamped.source_ids ?? [])],
+        : [spanId, ...(stamped.source_ids ?? [])],
+      ...(spanRef
+        ? { source_refs: [...(stamped.source_refs ?? []), spanRef] }
+        : {}),
     };
     return routed === "verifier" ? normalizeVerifierRecord(withRaw) : withRaw;
   };
@@ -1160,8 +1229,8 @@ function main() {
       skippedRecords.push({ reason: "unparseable-json", preview: chunk });
     }
     for (const raw of parsed.records) {
-      const routed = routeRecord(raw, block.type);
-      const shaped = normalizeRecordShape(raw, {
+      const routed = routeRecord(raw.value, block.type);
+      const shaped = normalizeRecordShape(raw.value, {
         blockType: routed,
         laneSlug,
         index: recordIndex,
@@ -1174,7 +1243,7 @@ function main() {
       repairNotes.push(...shaped.repairs.map((note) => `${shaped.record.id}: ${note}`));
       let finalRecord;
       try {
-        finalRecord = processOne(shaped.record, routed);
+        finalRecord = processOne(shaped.record, routed, raw.lines);
       } catch (error) {
         // Last-resort salvage: reset the timestamp (drift-window rejections)
         // and retry once. A record that still fails is skipped WITH a reason
@@ -1190,6 +1259,7 @@ function main() {
               ],
             },
             routed,
+            raw.lines,
           );
         } catch (error2) {
           skippedRecords.push({
@@ -1213,9 +1283,9 @@ function main() {
   // harvested claims promote only if receipts or verifiers later back them.
   let harvested = 0;
   if (evidence.length === 0 && findings.length === 0 && !blockedReason) {
-    const proseClaims = harvestProseClaims(rawText);
+    const proseClaims = harvestProseClaims(quarantinedText);
     for (const raw of proseClaims) {
-      const shaped = normalizeRecordShape(raw, {
+      const shaped = normalizeRecordShape(raw.value, {
         blockType: "evidence",
         laneSlug,
         index: recordIndex,
@@ -1226,7 +1296,7 @@ function main() {
       });
       recordIndex += 1;
       try {
-        evidence.push(processOne(shaped.record, "evidence"));
+        evidence.push(processOne(shaped.record, "evidence", raw.lines));
         harvested += 1;
       } catch {
         // a single unharvestable line is not worth a report entry
@@ -1286,7 +1356,6 @@ function main() {
     );
   }
 
-  const runRelativeRawPath = path.relative(args.runDir, rawPath).replace(/\\/g, "/");
   evidence.unshift({
     id: `ev-subagent-session-${stamp}-${slugify(args.lane)}`,
     kind: "subagent-session",

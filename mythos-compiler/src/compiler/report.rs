@@ -200,6 +200,87 @@ fn render_refutations(packet: &NextPassPacket) -> String {
     out
 }
 
+/// Phase 3: the worklist - what Prime should DO, blocking first. Resolved
+/// items stay visible (struck through) for audit.
+fn render_worklist(packet: &NextPassPacket) -> String {
+    if packet.candidate_actions.is_empty() {
+        return String::new();
+    }
+    let mut out = String::from("<section class=\"worklist\">\n<h2>Worklist</h2>\n<ul>\n");
+    for item in &packet.candidate_actions {
+        let class = if item.resolved == Some(true) {
+            "resolved"
+        } else if item.blocking == Some(true) {
+            "blocking"
+        } else {
+            "advisory"
+        };
+        let badge_html = if item.blocking == Some(true) {
+            badge("badge-red", "blocking")
+        } else {
+            badge("badge-grey", "advisory")
+        };
+        let resolution = item
+            .resolution_id
+            .as_deref()
+            .map(|id| {
+                format!(
+                    " <span class=\"raw\">resolved by {}</span>",
+                    html_escape(id)
+                )
+            })
+            .unwrap_or_default();
+        out.push_str(&format!(
+            "<li class=\"{class}\">{} <span class=\"kind\">{}</span> <code>{}</code> - {}{}</li>\n",
+            badge_html,
+            html_escape(item.category.as_deref().unwrap_or("action")),
+            html_escape(&item.id),
+            html_escape(&item.title),
+            resolution
+        ));
+    }
+    out.push_str("</ul>\n</section>\n");
+    out
+}
+
+/// Phase 3: lane digests - which lanes to read, with drill-down handles.
+fn render_lane_digests(packet: &NextPassPacket) -> String {
+    if packet.lane_digests.is_empty() {
+        return String::new();
+    }
+    let mut out = String::from("<section class=\"digests\">\n<h2>Lane digests</h2>\n<ul>\n");
+    for digest in &packet.lane_digests {
+        let badge_class = match digest.read_recommendation.as_str() {
+            "skip-verified" => "badge-green",
+            "blocked" => "badge-red",
+            "read-adjudicate" => "badge-amber",
+            _ => "badge-grey",
+        };
+        let drill = if digest.drill_down.is_empty() {
+            String::new()
+        } else {
+            format!(
+                " <span class=\"raw\">drill: {}</span>",
+                html_escape(&digest.drill_down[..digest.drill_down.len().min(4)].join(", "))
+            )
+        };
+        out.push_str(&format!(
+            "<li><strong>{}</strong> {} {} records ({} attested / {} verifier / {} asserted, {} warnings, {} contradictions){}</li>\n",
+            html_escape(&digest.lane),
+            badge(badge_class, &digest.read_recommendation),
+            digest.records,
+            digest.attested,
+            digest.verifier,
+            digest.asserted,
+            digest.warnings,
+            digest.contradictions,
+            drill
+        ));
+    }
+    out.push_str("</ul>\n</section>\n");
+    out
+}
+
 /// Phase 1: "what changed on disk" - work receipts rendered as a scope
 /// section. Notes are agent/Prime prose and are labeled asserted.
 fn render_work_scope(packet: &NextPassPacket) -> String {
@@ -417,6 +498,12 @@ table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0
 th, td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid #e2e2e2; vertical-align: top; }
 tbody tr:nth-child(even) { background: #f0f0f1; }
 .exit-ok { color: #1c6b2c; font-weight: 600; }
+.exit-fail { color: #a12622; font-weight: 700; background: #fbeceb; }
+.worklist li.blocking { border-left: 3px solid #a12622; padding-left: 8px; }
+.worklist li.advisory { border-left: 3px solid #b8b8b8; padding-left: 8px; }
+.worklist li.resolved { opacity: 0.55; text-decoration: line-through; }
+.badge-red { background: #fbeceb; color: #a12622; }
+.badge-amber { background: #fdf3e0; color: #8a5b00; }
 .exit-fail { color: #a11c1c; font-weight: 600; }
 .status-pass { color: #1c6b2c; font-weight: 600; }
 .status-fail { color: #a11c1c; font-weight: 600; }
@@ -463,9 +550,11 @@ pub fn render_report(
     html.push_str(&render_verdict_banner(gate));
     html.push_str(&render_scorecard(packet));
     html.push_str(&render_refutations(packet));
+    html.push_str(&render_worklist(packet));
     html.push_str(&render_work_scope(packet));
     html.push_str(&render_receipts_table(receipts));
     html.push_str(&render_trusted_facts(packet));
+    html.push_str(&render_lane_digests(packet));
     html.push_str(&render_evidence_by_lane(packet));
     html.push_str(&render_verifier_findings(packet));
     html.push_str(FOOTER);
@@ -538,6 +627,7 @@ mod tests {
             raw_drilldown_refs: vec![],
             halt_signals: vec![],
             sources: vec![],
+            lane_digests: vec![],
         }
     }
 

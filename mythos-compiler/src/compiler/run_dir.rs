@@ -138,6 +138,8 @@ pub fn compile_run_dir(run_dir: &Path) -> Result<RunDirCompileReport, Box<dyn st
         &exec_receipts,
     );
 
+    let trusted_facts_for_digests = trusted_facts.clone();
+
     // Phase 2: the derived worklist replaces template candidate_actions.
     // Resolutions (Prime's typed adjudications, hash-chained) clear blocking
     // items; a broken resolution chain is a hard compile error.
@@ -158,7 +160,7 @@ pub fn compile_run_dir(run_dir: &Path) -> Result<RunDirCompileReport, Box<dyn st
         evidence: worker_evidence.clone(),
         trusted_facts,
         active_hypotheses: vec![],
-        contradictions: auto_contradictions,
+        contradictions: auto_contradictions.clone(),
         recurring_failure_patterns: recurring_patterns,
         candidate_actions: worklist.clone(),
         verifier_findings: verifier_findings.clone(),
@@ -166,6 +168,12 @@ pub fn compile_run_dir(run_dir: &Path) -> Result<RunDirCompileReport, Box<dyn st
         raw_drilldown_refs: raw_sources,
         halt_signals: halt_signals_from_state(&verifier_findings, &worklist, &manifest.created_at),
         sources,
+        lane_digests: derive_lane_digests(
+            &worker_evidence,
+            &trusted_facts_for_digests,
+            &auto_contradictions,
+            &exec_receipts,
+        ),
     })?;
 
     let state_dir = run_dir.join("state");
@@ -849,6 +857,147 @@ fn facts_from_evidence(
                 source_ids: item.source_ids.clone(),
                 attestation: Some(attestation.to_string()),
             })
+        })
+        .collect()
+}
+
+/// Phase 3: per-lane reading guidance. Conservative rules (review finding 5):
+/// `skip-verified` only when every substantive record is promoted via a
+/// receipt:-id citation or verifier backing, with zero claimed-identity
+/// rewrites, zero provenance warnings, and zero contradiction involvement.
+/// Label-citation attestation floors at read-unverified. Any blocker =>
+/// blocked; contradiction involvement => read-adjudicate.
+fn derive_lane_digests(
+    evidence: &[EvidenceRecord],
+    trusted_facts: &[CompiledFact],
+    contradictions: &[Contradiction],
+    exec_receipts: &[ReceiptRecord],
+) -> Vec<crate::schema::LaneDigest> {
+    const INFRA: &[&str] = &[
+        "objective",
+        "subagent-session",
+        "codex-synthesis",
+        "receipt",
+        "work",
+    ];
+    let fact_tier: HashMap<&str, &str> = trusted_facts
+        .iter()
+        .filter_map(|fact| {
+            fact.id
+                .strip_prefix("fact:")
+                .zip(fact.attestation.as_deref())
+        })
+        .collect();
+    let contradicted: BTreeSet<&str> = contradictions
+        .iter()
+        .flat_map(|item| item.conflicting_item_ids.iter().map(String::as_str))
+        .collect();
+    let exec_ids: BTreeSet<String> = exec_receipts
+        .iter()
+        .map(|receipt| format!("receipt:{}", receipt.id))
+        .collect();
+
+    let mut lanes: Vec<(String, Vec<&EvidenceRecord>)> = Vec::new();
+    for record in evidence {
+        let lane = record
+            .lane
+            .clone()
+            .unwrap_or_else(|| "(no lane)".to_string());
+        match lanes.iter_mut().find(|(name, _)| *name == lane) {
+            Some(entry) => entry.1.push(record),
+            None => lanes.push((lane, vec![record])),
+        }
+    }
+
+    lanes
+        .into_iter()
+        .map(|(lane, records)| {
+            let mut attested = 0u32;
+            let mut verifier = 0u32;
+            let mut asserted = 0u32;
+            let mut warnings = 0u32;
+            let mut lane_contradictions = 0u32;
+            let mut blocked = false;
+            let mut label_backed_attestation = false;
+            let mut claimed_identity = false;
+            let mut drill_down: Vec<String> = Vec::new();
+
+            for record in &records {
+                if record.kind == "blocker" {
+                    blocked = true;
+                }
+                if !record.provenance_warnings.is_empty() {
+                    warnings += 1;
+                }
+                if record.claimed_agent_id.is_some() || record.claimed_lane.is_some() {
+                    claimed_identity = true;
+                }
+                if contradicted.contains(record.id.as_str()) {
+                    lane_contradictions += 1;
+                }
+                for id in &record.source_ids {
+                    if id.starts_with("raw:subagents/") && id.rfind('-').is_some() {
+                        if let Some(rest) = id.rsplit(':').next() {
+                            if rest.contains('-')
+                                && rest.split('-').all(|part| part.parse::<u64>().is_ok())
+                                && drill_down.len() < 20
+                                && !drill_down.contains(id)
+                            {
+                                drill_down.push(id.clone());
+                            }
+                        }
+                    }
+                }
+                if INFRA.contains(&record.kind.as_str()) {
+                    continue;
+                }
+                match fact_tier.get(record.id.as_str()) {
+                    Some(&"attested") => {
+                        attested += 1;
+                        let receipt_cited = record
+                            .source_ids
+                            .iter()
+                            .any(|id| exec_ids.contains(id.as_str()));
+                        if !receipt_cited {
+                            label_backed_attestation = true;
+                        }
+                    }
+                    Some(&"verifier") => verifier += 1,
+                    _ => asserted += 1,
+                }
+            }
+
+            let substantive = attested + verifier + asserted;
+            let read_recommendation = if blocked {
+                "blocked"
+            } else if lane_contradictions > 0 {
+                "read-adjudicate"
+            } else if substantive > 0
+                && asserted == 0
+                && warnings == 0
+                && !claimed_identity
+                && !label_backed_attestation
+            {
+                "skip-verified"
+            } else if substantive == 0 && warnings == 0 && !claimed_identity {
+                // Infra-only lanes (e.g. the orchestrator's receipts).
+                "skip-verified"
+            } else {
+                "read-unverified"
+            };
+
+            crate::schema::LaneDigest {
+                lane,
+                agent_id: records.iter().find_map(|record| record.agent_id.clone()),
+                records: records.len() as u32,
+                attested,
+                verifier,
+                asserted,
+                warnings,
+                contradictions: lane_contradictions,
+                read_recommendation: read_recommendation.to_string(),
+                drill_down,
+            }
         })
         .collect()
 }

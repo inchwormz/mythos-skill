@@ -190,6 +190,28 @@ pub struct HaltSignal {
     pub source_ids: Vec<String>,
 }
 
+/// Phase 3: per-lane reading guidance for Prime. Conservative by design
+/// (review finding 5): `skip-verified` is only earned by receipt-id-cited or
+/// verifier-backed promotion - label-citation attestation floors at
+/// read-unverified, because a lane can bulk-cite plausible passing labels.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct LaneDigest {
+    pub lane: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub agent_id: Option<String>,
+    pub records: u32,
+    pub attested: u32,
+    pub verifier: u32,
+    pub asserted: u32,
+    pub warnings: u32,
+    pub contradictions: u32,
+    /// skip-verified | read-adjudicate | read-unverified | blocked
+    pub read_recommendation: String,
+    /// Drill-down handles: span-suffixed raw source ids for this lane.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub drill_down: Vec<String>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct NextPassPacket {
     #[serde(default = "default_schema_version")]
@@ -210,6 +232,10 @@ pub struct NextPassPacket {
     pub raw_drilldown_refs: Vec<SourceRef>,
     pub halt_signals: Vec<HaltSignal>,
     pub sources: Vec<SourceRef>,
+    /// Phase 3 (schema 1.2.0): per-lane reading guidance. Absent on legacy
+    /// packets.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub lane_digests: Vec<LaneDigest>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

@@ -22,6 +22,7 @@ pub struct CompilerInputBundle {
     pub raw_drilldown_refs: Vec<SourceRef>,
     pub halt_signals: Vec<HaltSignal>,
     pub sources: Vec<SourceRef>,
+    pub lane_digests: Vec<crate::schema::LaneDigest>,
 }
 
 pub fn build_next_pass_packet(
@@ -45,6 +46,7 @@ pub fn build_next_pass_packet(
         raw_drilldown_refs: input.raw_drilldown_refs,
         halt_signals: input.halt_signals,
         sources: input.sources,
+        lane_digests: input.lane_digests,
     };
 
     validate_packet_sources(&packet)?;
@@ -115,6 +117,7 @@ mod tests {
                 span: None,
                 observed_at: "2026-04-21T00:00:00Z".to_string(),
             }],
+            lane_digests: vec![],
         })
         .expect("valid packet");
 
