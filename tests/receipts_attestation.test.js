@@ -270,6 +270,65 @@ test("agents cannot impersonate receipts or cite unminted ones", (t) => {
   assert.ok((rec.provenance_warnings ?? []).some((w) => w.startsWith("receipt-impersonation")));
 });
 
+test("work receipts attest tree state but confer NOTHING on claims citing them", (t) => {
+  const runDir = freshRunDir("work-receipt");
+  t.after(() => removeDir(runDir));
+
+  // Mint a work receipt via the real subcommand (repo_root is this repo).
+  const diff = spawnSync(
+    "cargo",
+    ["run", "--quiet", "--bin", "mythos", "--", "diff", "--run-dir", runDir, "--note", "phase-1-fixture"],
+    { cwd: compilerDir, encoding: "utf8", shell: process.platform === "win32" },
+  );
+  assert.equal(diff.status, 0, `mythos diff must succeed: ${diff.stderr}`);
+  const journal = readJsonl(path.join(runDir, "receipts", "receipts.jsonl"));
+  assert.equal(journal[0].label, "work:tree", "work receipts carry the constant label");
+
+  // A lane tries to ride the work receipt: cites the label AND the id.
+  const ingest = ingestLane(
+    runDir,
+    "rider",
+    [
+      "```mythos-evidence-jsonl",
+      JSON.stringify({ id: "ev-rider", kind: "code-change", summary: "I did all of that tree work", source_ids: ["work:tree", "receipt:rcpt-0001"], observed_at: now() }),
+      "```",
+      "",
+    ].join("\n"),
+  );
+  assert.equal(ingest.status, 0, `rider ingest must survive: ${ingest.stderr}`);
+
+  const driver = runNode(["driver.mjs", "--run-dir", runDir]);
+  assert.equal(driver.status, 0, `compile failed: ${driver.stderr}`);
+  const packet = JSON.parse(fs.readFileSync(path.join(runDir, "state", "next_pass_packet.json"), "utf8"));
+
+  // The work receipt itself IS an attested fact about the tree...
+  const workFact = packet.trusted_facts.find((f) => f.id === "fact:ev-rcpt-0001");
+  assert.ok(workFact, "work receipt must compile to an attested tree-state fact");
+  assert.equal(workFact.attestation, "attested");
+  assert.ok(workFact.statement.startsWith("tree delta:"), workFact.statement);
+
+  // ...but the rider gains nothing: its claim stays out of trusted_facts.
+  assert.equal(
+    packet.trusted_facts.find((f) => f.id === "fact:ev-rider"),
+    undefined,
+    "citing a work receipt/label must never attest a claim",
+  );
+  const rider = packet.evidence.find((e) => e.id === "ev-rider");
+  assert.ok(
+    rider.source_ids.some((id) => id.startsWith("log:")),
+    `the work:tree citation must have been downgraded to log:*; got ${JSON.stringify(rider.source_ids)}`,
+  );
+
+  // Gate: the rider's citations are not content anchors either.
+  const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], {
+    env: { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "1" },
+  });
+  assert.ok(
+    gate.stdout.includes("summary-only evidence") && gate.stdout.includes("ev-rider"),
+    `rider must be flagged summary-only despite citing the work receipt; got ${gate.stdout}`,
+  );
+});
+
 test("a tampered journal breaks the chain and fails compile", (t) => {
   const runDir = freshRunDir("tamper");
   t.after(() => removeDir(runDir));

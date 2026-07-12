@@ -147,6 +147,10 @@ function loadReceiptOutcomes(runDir) {
       if (!trimmed) continue;
       try {
         const record = JSON.parse(trimmed);
+        // WORK receipts (label work:tree) attest tree state, never claims:
+        // invisible to both citable ids and passing labels (a lane minting a
+        // work receipt gains nothing).
+        if (record.label === "work:tree") continue;
         if (record.id) ids.add(record.id);
         if (record.label) latestByLabel.set(record.label, record);
       } catch {
@@ -474,7 +478,7 @@ function requiresDirectEvidence(record) {
   // lanes the forgiving parser deliberately kept alive.
   // `receipt` records are runtime-authored from the verified journal - they
   // ARE the provenance.
-  if (["objective", "process", "subagent-session", "codex-synthesis", "blocker", "unstructured", "receipt"].includes(kind)) return false;
+  if (["objective", "process", "subagent-session", "codex-synthesis", "blocker", "unstructured", "receipt", "work"].includes(kind)) return false;
   return true;
 }
 
@@ -536,6 +540,7 @@ const KNOWN_EVIDENCE_KINDS = new Set([
   "plan",
   "unstructured",
   "receipt",
+  "work",
 ]);
 
 function checkUnknownEvidenceKinds(evidence, warnings) {
@@ -556,7 +561,7 @@ function checkUnknownEvidenceKinds(evidence, warnings) {
 // `source_ids` of a `subagent-session` record. This closes the "Prime invented
 // evidence outside any lane" laundering path.
 function checkSubagentTraceability(evidence, errors) {
-  const infrastructureKinds = new Set(["objective", "subagent-session", "codex-synthesis", "receipt"]);
+  const infrastructureKinds = new Set(["objective", "subagent-session", "codex-synthesis", "receipt", "work"]);
   const sessionSourceIds = new Set();
   for (const record of evidence) {
     if (record.kind === "subagent-session") {
@@ -630,7 +635,7 @@ function checkAgentCoverage(evidence, findings, manifest, packet, errors) {
     // Unstructured prose fallbacks are not substantive contributions — three
     // prose-only lanes must not satisfy the diversity floor. Runtime receipt
     // records are the orchestrator's, not a lane's.
-    if (["unstructured", "receipt"].includes(String(record.kind ?? ""))) continue;
+    if (["unstructured", "receipt", "work"].includes(String(record.kind ?? ""))) continue;
     const agentId = record.agent_id;
     if (typeof agentId === "string" && agentId.trim().length > 0) {
       distinct.add(agentId.trim());

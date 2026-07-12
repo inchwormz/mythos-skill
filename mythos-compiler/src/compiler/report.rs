@@ -200,6 +200,40 @@ fn render_refutations(packet: &NextPassPacket) -> String {
     out
 }
 
+/// Phase 1: "what changed on disk" - work receipts rendered as a scope
+/// section. Notes are agent/Prime prose and are labeled asserted.
+fn render_work_scope(packet: &NextPassPacket) -> String {
+    let work: Vec<&EvidenceRecord> = packet
+        .evidence
+        .iter()
+        .filter(|record| record.kind == "work")
+        .collect();
+    if work.is_empty() {
+        return String::new();
+    }
+    let mut out = String::from("<section class=\"work-scope\">\n<h2>Codebase changes</h2>\n<ul>\n");
+    for record in work {
+        let note = record
+            .rationale
+            .as_deref()
+            .map(|text| {
+                format!(
+                    " <span class=\"raw\">note (asserted): {}</span>",
+                    html_escape(text)
+                )
+            })
+            .unwrap_or_default();
+        out.push_str(&format!(
+            "<li><code>{}</code> {}{}</li>\n",
+            html_escape(&record.id),
+            html_escape(&record.summary),
+            note
+        ));
+    }
+    out.push_str("</ul>\n</section>\n");
+    out
+}
+
 fn render_receipts_table(receipts: &[ReceiptRecord]) -> String {
     let mut out = String::from("<section class=\"receipts\">\n<h2>Receipts</h2>\n");
     if receipts.is_empty() {
@@ -429,6 +463,7 @@ pub fn render_report(
     html.push_str(&render_verdict_banner(gate));
     html.push_str(&render_scorecard(packet));
     html.push_str(&render_refutations(packet));
+    html.push_str(&render_work_scope(packet));
     html.push_str(&render_receipts_table(receipts));
     html.push_str(&render_trusted_facts(packet));
     html.push_str(&render_evidence_by_lane(packet));

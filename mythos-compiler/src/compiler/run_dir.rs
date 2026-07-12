@@ -58,11 +58,22 @@ pub fn compile_run_dir(run_dir: &Path) -> Result<RunDirCompileReport, Box<dyn st
     // M1/M2: load the execution-receipt journal. A broken hash chain is a
     // hard compile error - receipts are the one artifact whose integrity is
     // non-negotiable. Each receipt becomes a packet source plus a
-    // runtime-authored evidence record, and receipt outcomes attest or refute
-    // claims below.
+    // runtime-authored evidence record, and EXEC receipt outcomes attest or
+    // refute claims below. WORK receipts (label work:tree) attest tree state
+    // only - they are partitioned out of every claim-attestation path.
     let receipts = load_verified_receipts(run_dir)?;
+    let (work_receipts, exec_receipts): (Vec<&ReceiptRecord>, Vec<&ReceiptRecord>) =
+        receipts.iter().partition(|receipt| {
+            receipt.label.as_deref() == Some(crate::compiler::receipts::WORK_LABEL)
+        });
+    let exec_receipts: Vec<ReceiptRecord> = exec_receipts.into_iter().cloned().collect();
     let mut worker_evidence = worker_evidence;
-    worker_evidence.extend(receipts.iter().map(receipt_evidence_record));
+    worker_evidence.extend(exec_receipts.iter().map(receipt_evidence_record));
+    worker_evidence.extend(
+        work_receipts
+            .iter()
+            .map(|receipt| work_evidence_record(run_dir, receipt, &receipts)),
+    );
 
     let mut sources = raw_sources.clone();
     sources.extend(receipts.iter().map(receipt_source_ref));
@@ -111,16 +122,19 @@ pub fn compile_run_dir(run_dir: &Path) -> Result<RunDirCompileReport, Box<dyn st
     // M2: a passed verifier finding whose cited label has a FAILING latest
     // receipt is refuted mechanically - the strongest signal this system
     // produces, and it requires zero agent cooperation.
-    auto_contradictions.extend(detect_receipt_refutations(&verifier_findings, &receipts));
+    auto_contradictions.extend(detect_receipt_refutations(
+        &verifier_findings,
+        &exec_receipts,
+    ));
     auto_contradictions.sort_by(|a, b| a.id.cmp(&b.id));
     // F1 + M2: trusted_facts are GATED, not relabeled evidence. Receipt-backed
     // records promote as "attested"; verifier-backed as "verifier"; everything
-    // else stays in the evidence section.
+    // else stays in the evidence section. Only EXEC receipts participate.
     let trusted_facts = facts_from_evidence(
         &worker_evidence,
         &verifier_findings,
         &auto_contradictions,
-        &receipts,
+        &exec_receipts,
     );
     let packet = build_next_pass_packet(CompilerInputBundle {
         objective_id: manifest.objective_id.clone(),
@@ -611,6 +625,81 @@ fn receipt_evidence_record(receipt: &ReceiptRecord) -> EvidenceRecord {
     }
 }
 
+/// One runtime-authored evidence record per WORK receipt: what changed in the
+/// tree, with a mechanical window id (exec receipt ids since the previous
+/// work receipt - never a lane name; review finding 6). Stats come from the
+/// receipt's content-addressed artifact; the optional note is agent/Prime
+/// prose and lands in `rationale` (asserted-tier annotation only).
+fn work_evidence_record(
+    run_dir: &Path,
+    receipt: &ReceiptRecord,
+    all_receipts: &[ReceiptRecord],
+) -> EvidenceRecord {
+    // Window: exec receipts between the previous work receipt and this one.
+    let mut window: Vec<&str> = Vec::new();
+    for other in all_receipts {
+        if other.id == receipt.id {
+            break;
+        }
+        if other.label.as_deref() == Some(crate::compiler::receipts::WORK_LABEL) {
+            window.clear();
+        } else {
+            window.push(other.id.as_str());
+        }
+    }
+    let window_text = match (window.first(), window.last()) {
+        (Some(first), Some(last)) if first == last => format!("window {first}"),
+        (Some(first), Some(last)) => format!("window {first}..{last}"),
+        _ => "window (no exec receipts)".to_string(),
+    };
+
+    // Stats live in the content-addressed artifact (the record is frozen).
+    let artifact_path = run_dir
+        .join("receipts")
+        .join("artifacts")
+        .join(format!("{}.txt", receipt.stdout_hash));
+    let (summary_stats, note) = fs::read_to_string(&artifact_path)
+        .ok()
+        .and_then(|text| serde_json::from_str::<serde_json::Value>(&text).ok())
+        .map(|value| {
+            (
+                format!(
+                    "{} file(s), +{}/-{}, {} untracked{}",
+                    value["total_files"].as_u64().unwrap_or(0),
+                    value["total_added"].as_u64().unwrap_or(0),
+                    value["total_removed"].as_u64().unwrap_or(0),
+                    value["untracked"].as_u64().unwrap_or(0),
+                    if value["truncated"].as_bool().unwrap_or(false) {
+                        " (file list truncated)"
+                    } else {
+                        ""
+                    }
+                ),
+                value["note"].as_str().map(str::to_string),
+            )
+        })
+        .unwrap_or_else(|| (receipt.stdout_tail.clone(), None));
+
+    EvidenceRecord {
+        id: format!("ev-{}", receipt.id),
+        kind: "work".to_string(),
+        summary: format!("tree delta: {summary_stats} [{window_text}]"),
+        source_ids: vec![format!("receipt:{}", receipt.id)],
+        source_refs: vec![],
+        observed_at: receipt.ended_at.clone(),
+        agent_id: receipt.agent_id.clone(),
+        lane: receipt.lane.clone(),
+        confidence: Some(1.0),
+        rationale: note,
+        diff_ref: None,
+        span_before: receipt.tree_before.clone(),
+        span_after: receipt.tree_after.clone(),
+        claimed_agent_id: None,
+        claimed_lane: None,
+        provenance_warnings: vec![],
+    }
+}
+
 /// Latest receipt per label wins (retries are legitimate; the final state of
 /// a check is its state).
 fn latest_receipt_per_label(receipts: &[ReceiptRecord]) -> HashMap<&str, &ReceiptRecord> {
@@ -704,11 +793,18 @@ fn facts_from_evidence(
 
     evidence
         .iter()
-        .filter(|item| item.kind == "receipt" || !NON_FACT_KINDS.contains(&item.kind.as_str()))
+        .filter(|item| {
+            item.kind == "receipt"
+                || item.kind == "work"
+                || !NON_FACT_KINDS.contains(&item.kind.as_str())
+        })
         .filter(|item| item.provenance_warnings.is_empty())
         .filter(|item| !contradicted.contains(item.id.as_str()))
         .filter_map(|item| {
+            // "receipt" and "work" records are runtime-authored from the
+            // verified journal - attested by construction.
             let attested = item.kind == "receipt"
+                || item.kind == "work"
                 || item.source_ids.iter().any(|id| {
                     valid_receipt_ids.contains(id) || passing_labels.contains(id.as_str())
                 });

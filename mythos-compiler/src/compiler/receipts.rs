@@ -20,6 +20,12 @@ use std::path::{Path, PathBuf};
 
 pub const GENESIS: &str = "GENESIS";
 
+/// The one label work receipts (`mythos diff`) carry. This label is
+/// deliberately INVISIBLE to claim attestation: work receipts attest tree
+/// state, never claims. Both the Rust compiler and the JS gate must exclude
+/// it from passing-label logic and from citable receipt ids.
+pub const WORK_LABEL: &str = "work:tree";
+
 pub fn fnv1a_hash(bytes: &[u8]) -> String {
     let mut hash = 0xcbf29ce484222325u64;
     for byte in bytes {

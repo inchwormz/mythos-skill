@@ -1,4 +1,6 @@
-use mythos_skill::compiler::receipts::{append_receipt, git_tree_state, store_artifact};
+use mythos_skill::compiler::receipts::{
+    WORK_LABEL, append_receipt, git_tree_state, store_artifact,
+};
 use mythos_skill::compiler::report::generate_report;
 use mythos_skill::compiler::run_dir::compile_run_dir;
 use mythos_skill::schema::ReceiptRecord;
@@ -45,6 +47,10 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             let rest: Vec<String> = args.collect();
             run_with_receipt(rest)
         }
+        "diff" => {
+            let rest: Vec<String> = args.collect();
+            diff_with_receipt(rest)
+        }
         "compile" => {
             let run_dir = parse_run_dir(args.collect())?;
             preflight_run_dir(&run_dir)?;
@@ -83,6 +89,11 @@ COMMANDS:
     run --run-dir <dir> [--lane L] [--agent-id A] [--label test:name] -- <command...>
                             Execute a command and mint a tamper-evident execution
                             receipt in receipts/receipts.jsonl (exit code = child's)
+    diff --run-dir <dir> [--note <text>] [--patch]
+                            Mint a WORK receipt: what changed in repo_root's tree
+                            (numstat summary by default; --patch embeds the full
+                            patch, hard-capped at 512KB). Work receipts attest
+                            tree state and are invisible to claim attestation.
     compile --run-dir <dir> Compile a run directory into state/next_pass_packet.json
     report --run-dir <dir>  Render a human-readable state/report.html for the run
     --version, -V           Print version
@@ -242,6 +253,191 @@ fn run_with_receipt(args: Vec<String>) -> Result<(), Box<dyn std::error::Error>>
         })
     );
     std::process::exit(exit_code as i32);
+}
+
+/// Phase 1: mint a WORK receipt capturing what changed in repo_root's tree.
+/// Numstat-only by default (no file contents -> no secret capture, bounded
+/// size); `--patch` embeds the full patch, hard-capped at 512KB. The label is
+/// always the constant `work:tree` - never caller-chosen - and both compile
+/// and gate exclude that label from claim attestation.
+fn diff_with_receipt(args: Vec<String>) -> Result<(), Box<dyn std::error::Error>> {
+    let run_dir = PathBuf::from(
+        parse_flag_value(&args, "--run-dir").ok_or("`diff` requires --run-dir <dir>")?,
+    );
+    preflight_run_dir(&run_dir)?;
+    let note = parse_flag_value(&args, "--note");
+    let want_patch = args.iter().any(|arg| arg == "--patch");
+    let lane = parse_flag_value(&args, "--lane");
+    let agent_id = parse_flag_value(&args, "--agent-id");
+
+    let manifest: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(run_dir.join("manifest.json"))?)?;
+    let repo_root = manifest["repo_root"]
+        .as_str()
+        .ok_or("`diff` requires repo_root in manifest.json (re-init the run with --repo-root)")?
+        .to_string();
+
+    // Pathspec-exclude the run-dir tree so the engine's own journal churn
+    // never shows up as "work". `.mythos` covers the default location; the
+    // actual run dir is excluded too when it lives under repo_root elsewhere.
+    let mut excludes: Vec<String> = vec![":(exclude,top).mythos".to_string()];
+    if let (Ok(run_abs), Ok(root_abs)) =
+        (run_dir.canonicalize(), Path::new(&repo_root).canonicalize())
+    {
+        if let Ok(rel) = run_abs.strip_prefix(&root_abs) {
+            let rel = rel.to_string_lossy().replace('\\', "/");
+            if !rel.is_empty() && !rel.starts_with(".mythos") {
+                excludes.push(format!(":(exclude,top){rel}"));
+            }
+        }
+    }
+
+    let git = |extra: &[&str]| -> Result<std::process::Output, Box<dyn std::error::Error>> {
+        let mut cmd = std::process::Command::new("git");
+        cmd.arg("-C").arg(&repo_root);
+        cmd.args(extra);
+        cmd.arg("--");
+        cmd.arg(":(top)."); // anchor to repo top so excludes apply repo-wide
+        for exclude in &excludes {
+            cmd.arg(exclude);
+        }
+        Ok(cmd.output()?)
+    };
+
+    let started_at = iso_now();
+    let start = std::time::Instant::now();
+    let status_out = git(&["status", "--porcelain"])?;
+    let numstat_out = git(&["diff", "--numstat", "HEAD"])?;
+    if !status_out.status.success() || !numstat_out.status.success() {
+        return Err(format!(
+            "git failed under {repo_root}: {}",
+            String::from_utf8_lossy(&numstat_out.stderr)
+        )
+        .into());
+    }
+
+    // Parse numstat: "<added>\t<removed>\t<path>" ("-" for binary).
+    #[derive(serde::Serialize)]
+    struct FileDelta {
+        path: String,
+        added: Option<u64>,
+        removed: Option<u64>,
+        status: String,
+    }
+    let mut files: Vec<FileDelta> = Vec::new();
+    for line in String::from_utf8_lossy(&numstat_out.stdout).lines() {
+        let mut parts = line.splitn(3, '\t');
+        let (Some(a), Some(r), Some(p)) = (parts.next(), parts.next(), parts.next()) else {
+            continue;
+        };
+        files.push(FileDelta {
+            path: p.trim().to_string(),
+            added: a.parse().ok(),
+            removed: r.parse().ok(),
+            status: "modified".to_string(),
+        });
+    }
+    let mut untracked = 0u64;
+    for line in String::from_utf8_lossy(&status_out.stdout).lines() {
+        if let Some(path) = line.strip_prefix("?? ") {
+            untracked += 1;
+            files.push(FileDelta {
+                path: path.trim().to_string(),
+                added: None,
+                removed: None,
+                status: "untracked".to_string(),
+            });
+        }
+    }
+    let total_added: u64 = files.iter().filter_map(|f| f.added).sum();
+    let total_removed: u64 = files.iter().filter_map(|f| f.removed).sum();
+    let total_files = files.len();
+    // Deterministic order: biggest deltas first, path as tiebreak; top 100
+    // inline, remainder counted.
+    files.sort_by(|left, right| {
+        let l = left.added.unwrap_or(0) + left.removed.unwrap_or(0);
+        let r = right.added.unwrap_or(0) + right.removed.unwrap_or(0);
+        r.cmp(&l).then_with(|| left.path.cmp(&right.path))
+    });
+    let truncated = files.len() > 100;
+    files.truncate(100);
+
+    let mut artifact = serde_json::json!({
+        "work": "tree",
+        "note": note,
+        "files": files,
+        "total_files": total_files,
+        "total_added": total_added,
+        "total_removed": total_removed,
+        "untracked": untracked,
+        "truncated": truncated,
+    });
+    if want_patch {
+        let patch_out = git(&["diff", "HEAD"])?;
+        const PATCH_CAP: usize = 512 * 1024;
+        if patch_out.stdout.len() > PATCH_CAP {
+            return Err(format!(
+                "--patch refused: patch is {} bytes (cap {PATCH_CAP}). Use the numstat summary, or narrow the tree.",
+                patch_out.stdout.len()
+            )
+            .into());
+        }
+        artifact["patch"] =
+            serde_json::Value::String(String::from_utf8_lossy(&patch_out.stdout).to_string());
+    }
+    let artifact_bytes = serde_json::to_vec_pretty(&artifact)?;
+    let (artifact_hash, artifact_rel) = store_artifact(&run_dir, &artifact_bytes)?;
+    let (stderr_hash, _) = store_artifact(&run_dir, &numstat_out.stderr)?;
+
+    let duration_ms = start.elapsed().as_millis() as u64;
+    let ended_at = iso_now();
+    let tree = git_tree_state(Some(&repo_root));
+    let summary_tail = format!(
+        "{total_files} file(s) changed, +{total_added}/-{total_removed}, {untracked} untracked"
+    );
+
+    let record = append_receipt(
+        &run_dir,
+        ReceiptRecord {
+            id: String::new(),
+            label: Some(WORK_LABEL.to_string()),
+            cmd: vec![
+                "git".to_string(),
+                "diff".to_string(),
+                "--numstat".to_string(),
+                "HEAD".to_string(),
+            ],
+            cwd: repo_root.clone(),
+            exit_code: 0,
+            duration_ms,
+            started_at,
+            ended_at,
+            stdout_hash: artifact_hash,
+            stderr_hash,
+            stdout_tail: summary_tail.clone(),
+            stderr_tail: String::new(),
+            tree_before: tree.clone(),
+            tree_after: tree,
+            lane,
+            agent_id,
+            writer: format!("mythos/{VERSION}"),
+            prev_record_hash: String::new(),
+            record_hash: String::new(),
+        },
+    )?;
+
+    println!(
+        "{}",
+        serde_json::json!({
+            "ok": true,
+            "receipt": record.id,
+            "record_hash": record.record_hash,
+            "label": WORK_LABEL,
+            "summary": summary_tail,
+            "artifact": artifact_rel,
+        })
+    );
+    Ok(())
 }
 
 fn preflight_run_dir(run_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
