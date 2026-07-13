@@ -190,3 +190,24 @@ Fresh verification after the last change:
 - Local URL checked: `http://127.0.0.1:4175/`.
 
 Exact next step: publish this verified source to the existing owner-only Sites project and confirm the production URL serves the new terminal assets.
+
+## HTML/CSS product terminals
+
+Date: 2026-07-14
+
+Rebuilt all four generated product-image slots as real HTML/CSS terminals. Each scene now uses the hero terminal's exact DOM and visual grammar: black shell, three restrained controls, centered label, surface gradient, Berkeley Mono command stream, line reveal, blinking cursor, and bottom fade. Only the Receipts-specific command and output text changes between `receipts run`, `receipts absorb`, `receipts conclude`, and `receipts next`.
+
+The raster files remain preserved in the checkout, but the page no longer references or requests them. The original cloned demo DOM in each slot is hidden whenever its replacement terminal is present.
+
+Fresh verification after the last production change:
+
+- TDD red receipt — the new DOM-terminal test failed with 0 of 4 feature terminals and found all four PNG references before implementation.
+- `node site/smoke.test.mjs` — PASS, 4 tests, 0 failures.
+- `node site/build-worker.mjs` — PASS, generated Worker with 43 assets.
+- Static proof — 4 feature terminal articles, 6 CLI terminal articles total including the 2 hero terminals, and 0 references to `receipts-01.png` through `receipts-04.png`.
+- Desktop browser at `1440x1200` — PASS; all four replacement terminals render with the hero shell and no cloned interface painted underneath.
+- Mobile browser at `390x844` — PASS; document width equals viewport width, the responsive shell shows the first feature terminal at 358x384, and there is no horizontal overflow.
+- Browser console — PASS; 0 errors, 0 warnings.
+- Local URL checked: `http://127.0.0.1:4175/`.
+
+Exact next step: publish this verified source to the existing owner-only Sites project and confirm the production HTML contains four feature terminals and no product PNG references.

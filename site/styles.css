@@ -2626,19 +2626,13 @@ img, picture, video, canvas, svg { max-width: 100%; }
   width: 36px;
 }
 
-/* Generated terminal scenes replace, rather than texture, the cloned demo panels. */
-:has(> [data-ss-static-paint-snapshot][src^="assets/receipts/"])
-  > :not([data-ss-static-paint-snapshot]) {
+/* Product terminals replace, rather than sit above, the cloned demo panels. */
+:has(> .receipts-feature-terminal)
+  > :not(.receipts-feature-terminal) {
   display: none !important;
 }
 
-[data-ss-static-paint-snapshot][src^="assets/receipts/"] {
-  display: block;
-  height: auto;
-  inset: auto;
-  mix-blend-mode: normal;
-  opacity: 1;
-  position: relative;
+.receipts-feature-terminal {
   width: 100%;
 }
 
