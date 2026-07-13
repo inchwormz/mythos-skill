@@ -612,6 +612,10 @@ test("commit-hash anchors: real commits harvest as verified citations, fake ones
   assert.ok(fs.existsSync(persisted), "gate must persist state/gate-report.json unprompted");
   const gateReport = JSON.parse(fs.readFileSync(persisted, "utf8"));
   assert.equal(typeof gateReport.ok, "boolean", "persisted verdict must be the real report");
+  assert.ok(
+    !(gateReport.errors ?? []).some((error) => /source_ref commit:.*kind "commit" is not in the allowed set/.test(error)),
+    `verified commit citations must be admitted by the gate: ${JSON.stringify(gateReport.errors)}`,
+  );
 });
 
 test("flag-like objectives are rejected instead of scaffolding a run named --help", (t) => {
