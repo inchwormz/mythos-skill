@@ -113,3 +113,18 @@ Fresh verification:
 - Browser mobile at `390x844` — PASS; document/body width remain 390px and console errors/warnings are 0.
 
 Private republish remains blocked by the existing Sites deployment queue; the saved hosted version still does not contain this correction.
+
+## SiteSorted heading font correction
+
+Date: 2026-07-13
+
+The heading font correction is now applied: the local SiteSorted `Fraunces` asset is used for all main-content headings, while the SiteSorted `GeistSans` asset remains the core/body font and the header keeps its original Inter Variable treatment.
+
+Fresh verification:
+
+- TDD red receipt — the smoke test failed on the missing Fraunces CSS rule and asset before implementation.
+- `node site/smoke.test.mjs` — PASS, 3 tests, 0 failures.
+- `node site/build-worker.mjs` — PASS, generated Worker with 39 assets.
+- Browser desktop at `1280px` — PASS; computed `main h1` and `main h2` are `Fraunces`, the header remains `Inter Variable`, both Fraunces and GeistSans report loaded, and document/body width remain 1280px.
+
+Hosted republish is still pending until the Sites deployment queue accepts the new source version.

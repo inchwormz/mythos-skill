@@ -20019,9 +20019,17 @@ label.bBfjom { user-select: none; }
   src: url("assets/files/geist.woff2") format("woff2");
 }
 
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("assets/files/fraunces.woff2") format("woff2");
+}
+
 :root {
   --receipts-core-font: "GeistSans", "GeistSans Fallback", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --receipts-heading-font: "GeistSans", "GeistSans Fallback", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --receipts-heading-font: "Fraunces", Georgia, "Times New Roman", serif;
 }
 
 body { font-family: var(--receipts-core-font); }

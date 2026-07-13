@@ -46,9 +46,10 @@
 - Modify: `site/styles.css`
 - Modify: `site/smoke.test.mjs`
 - Add: `site/assets/files/geist.woff2`
+- Add: `site/assets/files/fraunces.woff2`
 
 - [x] Rebuild each terminal with layered chrome, tabs, conversation/activity rows, evidence metadata, line-numbered output, and status bars at the density of the removed compiler-emitted surfaces.
-- [x] Use the embedded SiteSorted GeistSans font for core UI and all H1 elements, while preserving the existing header and Berkeley Mono/sub-font treatment.
+- [x] Use the embedded SiteSorted GeistSans font for core UI and Fraunces for content headings, while preserving the existing header and Berkeley Mono/sub-font treatment.
 - [x] Re-run static, browser, Worker, and compiler checks before republishing.
 - [ ] Complete hosted verification after the private Sites deployment leaves `pending` and serves version 4.
 
@@ -59,6 +60,6 @@
 - [x] Replace explanatory terminal paragraphs with compact labels and state values.
 - [x] Use warm monochrome/amber terminal accents with no green or blue AI palette.
 - [x] Remove terminal orb markers and hide the harvested grid-dot orb visuals.
-- [x] Apply Geist to all main-content headings while preserving the header font.
+- [x] Apply Fraunces to all main-content headings while preserving the header font.
 - [x] Re-run static, Worker, and desktop/mobile browser checks.
 - [ ] Republish and verify the hosted correction after the Sites queue clears.
