@@ -1,4 +1,5 @@
 import assert from "node:assert/strict"
+import { createHash } from "node:crypto"
 import { readdir, readFile } from "node:fs/promises"
 import { test } from "node:test"
 import { fileURLToPath } from "node:url"
@@ -195,10 +196,12 @@ test("the visible shell is fully Receipts-owned with no Linear brand residue", a
   assert.match(css, /\.receipts-proof-card[\s\S]{0,360}background-repeat:\s*no-repeat/, "proof-card art must not tile")
   assert.match(css, /\.receipts-proof-card[\s\S]{0,360}background-size:\s*contain/, "proof-card art must remain legible instead of cropping into logo-like shapes")
 
-  await Promise.all([
+  const [trustCard, handoffCard] = await Promise.all([
     readFile(new URL("assets/receipts/receipts-card-trust.png", import.meta.url)),
     readFile(new URL("assets/receipts/receipts-card-handoff.png", import.meta.url)),
   ])
+  assert.equal(createHash("sha256").update(trustCard).digest("hex"), "52772a430dc72ca175a74e2568ed7e31b43d4bb3ddafbb88ea278ede2c458f2b", "the first requested flow-field asset must back the trust card")
+  assert.equal(createHash("sha256").update(handoffCard).digest("hex"), "ab64328800bc7ca8f11af00261db881f0429308ddcdf11c32d856c48bec17918", "the second requested flow-field asset must back the handoff card")
 })
 
 test("the stripped shell keeps its materialized assets local", async () => {

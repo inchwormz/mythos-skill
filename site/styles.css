@@ -2657,11 +2657,11 @@ img, picture, video, canvas, svg { max-width: 100%; }
 }
 
 .receipts-proof-card--trust {
-  background-image: url("assets/receipts/receipts-card-trust.png") !important;
+  background-image: url("assets/receipts/receipts-card-trust.png?v=52772a43") !important;
 }
 
 .receipts-proof-card--handoff {
-  background-image: url("assets/receipts/receipts-card-handoff.png") !important;
+  background-image: url("assets/receipts/receipts-card-handoff.png?v=ab643288") !important;
 }
 
 .receipts-proof-card .Dc5tqa_customerQuote,

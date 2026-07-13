@@ -216,7 +216,7 @@ Exact next step: publish this verified source to the existing owner-only Sites p
 
 Date: 2026-07-14
 
-Replaced the remaining borrowed visual identity with a Receipts-owned system. The header and footer now use a Fraunces `RECEIPTS` wordmark. The six benefit figures are inline SVGs for tamper-evident trust, deterministic execution, and verified handoff. Image generation was used as visual direction only; the shipped figures are deterministic HTML/SVG. The two proof cards reuse the earlier approved Receipts image-generation assets for evidence chaining and next-pass handoff.
+Replaced the remaining borrowed visual identity with a Receipts-owned system. The header and footer now use a Fraunces `RECEIPTS` wordmark. The six benefit figures are inline SVGs for tamper-evident trust, deterministic execution, and verified handoff. Image generation was used as visual direction only; the shipped figures are deterministic HTML/SVG. The two proof cards use John's selected monochrome flow-field images, with content-hash cache keys so the deployed cards cannot retain superseded artwork.
 
 Converted the calendar demo into a 34-hour harness timeline, renamed project-management states and tasks around receipt capture, verification, and handoff, and replaced customer identities, navigation labels, legal labels, and generic demo copy. A final browser investigation found the old customer-logo SVG nodes layered above the new card art; those nodes are suppressed, the clone-only pulse/version strip is removed, and the remaining visible blue/green diagram palette is remapped to the warm Receipts accent.
 
@@ -230,5 +230,11 @@ Fresh verification after the last production change:
 - Mobile browser at `390x844` — PASS; document width equals viewport width with no horizontal overflow.
 - Browser console — PASS; 0 errors, 0 warnings.
 - Local URL checked: `http://127.0.0.1:4175/`.
+
+Final card-art override:
+
+- Trust card asset SHA-256: `52772a430dc72ca175a74e2568ed7e31b43d4bb3ddafbb88ea278ede2c458f2b`.
+- Handoff card asset SHA-256: `ab64328800bc7ca8f11af00261db881f0429308ddcdf11c32d856c48bec17918`.
+- Browser card captures — PASS; both cards show the requested white flow fields on black, the copy remains legible, and the legacy customer marks remain absent.
 
 Exact next step: commit and publish this verified artifact to the existing owner-only Sites project, then confirm the hosted HTML, CSS, wordmarks, proof figures, hour labels, and card images.
