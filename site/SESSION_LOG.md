@@ -151,3 +151,19 @@ Deployment receipt for the terminal-only revision:
 - Saved Sites version: `5` (`appgprj_6a54232a80208191a151c49baf473e7e~appgver_77524856d2c88191b8274ffca5dbecc9`).
 - Private deployment: `appgdep_6a543e0949348191a50903f9226a5a92` remains `pending` with no provider deployment ID after two valid polls.
 - Hosted endpoint check — not passed for version 5: the live URL still returns the older site and the Fraunces asset is not found. Local source and Worker are the verified current surface.
+
+## Flat Linear-style terminal correction
+
+Date: 2026-07-13
+
+The serving layer was healthy; the mismatch was visual. The visible terminal panes still carried dashboard UI through bordered event cards, status treatments, and a framed output panel. The final correction flattens those interiors into two simple terminal streams. Styling depth now comes from the window frame, subtle surface texture, type hierarchy, thin rules, spacing, shadow, line numbers, and a restrained active line.
+
+Fresh verification:
+
+- TDD red receipt — the smoke test failed on the missing simple-surface token before the styling correction.
+- `node site/smoke.test.mjs` — PASS, 3 tests, 0 failures.
+- `node site/build-worker.mjs` — PASS, generated Worker with 39 assets.
+- Browser desktop at `1280px` — PASS; 2 visible panes, 0 visible bordered cards, transparent card/output backgrounds, body width 1280px, and warm-only computed prompt/success colors.
+- Browser mobile at `390px` — PASS; 2 visible panes, body width 390px, terminal surface width 358px, 0 visible headings, and 0 console errors/warnings.
+
+Hosted verification is not complete for this correction.

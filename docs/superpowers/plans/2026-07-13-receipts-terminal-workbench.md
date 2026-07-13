@@ -73,3 +73,13 @@
 - [x] Flatten the visible panes toward a simple Hyper-style window with the receipt conversation and CLI output as the product story.
 - [x] Verify two visible panes at desktop and mobile widths with no horizontal overflow.
 - [ ] Republish and verify the hosted correction after the Sites queue clears; version 5 is saved but deployment `appgdep_6a543e0949348191a50903f9226a5a92` is still pending.
+
+### Task 7: Flatten the terminal interiors
+
+**Files:** `site/styles.css`, `site/smoke.test.mjs`
+
+- [x] Remove the visual card/dashboard treatment from the subagent stream.
+- [x] Reduce the prime pane to a plain CLI stream with restrained line-number and active-line styling.
+- [x] Keep visual depth in the terminal shell, typography, rules, texture, spacing, and shadow treatment.
+- [x] Verify exactly two visible panes, zero visible cards, transparent output surfaces, warm-only accents, and no mobile overflow.
+- [ ] Save and verify the final hosted revision after the Sites deployment queue clears.

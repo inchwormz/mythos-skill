@@ -120,6 +120,9 @@ test("the Receipts workbench keeps local actions and responsive guardrails", asy
   assert.match(css, /:not\(\.receipts-terminal-workbench-hero\)/, "marketing sections must stay hidden around the terminal pair")
   assert.match(css, /\.TZTsQG_rightSideWrapper\s*\{\s*display:\s*none/, "header copy must not compete with the terminal pair")
   assert.match(css, /receipts-terminal-toolbar,\s*\.receipts-terminal-tabs,\s*\.receipts-terminal-rail/, "terminal chrome should stay Hyper-simple")
+  assert.match(css, /--receipts-terminal-surface:\s*#/, "simple terminal surface token is missing")
+  assert.match(css, /receipts-terminal-workbench-hero \.receipts-terminal-thread-card[\s\S]{0,360}background:\s*transparent/, "subagent output should not read as a dashboard card")
+  assert.match(css, /receipts-terminal-workbench-hero \.receipts-terminal-output-window[\s\S]{0,360}background:\s*transparent/, "prime output should stay a plain terminal stream")
   assert.match(css, /:focus-visible/)
 })
 
