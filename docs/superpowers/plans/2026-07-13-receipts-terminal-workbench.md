@@ -47,6 +47,7 @@
 - Modify: `site/smoke.test.mjs`
 - Add: `site/assets/files/geist.woff2`
 
-- [ ] Rebuild each terminal with layered chrome, tabs, conversation/activity rows, evidence metadata, line-numbered output, and status bars at the density of the removed compiler-emitted surfaces.
-- [ ] Use the embedded SiteSorted GeistSans font for core UI and all H1 elements, while preserving the existing header and Berkeley Mono/sub-font treatment.
-- [ ] Re-run static, browser, Worker, compiler, and hosted checks before republishing.
+- [x] Rebuild each terminal with layered chrome, tabs, conversation/activity rows, evidence metadata, line-numbered output, and status bars at the density of the removed compiler-emitted surfaces.
+- [x] Use the embedded SiteSorted GeistSans font for core UI and all H1 elements, while preserving the existing header and Berkeley Mono/sub-font treatment.
+- [x] Re-run static, browser, Worker, and compiler checks before republishing.
+- [ ] Complete hosted verification after the private Sites deployment leaves `pending` and serves version 4.

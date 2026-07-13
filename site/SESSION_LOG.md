@@ -78,7 +78,7 @@ Fresh local/browser verification:
 - Browser desktop — PASS; terminal panes render at 818px height with both detailed surfaces present, old mockup markers absent, and computed fonts confirm GeistSans body/H1, Inter Variable header, and Berkeley Mono code.
 - Browser mobile at `390x844` — PASS; document width remains 390px, internal terminal rails and packet output stay within the viewport, and console errors/warnings are 0.
 
-Private Sites republish is pending for this refinement.
+Private Sites republish is currently blocked by the Sites deployment queue. The saved version 4 points to commit `e9c7093387201c9d2107b42c506a8a7365bc6eeb`, but both owner-only deployment attempts remain `pending` with no provider deployment ID. The current live URL still serves version 3: the hosted HTML has no rich-terminal markers and `/assets/files/geist.woff2` returns 404. Local source, Worker, and browser proofs remain valid; hosted verification is not complete.
 
 Hosted receipt for the terminal workbench:
 
@@ -86,3 +86,9 @@ Hosted receipt for the terminal workbench:
 - Deployment: succeeded (`appgdep_6a542db344a48191b3cbf457b6ed3d8b`); owner-only private access preserved.
 - Hosted URL: `https://receipts-for-agents.johnrichardmckeown.chatgpt.site`.
 - Hosted endpoint check — PASS with owner authorization: `/` 200 HTML, `/styles.css` 200 CSS, representative AVIF and PNG assets 200, unknown route 404; hosted HTML contains the terminal workbench and model labels and excludes the old hero/diff markers.
+
+Hosted receipt for terminal depth and Geist refinement:
+
+- Saved Sites version: `4` (`appgprj_6a54232a80208191a151c49baf473e7e~appgver_0884935d93888191bd82e4b4e5a60f2e`), source commit `e9c7093387201c9d2107b42c506a8a7365bc6eeb`.
+- Deployment attempts: `appgdep_6a54345bc6f8819198ec1f1cc2dd7df8` and `appgdep_6a54355213cc8191bc012b8c73e0c860`; both remain `pending` with `provider_deployment_id=null`.
+- Hosted endpoint check — not passed for this refinement: current live URL returns version-3 HTML, the rich-terminal/Geist markers are absent, and `/assets/files/geist.woff2` returns 404.
