@@ -92,3 +92,8 @@ Hosted receipt for terminal depth and Geist refinement:
 - Saved Sites version: `4` (`appgprj_6a54232a80208191a151c49baf473e7e~appgver_0884935d93888191bd82e4b4e5a60f2e`), source commit `e9c7093387201c9d2107b42c506a8a7365bc6eeb`.
 - Deployment attempts: `appgdep_6a54345bc6f8819198ec1f1cc2dd7df8` and `appgdep_6a54355213cc8191bc012b8c73e0c860`; both remain `pending` with `provider_deployment_id=null`.
 - Hosted endpoint check — not passed for this refinement: current live URL returns version-3 HTML, the rich-terminal/Geist markers are absent, and `/assets/files/geist.woff2` returns 404.
+
+Re-serve attempt:
+
+- Local server receipt — PASS: `http://127.0.0.1:4175/` returns 200 and contains the rich terminal surface plus Claude, Codex, Grok, and Gemini labels.
+- Third private deployment retry: `appgdep_6a54364613bc8191b1cf9dfeecdaa8d`; after a fresh queue wait it remains `pending`, with no provider deployment ID and no hosted content change.
