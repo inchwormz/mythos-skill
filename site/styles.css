@@ -2597,6 +2597,128 @@ img, picture, video, canvas, svg { max-width: 100%; }
   animation-play-state: running !important;
 }
 
+/* Receipts-owned identity and proof imagery. */
+.receipts-wordmark {
+  color: rgba(255, 255, 255, .92);
+  display: inline-block;
+  font-family: var(--receipts-heading-font);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: .055em;
+  line-height: 1;
+}
+
+.Jmh1Wq_logoColumn .receipts-wordmark {
+  font-size: 16px;
+  writing-mode: vertical-rl;
+}
+
+.receipts-proof-illustration {
+  align-items: center;
+  color: rgba(208, 214, 224, .68);
+  display: flex;
+  justify-content: center;
+}
+
+.receipts-proof-svg {
+  height: auto;
+  max-width: 272px;
+  overflow: visible;
+  width: 100%;
+}
+
+.receipts-proof-svg path,
+.receipts-proof-svg circle,
+.receipts-proof-svg polyline {
+  vector-effect: non-scaling-stroke;
+}
+
+.receipts-proof-accent {
+  color: var(--receipts-terminal-accent);
+}
+
+.receipts-proof-card {
+  background-color: #050505 !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  color: rgba(255, 255, 255, .94) !important;
+  isolation: isolate;
+  overflow: hidden;
+  position: relative;
+}
+
+.receipts-proof-card::before {
+  background: linear-gradient(90deg, rgba(0, 0, 0, .9), rgba(0, 0, 0, .48));
+  content: "";
+  inset: 0;
+  position: absolute;
+  z-index: -1;
+}
+
+.receipts-proof-card--trust {
+  background-image: url("assets/receipts/receipts-card-trust.png") !important;
+}
+
+.receipts-proof-card--handoff {
+  background-image: url("assets/receipts/receipts-card-handoff.png") !important;
+}
+
+.receipts-proof-card .Dc5tqa_customerQuote,
+.receipts-proof-card .Dc5tqa_authorInfoDesktop span {
+  color: rgba(255, 255, 255, .92) !important;
+}
+
+.receipts-proof-card .Dc5tqa_primaryLogo {
+  display: none !important;
+}
+
+/* Clone-only pulse/version labels are not part of the Receipts product story. */
+.b-30Va_footer {
+  display: none !important;
+}
+
+/* Receipts uses warm evidence marks, never generic blue/green AI accents. */
+:where(
+  [fill="#4354B8"], [fill="#6366F1"], [fill="#5E6AD2"],
+  [fill="#36C5F0"], [fill="#2EB67D"], [fill="#10B981"],
+  [fill="#06B6D4"], [fill="#02B8CC"], [fill="#008D2C"],
+  [fill="#8B5CF6"]
+) {
+  fill: var(--receipts-terminal-accent) !important;
+}
+
+:where(
+  [stroke="#4354B8"], [stroke="#6366F1"], [stroke="#5E6AD2"],
+  [stroke="#36C5F0"], [stroke="#2EB67D"], [stroke="#10B981"],
+  [stroke="#06B6D4"], [stroke="#02B8CC"], [stroke="#008D2C"],
+  [stroke="#8B5CF6"]
+) {
+  stroke: var(--receipts-terminal-accent) !important;
+}
+
+.LwA8Xa_barTop,
+.LwA8Xa_barBottom {
+  background: var(--receipts-terminal-accent) !important;
+}
+
+.LwA8Xa_barBottom {
+  opacity: .42;
+}
+
+.receipts-card-mark {
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 6px;
+  color: var(--receipts-terminal-accent);
+  display: inline-flex;
+  font: 11px/1 var(--font-monospace);
+  height: 32px;
+  justify-content: center;
+  margin-right: 12px;
+  width: 32px;
+}
+
 /* Tiny participant marks are terminal prompts, not generated character art. */
 .receipts-agent-glyph {
   align-items: center;

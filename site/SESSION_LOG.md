@@ -211,3 +211,24 @@ Fresh verification after the last production change:
 - Local URL checked: `http://127.0.0.1:4175/`.
 
 Exact next step: publish this verified source to the existing owner-only Sites project and confirm the production HTML contains four feature terminals and no product PNG references.
+
+## Receipts-owned brand and proof sweep
+
+Date: 2026-07-14
+
+Replaced the remaining borrowed visual identity with a Receipts-owned system. The header and footer now use a Fraunces `RECEIPTS` wordmark. The six benefit figures are inline SVGs for tamper-evident trust, deterministic execution, and verified handoff. Image generation was used as visual direction only; the shipped figures are deterministic HTML/SVG. The two proof cards reuse the earlier approved Receipts image-generation assets for evidence chaining and next-pass handoff.
+
+Converted the calendar demo into a 34-hour harness timeline, renamed project-management states and tasks around receipt capture, verification, and handoff, and replaced customer identities, navigation labels, legal labels, and generic demo copy. A final browser investigation found the old customer-logo SVG nodes layered above the new card art; those nodes are suppressed, the clone-only pulse/version strip is removed, and the remaining visible blue/green diagram palette is remapped to the warm Receipts accent.
+
+Fresh verification after the last production change:
+
+- TDD red receipts — the residue guard first failed on missing wordmarks; card-art checks failed on `cover`/tiling; shell-copy checks failed on borrowed navigation; customer-card checks failed on visible legacy logo nodes; and palette checks failed on the cyan evidence bars.
+- `node site/smoke.test.mjs` — PASS, 5 tests, 0 failures.
+- `node site/build-worker.mjs` — PASS, generated Worker with 45 assets.
+- Static proof — 2 Fraunces wordmarks, 6 owned proof SVGs, 8 elapsed-hour labels, 2 card-art references, 4 HTML/CSS feature terminals, and 0 OpenAI/Ramp/Linear names or links.
+- Desktop browser at `1440x1200` — PASS; owned SVGs, harness timeline, neutral state diagram, clean proof cards, and complete horizontal card grid render correctly.
+- Mobile browser at `390x844` — PASS; document width equals viewport width with no horizontal overflow.
+- Browser console — PASS; 0 errors, 0 warnings.
+- Local URL checked: `http://127.0.0.1:4175/`.
+
+Exact next step: commit and publish this verified artifact to the existing owner-only Sites project, then confirm the hosted HTML, CSS, wordmarks, proof figures, hour labels, and card images.

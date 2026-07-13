@@ -162,6 +162,45 @@ test("the four product scenes reuse the hero terminal DOM instead of images", as
   assert.doesNotMatch(css, /\[data-ss-static-paint-snapshot\]\[src\^="assets\/receipts\/"\]/, "obsolete raster compositor CSS remains")
 })
 
+test("the visible shell is fully Receipts-owned with no Linear brand residue", async () => {
+  const [html, css] = await Promise.all([readSiteFile("index.html"), readSiteFile("styles.css")])
+
+  assert.equal((html.match(/class="receipts-wordmark"/g) ?? []).length, 2, "header and footer must use the Receipts wordmark")
+  assert.match(css, /\.receipts-wordmark[\s\S]{0,260}font-family:\s*var\(--receipts-heading-font\)/, "the Receipts wordmark must use Fraunces")
+  assert.doesNotMatch(html, /data-source-node-id="web-node-(?:00188|03106)"/, "the old header or footer icon mark remains")
+
+  const proofFigures = [...html.matchAll(/data-receipts-proof="(trust|determinism|handoff)"/g)].map((match) => match[1])
+  assert.deepEqual(proofFigures.sort(), ["determinism", "determinism", "handoff", "handoff", "trust", "trust"], "mobile and desktop need all three Receipts proof figures")
+  assert.doesNotMatch(html, /_3fVNxW_agentsWrapper|GJ9TEa_momentum|FIG 0\.[234]/, "borrowed benefit illustration system remains")
+
+  for (const label of ["HOUR 00", "HOUR 04", "HOUR 08", "HOUR 12", "HOUR 16", "HOUR 20", "HOUR 24", "HOUR 28"]) {
+    assert.ok(html.includes(`>${label}<`), `missing harness elapsed-time label: ${label}`)
+  }
+
+  assert.doesNotMatch(html, />(?:FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|Backlog|Todo|In Progress|Done|Alpha|GA)</, "calendar or project-management residue remains visible")
+  assert.doesNotMatch(html, /OpenAI|Ramp|Staff Software Engineer|Head of Engineering|33,000|Dc5tqa_logoDesktop/, "borrowed testimonial identity remains")
+  assert.match(css, /\.receipts-proof-card\s+\.Dc5tqa_primaryLogo[\s\S]{0,120}display:\s*none/, "borrowed testimonial logo nodes remain visible")
+  assert.match(css, /\.b-30Va_footer[\s\S]{0,80}display:\s*none/, "borrowed pulse footer remains visible")
+  assert.match(css, /\[fill="\#4354B8"\][\s\S]{0,620}fill:\s*var\(--receipts-terminal-accent\)/, "borrowed blue diagram palette remains visible")
+  assert.match(css, /\.LwA8Xa_barTop[\s\S]{0,160}background:\s*var\(--receipts-terminal-accent\)/, "borrowed cyan evidence bars remain visible")
+  assert.doesNotMatch(html, />(?:Open workspace|Coding Sessions|Mobile|Switch|Download|DPA|AUP)</, "borrowed navigation or footer copy remains")
+  assert.doesNotMatch(html, /Prevent duplicate ride requests|Clean up deprecated APIs|Prime agent workspace idle/, "generic demo task copy remains")
+  for (const copy of ["View source", "Harness runs", "Strict mode", "Receipt schema", "MIT license"]) {
+    assert.ok(html.includes(copy), `missing Receipts-owned shell copy: ${copy}`)
+  }
+  assert.match(html, /assets\/receipts\/receipts-card-trust\.png/)
+  assert.match(html, /assets\/receipts\/receipts-card-handoff\.png/)
+  assert.match(css, /\.receipts-proof-card--trust[\s\S]{0,320}receipts-card-trust\.png/)
+  assert.match(css, /\.receipts-proof-card--handoff[\s\S]{0,320}receipts-card-handoff\.png/)
+  assert.match(css, /\.receipts-proof-card[\s\S]{0,360}background-repeat:\s*no-repeat/, "proof-card art must not tile")
+  assert.match(css, /\.receipts-proof-card[\s\S]{0,360}background-size:\s*contain/, "proof-card art must remain legible instead of cropping into logo-like shapes")
+
+  await Promise.all([
+    readFile(new URL("assets/receipts/receipts-card-trust.png", import.meta.url)),
+    readFile(new URL("assets/receipts/receipts-card-handoff.png", import.meta.url)),
+  ])
+})
+
 test("the stripped shell keeps its materialized assets local", async () => {
   const html = await readSiteFile("index.html")
   const localUrls = [...html.matchAll(/(?:src|href)="(?!https?:|mailto:|data:|#|javascript:)([^"]+)"/g)].map((match) => match[1])
