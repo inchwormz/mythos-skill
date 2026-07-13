@@ -62,4 +62,11 @@ Local verification after the replacement:
 - Browser mobile check at `390x844` — PASS: terminal grid stacks to one column, document width remains 390px, zero console errors or warnings.
 - `cargo test --manifest-path mythos-compiler/Cargo.toml` — PASS; 43 unit tests, 1 determinism test, and 1 init contract test, 0 failures.
 
-Private Sites republish is the remaining step for this update.
+Private Sites republish completed successfully.
+
+Hosted receipt for the terminal workbench:
+
+- Site version: `3` (`appgprj_6a54232a80208191a151c49baf473e7e~appgver_9a9c50141de881918a84f8fa40a86934`).
+- Deployment: succeeded (`appgdep_6a542db344a48191b3cbf457b6ed3d8b`); owner-only private access preserved.
+- Hosted URL: `https://receipts-for-agents.johnrichardmckeown.chatgpt.site`.
+- Hosted endpoint check — PASS with owner authorization: `/` 200 HTML, `/styles.css` 200 CSS, representative AVIF and PNG assets 200, unknown route 404; hosted HTML contains the terminal workbench and model labels and excludes the old hero/diff markers.

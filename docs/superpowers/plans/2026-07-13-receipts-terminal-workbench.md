@@ -37,4 +37,4 @@
 
 - [x] Run the smoke test, rebuild the Worker, run the Worker route check, and inspect the real browser at desktop and 390px mobile widths.
 - [x] Run the Mythos compiler tests without touching unrelated working-tree edits.
-- [ ] Commit the site change, save a new private Sites version, deploy it, and verify the hosted HTML/CSS/asset routes.
+- [x] Commit the site change, save a new private Sites version, deploy it, and verify the hosted HTML/CSS/asset routes.
