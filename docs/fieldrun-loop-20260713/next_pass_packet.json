@@ -870,6 +870,76 @@
       "span_after": "63c8d907c314e405ad389cbffd5a7596ebfd003e dirty:31e2804cd96ae95a"
     },
     {
+      "id": "ev-rcpt-0007",
+      "kind": "receipt",
+      "summary": "mythos run: `node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving_ingest.test.js tests/receipts_attestation.test.js tests/worklist_resolutions.test.js tests/prime_brief.test.js tests/loop_composites.test.js` exited 0 in 7207ms [attests test:node-suites]",
+      "source_ids": [
+        "receipt:rcpt-0007"
+      ],
+      "observed_at": "2026-07-12T23:59:22Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "00a4a5f497b1b3bde2ca47e6a7add471b14710d2 dirty:2336713476b06184",
+      "span_after": "00a4a5f497b1b3bde2ca47e6a7add471b14710d2 dirty:2336713476b06184"
+    },
+    {
+      "id": "ev-rcpt-0008",
+      "kind": "receipt",
+      "summary": "mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 338ms [attests test:cargo-suite]",
+      "source_ids": [
+        "receipt:rcpt-0008"
+      ],
+      "observed_at": "2026-07-13T00:19:40Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "2a96fdbcf34d9bc06d890606aa3aa3cce431fc96 dirty:cfec8b86ba55bb94",
+      "span_after": "2a96fdbcf34d9bc06d890606aa3aa3cce431fc96 dirty:cfec8b86ba55bb94"
+    },
+    {
+      "id": "ev-rcpt-0009",
+      "kind": "receipt",
+      "summary": "mythos run: `node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving_ingest.test.js tests/receipts_attestation.test.js tests/worklist_resolutions.test.js tests/prime_brief.test.js tests/loop_composites.test.js` exited 1 in 5085ms [attests test:node-suites]",
+      "source_ids": [
+        "receipt:rcpt-0009"
+      ],
+      "observed_at": "2026-07-13T00:19:58Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "2a96fdbcf34d9bc06d890606aa3aa3cce431fc96 dirty:cfec8b86ba55bb94",
+      "span_after": "2a96fdbcf34d9bc06d890606aa3aa3cce431fc96 dirty:cfec8b86ba55bb94"
+    },
+    {
+      "id": "ev-rcpt-0010",
+      "kind": "receipt",
+      "summary": "mythos run: `node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving_ingest.test.js tests/receipts_attestation.test.js tests/worklist_resolutions.test.js tests/prime_brief.test.js tests/loop_composites.test.js` exited 0 in 8163ms [attests test:node-suites]",
+      "source_ids": [
+        "receipt:rcpt-0010"
+      ],
+      "observed_at": "2026-07-13T00:20:39Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "2a96fdbcf34d9bc06d890606aa3aa3cce431fc96 dirty:cfec8b86ba55bb94",
+      "span_after": "2a96fdbcf34d9bc06d890606aa3aa3cce431fc96 dirty:cfec8b86ba55bb94"
+    },
+    {
+      "id": "ev-rcpt-0011",
+      "kind": "receipt",
+      "summary": "mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 340ms [attests test:cargo-suite]",
+      "source_ids": [
+        "receipt:rcpt-0011"
+      ],
+      "observed_at": "2026-07-13T00:20:40Z",
+      "agent_id": "prime",
+      "lane": "orchestrator",
+      "confidence": 1.0,
+      "span_before": "2a96fdbcf34d9bc06d890606aa3aa3cce431fc96 dirty:cfec8b86ba55bb94",
+      "span_after": "2a96fdbcf34d9bc06d890606aa3aa3cce431fc96 dirty:cfec8b86ba55bb94"
+    },
+    {
       "id": "ev-rcpt-0004",
       "kind": "work",
       "summary": "tree delta: 90 file(s), +503/-1234, 83 untracked [window rcpt-0001..rcpt-0003]",
@@ -946,6 +1016,66 @@
       "attestation": "attested"
     },
     {
+      "id": "fact:ev-rcpt-0007",
+      "statement": "mythos run: `node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving_ingest.test.js tests/receipts_attestation.test.js tests/worklist_resolutions.test.js tests/prime_brief.test.js tests/loop_composites.test.js` exited 0 in 7207ms [attests test:node-suites]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0007"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-rcpt-0008",
+      "statement": "mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 338ms [attests test:cargo-suite]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0008"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-rcpt-0009",
+      "statement": "mythos run: `node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving_ingest.test.js tests/receipts_attestation.test.js tests/worklist_resolutions.test.js tests/prime_brief.test.js tests/loop_composites.test.js` exited 1 in 5085ms [attests test:node-suites]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0009"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-rcpt-0010",
+      "statement": "mythos run: `node --test tests/packet_shape_integrity.test.js tests/m0_trust_semantics.test.js tests/forgiving_ingest.test.js tests/receipts_attestation.test.js tests/worklist_resolutions.test.js tests/prime_brief.test.js tests/loop_composites.test.js` exited 0 in 8163ms [attests test:node-suites]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0010"
+      ],
+      "attestation": "attested"
+    },
+    {
+      "id": "fact:ev-rcpt-0011",
+      "statement": "mythos run: `cargo test --manifest-path mythos-compiler/Cargo.toml` exited 0 in 340ms [attests test:cargo-suite]",
+      "confidence": 1.0,
+      "objective_relevance": 0.8,
+      "novelty_gain": 0.3,
+      "needs_raw_drilldown": false,
+      "source_ids": [
+        "receipt:rcpt-0011"
+      ],
+      "attestation": "attested"
+    },
+    {
       "id": "fact:ev-rcpt-0004",
       "statement": "tree delta: 90 file(s), +503/-1234, 83 untracked [window rcpt-0001..rcpt-0003]",
       "confidence": 1.0,
@@ -971,269 +1101,9 @@
     }
   ],
   "active_hypotheses": [],
-  "contradictions": [
-    {
-      "id": "con:auto:ev-auto-composites-builder-10:ev-auto-docs-truther-5",
-      "summary": "Evidence ev-auto-composites-builder-10 and ev-auto-docs-truther-5 disagree on the same direct span (file:tests/loop_composites.test.js:1): \"node --test tests/loopcomposites.test.js - 4/4 pass.\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
-      "conflicting_item_ids": [
-        "ev-auto-composites-builder-10",
-        "ev-auto-docs-truther-5"
-      ],
-      "severity": "low",
-      "source_ids": [
-        "file:tests/loop_composites.test.js:1"
-      ],
-      "source_refs": [
-        {
-          "source_id": "file:tests/loop_composites.test.js:1",
-          "path": "tests/loop_composites.test.js",
-          "kind": "file",
-          "hash": "f63167df7ebd3b0a",
-          "hash_alg": "fnv1a-64",
-          "hash_basis": "content",
-          "span": "1",
-          "observed_at": "2026-07-12T23:54:28.058Z"
-        }
-      ]
-    },
-    {
-      "id": "con:auto:ev-auto-composites-builder-12:ev-auto-docs-truther-5",
-      "summary": "Evidence ev-auto-composites-builder-12 and ev-auto-docs-truther-5 disagree on the same direct span (file:bin/mythos-skill.mjs:1, file:tests/loop_composites.test.js:1): \"git status confirms only bin/mythos-skill.mjs modified and tests/loopcomposites.test.js added.\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
-      "conflicting_item_ids": [
-        "ev-auto-composites-builder-12",
-        "ev-auto-docs-truther-5"
-      ],
-      "severity": "low",
-      "source_ids": [
-        "file:bin/mythos-skill.mjs:1",
-        "file:tests/loop_composites.test.js:1"
-      ],
-      "source_refs": [
-        {
-          "source_id": "file:bin/mythos-skill.mjs:1",
-          "path": "bin/mythos-skill.mjs",
-          "kind": "file",
-          "hash": "a790f0d35343b0df",
-          "hash_alg": "fnv1a-64",
-          "hash_basis": "content",
-          "span": "1",
-          "observed_at": "2026-07-12T23:54:28.058Z"
-        },
-        {
-          "source_id": "file:tests/loop_composites.test.js:1",
-          "path": "tests/loop_composites.test.js",
-          "kind": "file",
-          "hash": "f63167df7ebd3b0a",
-          "hash_alg": "fnv1a-64",
-          "hash_basis": "content",
-          "span": "1",
-          "observed_at": "2026-07-12T23:54:28.058Z"
-        }
-      ]
-    },
-    {
-      "id": "con:auto:ev-auto-composites-builder-1:ev-auto-docs-truther-5",
-      "summary": "Evidence ev-auto-composites-builder-1 and ev-auto-docs-truther-5 disagree on the same direct span (file:bin/mythos-skill.mjs:1, file:tests/loop_composites.test.js:1): \"Implemented both loop-composite commands in bin/mythos-skill.mjs per the binding spec, plus the new test file. No other files touched (verified via git diff --stat - only bin/mythos-skill.mjs, 214 insertions/0 deletions, plus the new tests/loopcomposites.test.js).\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
-      "conflicting_item_ids": [
-        "ev-auto-composites-builder-1",
-        "ev-auto-docs-truther-5"
-      ],
-      "severity": "low",
-      "source_ids": [
-        "file:bin/mythos-skill.mjs:1",
-        "file:tests/loop_composites.test.js:1"
-      ],
-      "source_refs": [
-        {
-          "source_id": "file:bin/mythos-skill.mjs:1",
-          "path": "bin/mythos-skill.mjs",
-          "kind": "file",
-          "hash": "a790f0d35343b0df",
-          "hash_alg": "fnv1a-64",
-          "hash_basis": "content",
-          "span": "1",
-          "observed_at": "2026-07-12T23:54:28.058Z"
-        },
-        {
-          "source_id": "file:tests/loop_composites.test.js:1",
-          "path": "tests/loop_composites.test.js",
-          "kind": "file",
-          "hash": "f63167df7ebd3b0a",
-          "hash_alg": "fnv1a-64",
-          "hash_basis": "content",
-          "span": "1",
-          "observed_at": "2026-07-12T23:54:28.058Z"
-        }
-      ]
-    },
-    {
-      "id": "con:auto:ev-auto-composites-builder-2:ev-auto-docs-truther-5",
-      "summary": "Evidence ev-auto-composites-builder-2 and ev-auto-docs-truther-5 disagree on the same direct span (file:bin/mythos-skill.mjs:1): \"bin/mythos-skill.mjs changes at lines 13-27, 39-48, 60-263, 279-282:\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
-      "conflicting_item_ids": [
-        "ev-auto-composites-builder-2",
-        "ev-auto-docs-truther-5"
-      ],
-      "severity": "low",
-      "source_ids": [
-        "file:bin/mythos-skill.mjs:1"
-      ],
-      "source_refs": [
-        {
-          "source_id": "file:bin/mythos-skill.mjs:1",
-          "path": "bin/mythos-skill.mjs",
-          "kind": "file",
-          "hash": "a790f0d35343b0df",
-          "hash_alg": "fnv1a-64",
-          "hash_basis": "content",
-          "span": "1",
-          "observed_at": "2026-07-12T23:54:28.058Z"
-        }
-      ]
-    },
-    {
-      "id": "con:auto:ev-auto-composites-builder-3:ev-auto-docs-truther-1",
-      "summary": "Evidence ev-auto-composites-builder-3 and ev-auto-docs-truther-1 disagree on the same direct span (file:scripts/ingest-subagent.mjs:1): \"absorb (cmdAbsorb, bin/mythos-skill.mjs:107-188): runs scripts/ingest-subagent.mjs (fatal, propagates exit code + stderr), then mythos diff --run-dir with note \"post-lane <lane>\" unless --no-diff (non-fatal, warns to stderr and continues on failure, extracts .receipt from its JSON stdout as workrece\" vs \"Kept verbatim: the Receipts rename banner and the Subagent output contract section (verified still accurate against scripts/ingest-subagent.mjs).\"",
-      "conflicting_item_ids": [
-        "ev-auto-composites-builder-3",
-        "ev-auto-docs-truther-1"
-      ],
-      "severity": "low",
-      "source_ids": [
-        "file:scripts/ingest-subagent.mjs:1"
-      ],
-      "source_refs": [
-        {
-          "source_id": "file:scripts/ingest-subagent.mjs:1",
-          "path": "scripts/ingest-subagent.mjs",
-          "kind": "file",
-          "hash": "6af43f51eb4cb003",
-          "hash_alg": "fnv1a-64",
-          "hash_basis": "content",
-          "span": "1",
-          "observed_at": "2026-07-12T23:54:28.058Z"
-        }
-      ]
-    },
-    {
-      "id": "con:auto:ev-auto-composites-builder-7:ev-auto-docs-truther-5",
-      "summary": "Evidence ev-auto-composites-builder-7 and ev-auto-docs-truther-5 disagree on the same direct span (file:tests/loop_composites.test.js:1): \"tests/loopcomposites.test.js (new file, 4 tests, scaffolded off tests/worklistresolutions.test.js freshRunDir pattern):\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
-      "conflicting_item_ids": [
-        "ev-auto-composites-builder-7",
-        "ev-auto-docs-truther-5"
-      ],
-      "severity": "low",
-      "source_ids": [
-        "file:tests/loop_composites.test.js:1"
-      ],
-      "source_refs": [
-        {
-          "source_id": "file:tests/loop_composites.test.js:1",
-          "path": "tests/loop_composites.test.js",
-          "kind": "file",
-          "hash": "f63167df7ebd3b0a",
-          "hash_alg": "fnv1a-64",
-          "hash_basis": "content",
-          "span": "1",
-          "observed_at": "2026-07-12T23:54:28.058Z"
-        }
-      ]
-    }
-  ],
+  "contradictions": [],
   "recurring_failure_patterns": [],
-  "candidate_actions": [
-    {
-      "id": "wl:adjudicate:con:auto:ev-auto-composites-builder-10:ev-auto-docs-truther-5",
-      "title": "Adjudicate contradiction con:auto:ev-auto-composites-builder-10:ev-auto-docs-truther-5",
-      "rationale": "Evidence ev-auto-composites-builder-10 and ev-auto-docs-truther-5 disagree on the same direct span (file:tests/loop_composites.test.js:1): \"node --test tests/loopcomposites.test.js - 4/4 pass.\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
-      "actionability_score": 0.5,
-      "decision_dependency_ids": [
-        "con:auto:ev-auto-composites-builder-10:ev-auto-docs-truther-5"
-      ],
-      "source_ids": [
-        "file:tests/loop_composites.test.js:1"
-      ],
-      "category": "adjudicate",
-      "blocking": false,
-      "resolved": false
-    },
-    {
-      "id": "wl:adjudicate:con:auto:ev-auto-composites-builder-12:ev-auto-docs-truther-5",
-      "title": "Adjudicate contradiction con:auto:ev-auto-composites-builder-12:ev-auto-docs-truther-5",
-      "rationale": "Evidence ev-auto-composites-builder-12 and ev-auto-docs-truther-5 disagree on the same direct span (file:bin/mythos-skill.mjs:1, file:tests/loop_composites.test.js:1): \"git status confirms only bin/mythos-skill.mjs modified and tests/loopcomposites.test.js added.\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
-      "actionability_score": 0.5,
-      "decision_dependency_ids": [
-        "con:auto:ev-auto-composites-builder-12:ev-auto-docs-truther-5"
-      ],
-      "source_ids": [
-        "file:bin/mythos-skill.mjs:1",
-        "file:tests/loop_composites.test.js:1"
-      ],
-      "category": "adjudicate",
-      "blocking": false,
-      "resolved": false
-    },
-    {
-      "id": "wl:adjudicate:con:auto:ev-auto-composites-builder-1:ev-auto-docs-truther-5",
-      "title": "Adjudicate contradiction con:auto:ev-auto-composites-builder-1:ev-auto-docs-truther-5",
-      "rationale": "Evidence ev-auto-composites-builder-1 and ev-auto-docs-truther-5 disagree on the same direct span (file:bin/mythos-skill.mjs:1, file:tests/loop_composites.test.js:1): \"Implemented both loop-composite commands in bin/mythos-skill.mjs per the binding spec, plus the new test file. No other files touched (verified via git diff --stat - only bin/mythos-skill.mjs, 214 insertions/0 deletions, plus the new tests/loopcomposites.test.js).\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
-      "actionability_score": 0.5,
-      "decision_dependency_ids": [
-        "con:auto:ev-auto-composites-builder-1:ev-auto-docs-truther-5"
-      ],
-      "source_ids": [
-        "file:bin/mythos-skill.mjs:1",
-        "file:tests/loop_composites.test.js:1"
-      ],
-      "category": "adjudicate",
-      "blocking": false,
-      "resolved": false
-    },
-    {
-      "id": "wl:adjudicate:con:auto:ev-auto-composites-builder-2:ev-auto-docs-truther-5",
-      "title": "Adjudicate contradiction con:auto:ev-auto-composites-builder-2:ev-auto-docs-truther-5",
-      "rationale": "Evidence ev-auto-composites-builder-2 and ev-auto-docs-truther-5 disagree on the same direct span (file:bin/mythos-skill.mjs:1): \"bin/mythos-skill.mjs changes at lines 13-27, 39-48, 60-263, 279-282:\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
-      "actionability_score": 0.5,
-      "decision_dependency_ids": [
-        "con:auto:ev-auto-composites-builder-2:ev-auto-docs-truther-5"
-      ],
-      "source_ids": [
-        "file:bin/mythos-skill.mjs:1"
-      ],
-      "category": "adjudicate",
-      "blocking": false,
-      "resolved": false
-    },
-    {
-      "id": "wl:adjudicate:con:auto:ev-auto-composites-builder-3:ev-auto-docs-truther-1",
-      "title": "Adjudicate contradiction con:auto:ev-auto-composites-builder-3:ev-auto-docs-truther-1",
-      "rationale": "Evidence ev-auto-composites-builder-3 and ev-auto-docs-truther-1 disagree on the same direct span (file:scripts/ingest-subagent.mjs:1): \"absorb (cmdAbsorb, bin/mythos-skill.mjs:107-188): runs scripts/ingest-subagent.mjs (fatal, propagates exit code + stderr), then mythos diff --run-dir with note \"post-lane <lane>\" unless --no-diff (non-fatal, warns to stderr and continues on failure, extracts .receipt from its JSON stdout as workrece\" vs \"Kept verbatim: the Receipts rename banner and the Subagent output contract section (verified still accurate against scripts/ingest-subagent.mjs).\"",
-      "actionability_score": 0.5,
-      "decision_dependency_ids": [
-        "con:auto:ev-auto-composites-builder-3:ev-auto-docs-truther-1"
-      ],
-      "source_ids": [
-        "file:scripts/ingest-subagent.mjs:1"
-      ],
-      "category": "adjudicate",
-      "blocking": false,
-      "resolved": false
-    },
-    {
-      "id": "wl:adjudicate:con:auto:ev-auto-composites-builder-7:ev-auto-docs-truther-5",
-      "title": "Adjudicate contradiction con:auto:ev-auto-composites-builder-7:ev-auto-docs-truther-5",
-      "rationale": "Evidence ev-auto-composites-builder-7 and ev-auto-docs-truther-5 disagree on the same direct span (file:tests/loop_composites.test.js:1): \"tests/loopcomposites.test.js (new file, 4 tests, scaffolded off tests/worklistresolutions.test.js freshRunDir pattern):\" vs \"Important caveat: at the time of this rewrite, absorb and conclude were NOT yet implemented in bin/mythos-skill.mjs (COMMANDS object had no absorb/conclude entries) and tests/loopcomposites.test.js did not exist. Documented them anyway per instructions since the binding spec said they land today. Re\"",
-      "actionability_score": 0.5,
-      "decision_dependency_ids": [
-        "con:auto:ev-auto-composites-builder-7:ev-auto-docs-truther-5"
-      ],
-      "source_ids": [
-        "file:tests/loop_composites.test.js:1"
-      ],
-      "category": "adjudicate",
-      "blocking": false,
-      "resolved": false
-    }
-  ],
+  "candidate_actions": [],
   "verifier_findings": [
     {
       "id": "vf-codex-synthesis-pending",
@@ -1548,6 +1418,51 @@
       "hash_alg": "fnv1a-64",
       "span": "ev-rcpt-0006",
       "observed_at": "2026-07-12T23:56:51Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0007",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "53a230f1ddc7e81d",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0007",
+      "observed_at": "2026-07-12T23:59:22Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0008",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "880dd57d5e9ca905",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0008",
+      "observed_at": "2026-07-13T00:19:40Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0009",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "27c2022e7cad157a",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0009",
+      "observed_at": "2026-07-13T00:19:58Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0010",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "b4096d24f912df61",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0010",
+      "observed_at": "2026-07-13T00:20:39Z"
+    },
+    {
+      "source_id": "evidence:ev-rcpt-0011",
+      "path": "worker-results/evidence.jsonl",
+      "kind": "receipt",
+      "hash": "440ad2ea1f07f300",
+      "hash_alg": "fnv1a-64",
+      "span": "ev-rcpt-0011",
+      "observed_at": "2026-07-13T00:20:40Z"
     },
     {
       "source_id": "evidence:ev-subagent-session-20260712T235428Z-composites-builder",
@@ -2038,6 +1953,56 @@
       "observed_at": "2026-07-12T23:56:51Z"
     },
     {
+      "source_id": "receipt:rcpt-0007",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "1aa5997a090c5cc3",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0007",
+      "observed_at": "2026-07-12T23:59:22Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0008",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "4dfd792e54dd7c99",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0008",
+      "observed_at": "2026-07-13T00:19:40Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0009",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "eaa398a12000f95f",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0009",
+      "observed_at": "2026-07-13T00:19:58Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0010",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "7df3541eb7b046ea",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0010",
+      "observed_at": "2026-07-13T00:20:39Z"
+    },
+    {
+      "source_id": "receipt:rcpt-0011",
+      "path": "receipts/receipts.jsonl",
+      "kind": "receipt",
+      "hash": "f0d97760f29b1d54",
+      "hash_alg": "fnv1a-64",
+      "hash_basis": "content",
+      "span": "rcpt-0011",
+      "observed_at": "2026-07-13T00:20:40Z"
+    },
+    {
       "source_id": "verifier:vf-codex-synthesis-pending",
       "path": "verifier-results/findings.jsonl",
       "kind": "verifier",
@@ -2066,8 +2031,8 @@
       "verifier": 0,
       "asserted": 11,
       "warnings": 3,
-      "contradictions": 6,
-      "read_recommendation": "read-adjudicate",
+      "contradictions": 0,
+      "read_recommendation": "read-unverified",
       "drill_down": [
         "raw:subagents/composites-builder.md:3-3",
         "raw:subagents/composites-builder.md:5-5",
@@ -2090,8 +2055,8 @@
       "verifier": 0,
       "asserted": 6,
       "warnings": 0,
-      "contradictions": 2,
-      "read_recommendation": "read-adjudicate",
+      "contradictions": 0,
+      "read_recommendation": "read-unverified",
       "drill_down": [
         "raw:subagents/docs-truther.md:11-11",
         "raw:subagents/docs-truther.md:14-14",
@@ -2104,7 +2069,7 @@
     {
       "lane": "orchestrator",
       "agent_id": "prime",
-      "records": 4,
+      "records": 9,
       "attested": 0,
       "verifier": 0,
       "asserted": 0,

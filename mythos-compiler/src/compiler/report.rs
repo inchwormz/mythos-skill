@@ -73,6 +73,24 @@ fn is_asserted(record: &EvidenceRecord, fact_ids: &BTreeSet<&str>) -> bool {
         && !fact_ids.contains(format!("fact:{}", record.id).as_str())
 }
 
+/// Kinds whose claims carry engineering weight even when harvested from
+/// prose - an unproven "I changed the code" stays an asserted claim no
+/// matter how it arrived. Mirrors the worklist's verify-claim category.
+const LOAD_BEARING_KINDS: &[&str] = &["code-change", "test-change", "root-cause"];
+
+/// Field ruling (2026-07-13 loop field run): a prose sentence harvested
+/// because it mentioned a file is a NARRATIVE INDEX ENTRY, not an unproven
+/// claim - counting it against attestation coverage is a category error
+/// (the run's 17 "asserted" records were all this class, drowning the real
+/// signal of 0 unproven load-bearing claims). Narrative = asserted-tier,
+/// harvested, and not a load-bearing kind. Never promoted, never trusted -
+/// just counted honestly as what it is.
+fn is_narrative(record: &EvidenceRecord, fact_ids: &BTreeSet<&str>) -> bool {
+    is_asserted(record, fact_ids)
+        && record.rationale.as_deref() == Some("harvested-from-prose")
+        && !LOAD_BEARING_KINDS.contains(&record.kind.as_str())
+}
+
 /// Latest timestamp found across the verified receipts and the packet's
 /// evidence records, compared lexicographically (ISO-8601 strings sort
 /// correctly that way). `None` when there is nothing to anchor on.
@@ -125,7 +143,7 @@ fn render_verdict_banner(gate: Option<&GateReport>) -> String {
     }
 }
 
-fn compute_scorecard(packet: &NextPassPacket) -> (usize, usize, usize, usize, usize) {
+fn compute_scorecard(packet: &NextPassPacket) -> (usize, usize, usize, usize, usize, usize) {
     let attested = packet
         .trusted_facts
         .iter()
@@ -142,21 +160,34 @@ fn compute_scorecard(packet: &NextPassPacket) -> (usize, usize, usize, usize, us
         .filter(|c| c.id.starts_with("con:receipt:"))
         .count();
     let fact_ids: BTreeSet<&str> = packet.trusted_facts.iter().map(|f| f.id.as_str()).collect();
+    let narrative = packet
+        .evidence
+        .iter()
+        .filter(|e| is_narrative(e, &fact_ids))
+        .count();
     let asserted = packet
         .evidence
         .iter()
-        .filter(|e| is_asserted(e, &fact_ids))
+        .filter(|e| is_asserted(e, &fact_ids) && !is_narrative(e, &fact_ids))
         .count();
     let unstructured = packet
         .evidence
         .iter()
         .filter(|e| e.kind == "unstructured")
         .count();
-    (attested, verifier, refuted, asserted, unstructured)
+    (
+        attested,
+        verifier,
+        refuted,
+        asserted,
+        narrative,
+        unstructured,
+    )
 }
 
 fn render_scorecard(packet: &NextPassPacket) -> String {
-    let (attested, verifier, refuted, asserted, unstructured) = compute_scorecard(packet);
+    let (attested, verifier, refuted, asserted, narrative, unstructured) =
+        compute_scorecard(packet);
     let denom = attested + verifier + asserted;
     let coverage_text = if denom == 0 {
         "no substantive claims".to_string()
@@ -167,11 +198,12 @@ fn render_scorecard(packet: &NextPassPacket) -> String {
 
     format!(
         "<section class=\"scorecard\">\n<h2>Attestation scorecard</h2>\n\
-         <p class=\"coverage\">{coverage} <span class=\"raw\">({attested} attested, {verifier} verifier, {asserted} asserted)</span></p>\n\
+         <p class=\"coverage\">{coverage} <span class=\"raw\">({attested} attested, {verifier} verifier, {asserted} asserted; {narrative} narrative lines indexed)</span></p>\n\
          <ul class=\"scorecard-counts\">\n\
          <li>Attested: {attested}</li>\n\
          <li>Verifier: {verifier}</li>\n\
          <li>Asserted: {asserted}</li>\n\
+         <li>Narrative: {narrative}</li>\n\
          <li>Refuted: {refuted}</li>\n\
          <li>Unstructured: {unstructured}</li>\n\
          </ul>\n</section>\n",
@@ -397,7 +429,9 @@ fn render_evidence_by_lane(packet: &NextPassPacket) -> String {
         ));
         for e in records {
             let mut badges = String::new();
-            if is_asserted(e, &fact_ids) {
+            if is_narrative(e, &fact_ids) {
+                badges.push_str(&badge("badge-slate", "narrative"));
+            } else if is_asserted(e, &fact_ids) {
                 badges.push_str(&badge("badge-grey", "asserted"));
             }
             let mut warnings_html = String::new();
@@ -519,6 +553,7 @@ tbody tr:nth-child(even) { background: #f0f0f1; }
 .badge-green { background: #dff3e2; color: #1c6b2c; }
 .badge-blue { background: #dde8fb; color: #1c4b9c; }
 .badge-grey { background: #e8e8e8; color: #444; }
+.badge-slate { background: #e4e9f0; color: #3d4d63; }
 .badge-orange { background: #fbe8d2; color: #9c5a00; }
 .badge-purple { background: #ece0f8; color: #5c1c9c; }
 .refutations { background: #fbe4e4; padding: 1rem; border-radius: 6px; }
@@ -692,6 +727,36 @@ mod tests {
     #[test]
     fn html_escape_escapes_all_five_characters() {
         assert_eq!(html_escape("&<>\"'"), "&amp;&lt;&gt;&quot;&#39;");
+    }
+
+    #[test]
+    fn harvested_prose_is_narrative_not_asserted_unless_load_bearing() {
+        let mut packet = empty_packet();
+        let mut mention = evidence("ev-n1", "observation", "the dispatcher lives in bin/x.mjs");
+        mention.rationale = Some("harvested-from-prose".to_string());
+        let mut load_bearing = evidence("ev-n2", "code-change", "I rewrote bin/x.mjs entirely");
+        load_bearing.rationale = Some("harvested-from-prose".to_string());
+        packet.evidence.push(mention);
+        packet.evidence.push(load_bearing);
+
+        let html = render_report(&packet, &[], None);
+        // The harvested mention is narrative: out of the asserted bucket and
+        // out of the coverage denominator; the harvested code-change claim
+        // stays asserted - "I changed the code" is load-bearing however it
+        // arrived.
+        assert!(
+            html.contains("1 asserted; 1 narrative lines indexed"),
+            "expected 1 asserted + 1 narrative: {html}"
+        );
+        assert!(
+            html.contains(">narrative</span>"),
+            "narrative badge missing: {html}"
+        );
+        let asserted_badges = html.matches(">asserted</span>").count();
+        assert_eq!(
+            asserted_badges, 1,
+            "only the load-bearing harvested claim wears the asserted badge: {html}"
+        );
     }
 
     #[test]

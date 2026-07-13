@@ -143,6 +143,19 @@ pub fn detect_auto_contradictions(evidence: &[EvidenceRecord]) -> Vec<Contradict
                 continue;
             }
 
+            // Field tuning (2026-07-13 loop field run): HARVESTED records are
+            // prose sentences that MENTION a span, not assertions about its
+            // content - two different sentences citing the same file lines
+            // are complementary narrative, not disagreement. All six noise
+            // adjudications in the field run were exactly this class. Real
+            // conflicts between prose lanes still surface via receipts
+            // (refutation) and Prime's read of the digests.
+            if left.rationale.as_deref() == Some("harvested-from-prose")
+                || right.rationale.as_deref() == Some("harvested-from-prose")
+            {
+                continue;
+            }
+
             // G4: skip kind-pairs that describe upstream/downstream flow
             // rather than disagreement (observation+proposal, symptom+
             // root-cause, gap+proposal, etc.). Also skip any pair where at
@@ -344,6 +357,32 @@ mod tests {
         assert!(
             contradictions.is_empty(),
             "same-agent same-lane pairs must not fire"
+        );
+    }
+
+    #[test]
+    fn skips_pairs_involving_harvested_prose() {
+        let mut left = record(
+            "ev-a",
+            "observation",
+            "the dispatcher lives here and handles absorb",
+            &["file:bin/mythos-skill.mjs:13"],
+            Some("a"),
+            Some("lane-a"),
+        );
+        left.rationale = Some("harvested-from-prose".to_string());
+        let right = record(
+            "ev-b",
+            "observation",
+            "totally different sentence about unrelated commands table",
+            &["file:bin/mythos-skill.mjs:13"],
+            Some("b"),
+            Some("lane-b"),
+        );
+        let contradictions = detect_auto_contradictions(&[left, right]);
+        assert!(
+            contradictions.is_empty(),
+            "harvested prose mentions must never fire contradictions"
         );
     }
 

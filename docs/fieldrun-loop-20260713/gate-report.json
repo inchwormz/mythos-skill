@@ -14,7 +14,7 @@
   "halt_kinds": [
     "ready-to-halt"
   ],
-  "candidate_actions": 6,
+  "candidate_actions": 0,
   "errors": [],
   "warnings": [
     "evidence ev-auto-composites-builder-1 citation drifted: file:bin/mythos-skill.mjs:1 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
@@ -38,9 +38,6 @@
     "packet sources file:bin/mythos-skill.mjs:21-22 citation drifted: file:bin/mythos-skill.mjs:21-22 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
     "packet sources file:bin/mythos-skill.mjs:44-45 citation drifted: file:bin/mythos-skill.mjs:44-45 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
     "packet sources file:bin/mythos-skill.mjs:90-100 citation drifted: file:bin/mythos-skill.mjs:90-100 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
-    "packet sources file:scripts/strict-gate.mjs:1 citation drifted: file:scripts/strict-gate.mjs:1 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
-    "contradiction con:auto:ev-auto-composites-builder-12:ev-auto-docs-truther-5 citation drifted: file:bin/mythos-skill.mjs:1 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
-    "contradiction con:auto:ev-auto-composites-builder-1:ev-auto-docs-truther-5 citation drifted: file:bin/mythos-skill.mjs:1 was verified at ingest but the file has since changed (post-review fixes are the usual cause)",
-    "contradiction con:auto:ev-auto-composites-builder-2:ev-auto-docs-truther-5 citation drifted: file:bin/mythos-skill.mjs:1 was verified at ingest but the file has since changed (post-review fixes are the usual cause)"
+    "packet sources file:scripts/strict-gate.mjs:1 citation drifted: file:scripts/strict-gate.mjs:1 was verified at ingest but the file has since changed (post-review fixes are the usual cause)"
   ]
 }
