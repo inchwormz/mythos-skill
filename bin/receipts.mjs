@@ -87,9 +87,10 @@ function hasFlag(argv, flag) {
 // directly — routing them through cmd.exe (shell: true) instead breaks the
 // moment either path contains a space (e.g. `C:\Program Files\nodejs\node.exe`),
 // since cmd.exe then splits the command at that space.
-function spawnScript(scriptRelPath, scriptArgs) {
+function spawnScript(scriptRelPath, scriptArgs, { captureStdout = true } = {}) {
   return spawnSync(process.execPath, [path.join(root, scriptRelPath), ...scriptArgs], {
     encoding: "utf8",
+    stdio: ["ignore", captureStdout ? "pipe" : "ignore", "pipe"],
   });
 }
 
@@ -172,7 +173,7 @@ function cmdAbsorb(args) {
   }
 
   // Step 3: recompile. FATAL on failure.
-  const compileResult = spawnScript("driver.mjs", ["--run-dir", runDir]);
+  const compileResult = spawnScript("driver.mjs", ["--run-dir", runDir], { captureStdout: false });
   if (compileResult.error) {
     process.stderr.write(`receipts absorb: failed to run driver.mjs: ${compileResult.error.message}\n`);
     return 1;
@@ -208,7 +209,7 @@ function cmdConclude(args) {
   // stale here - record-synthesis fails closed on staleness by design.
   // (Field find, 2026-07-13: the first conclude of the first field run hit
   // exactly this; the spec missed it.) FATAL on failure.
-  const precompile = spawnScript("driver.mjs", ["--run-dir", runDir]);
+  const precompile = spawnScript("driver.mjs", ["--run-dir", runDir], { captureStdout: false });
   if (precompile.error || precompile.status !== 0) {
     if (precompile.stderr) process.stderr.write(precompile.stderr);
     process.stderr.write("receipts conclude: pre-synthesis recompile failed\n");
@@ -217,7 +218,9 @@ function cmdConclude(args) {
 
   // Step 1: record synthesis + recompile. FATAL on failure. Suppress its
   // stdout (the packet dump); let stderr through.
-  const synthesisResult = spawnScript("driver.mjs", ["--run-dir", runDir, "--record-synthesis", synthesis]);
+  const synthesisResult = spawnScript("driver.mjs", ["--run-dir", runDir, "--record-synthesis", synthesis], {
+    captureStdout: false,
+  });
   if (synthesisResult.error) {
     process.stderr.write(`receipts conclude: failed to run driver.mjs: ${synthesisResult.error.message}\n`);
     return 1;
