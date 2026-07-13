@@ -260,3 +260,14 @@ Fresh verification after the final URL correction:
 - Local URL checked: `http://127.0.0.1:4175/`.
 
 Exact next step: commit this verified one-page artifact, publish it to the existing private Sites project, and verify the hosted URL serves the same header targets and `agent-receipts` CTA.
+
+Deployment receipt:
+
+- Product commit: `37193589e01bc298014708dad142c6afe6409384` (`main`), pushed to `origin` and the Sites source repository.
+- Sites version: `11` (`appgprj_6a54232a80208191a151c49baf473e7e~appgver_e66235e2e0f08191a6e1cdfdf800468d`).
+- Deployment: `appgdep_6a5569c596f48191960ed94870691be9` — `succeeded`.
+- Hosted URL: `https://receipts-for-agents.johnrichardmckeown.chatgpt.site`.
+- Hosted response — PASS; HTTP 200 with the one-page marker, Rust compiler copy, GitHub target, and final CTA present.
+- Hosted screenshot — PASS; version 11 shows the simplified header and updated hero at the production URL.
+
+Exact next step: no implementation work remains for this pass.
