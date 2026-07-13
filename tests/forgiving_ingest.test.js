@@ -18,7 +18,7 @@ const repoRoot = path.dirname(path.dirname(thisFile));
 
 function freshRunDir(name) {
   const stamp = new Date().toISOString().replace(/[-:.]/g, "").replace(/\d{3}Z$/, "Z");
-  const runDir = path.join(repoRoot, ".codex", "mythos", `tmp-forgive-${stamp}-${process.pid}-${name}`);
+  const runDir = path.join(repoRoot, ".codex", "receipts", `tmp-forgive-${stamp}-${process.pid}-${name}`);
   fs.mkdirSync(path.join(runDir, "raw", "subagents"), { recursive: true });
   fs.mkdirSync(path.join(runDir, "worker-results"), { recursive: true });
   fs.mkdirSync(path.join(runDir, "verifier-results"), { recursive: true });
@@ -68,8 +68,8 @@ function freshRunDir(name) {
 
 function removeDir(dir) {
   if (!dir) return;
-  if (!dir.startsWith(path.join(repoRoot, ".codex", "mythos"))) {
-    throw new Error(`refusing to remove outside .codex/mythos: ${dir}`);
+  if (!dir.startsWith(path.join(repoRoot, ".codex", "receipts"))) {
+    throw new Error(`refusing to remove outside .codex/receipts: ${dir}`);
   }
   fs.rmSync(dir, { recursive: true, force: true });
 }
@@ -150,7 +150,7 @@ test("pretty-printed JSON with single quotes, unquoted keys, and trailing commas
     runDir,
     "repair-json",
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       "{",
       "  id: 'ev-pretty-1',",
       "  kind: 'observation',",
@@ -178,7 +178,7 @@ test("whole-block JSON array of records is accepted", (t) => {
     runDir,
     "array-block",
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify([
         { id: "ev-arr-1", kind: "observation", summary: "first", source_ids: ["file:driver.mjs:1"], observed_at: now() },
         { id: "ev-arr-2", kind: "observation", summary: "second", source_ids: ["file:package.json:1"], observed_at: now() },
@@ -201,7 +201,7 @@ test("field aliases and bare path:line citations normalize (text->summary, type-
     runDir,
     "aliases",
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({ type: "observation", text: "shorthand record with a bare citation", sources: "driver.mjs:12", timestamp: now() }),
       "```",
       "",
@@ -257,7 +257,7 @@ test("prose-only lane survives as a demoted unstructured record instead of a har
     "unstructured records must never promote to trusted_facts",
   );
   const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], {
-    env: { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "1" },
+    env: { ...process.env, RECEIPTS_MIN_AGENT_COVERAGE: "1" },
   });
   assert.notEqual(gate.status, 0, "one prose-only lane must not satisfy even a floor of 1");
   assert.ok(
@@ -280,7 +280,7 @@ test("zero-burden: claims are harvested from natural prose with no protocol at a
       "",
       "- The escape helper in scripts/strict-gate.mjs:164 hashes with fnv1a, same constants as the Rust side.",
       "- driver.mjs:93 duplicates that hash function again, third copy in the repo.",
-      "- I think the real fix belongs in mythos-compiler/src/compiler/run_dir.rs somewhere around the source dedupe.",
+      "- I think the real fix belongs in receipts-compiler/src/compiler/run_dir.rs somewhere around the source dedupe.",
       "",
       "No blockers, just flagging the duplication.",
       "",
@@ -315,7 +315,7 @@ test("zero-burden: a harvested prose claim can still become a trusted fact once 
   const proseLane = writeLane(
     runDir,
     "prose-worker",
-    "Looked at the dispatcher. The run passthrough lives in bin/mythos-skill.mjs:70 and forwards args verbatim.\n",
+    "Looked at the dispatcher. The run passthrough lives in bin/receipts.mjs:70 and forwards args verbatim.\n",
   );
   assert.equal(ingest(runDir, "prose-worker", proseLane).status, 0);
 
@@ -324,8 +324,8 @@ test("zero-burden: a harvested prose claim can still become a trusted fact once 
     runDir,
     "verify-worker",
     [
-      "```mythos-verifier-jsonl",
-      JSON.stringify({ id: "vf-backs-prose", summary: "confirmed the dispatcher forwards args verbatim", status: "passed", verifier_score: 1.0, source_ids: ["file:bin/mythos-skill.mjs:70"], observed_at: new Date().toISOString() }),
+      "```receipts-verifier-jsonl",
+      JSON.stringify({ id: "vf-backs-prose", summary: "confirmed the dispatcher forwards args verbatim", status: "passed", verifier_score: 1.0, source_ids: ["file:bin/receipts.mjs:70"], observed_at: new Date().toISOString() }),
       "```",
       "",
     ].join("\n"),
@@ -336,7 +336,7 @@ test("zero-burden: a harvested prose claim can still become a trusted fact once 
   assert.equal(driver.status, 0, `compile failed: ${driver.stderr}`);
   const packet = JSON.parse(fs.readFileSync(path.join(runDir, "state", "next_pass_packet.json"), "utf8"));
   const promoted = packet.trusted_facts.find(
-    (f) => f.statement.includes("dispatcher") || (f.source_ids ?? []).includes("file:bin/mythos-skill.mjs:70"),
+    (f) => f.statement.includes("dispatcher") || (f.source_ids ?? []).includes("file:bin/receipts.mjs:70"),
   );
   assert.ok(
     promoted,
@@ -353,7 +353,7 @@ test("nonexistent file citation is downgraded to log:unverifiable, lane survives
     runDir,
     "ghost-citation",
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({ id: "ev-ghost", kind: "code-change", summary: "cites a file that does not exist", source_ids: ["file:no/such/file.rs:10"], observed_at: now() }),
       "```",
       "",
@@ -395,7 +395,7 @@ test("a demoted record (unresolvable citation) does not double-jeopardy the gate
 
   runNode(["driver.mjs", "--run-dir", runDir]);
   const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], {
-    env: { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "1" },
+    env: { ...process.env, RECEIPTS_MIN_AGENT_COVERAGE: "1" },
   });
   assert.ok(
     !gate.stdout.includes("summary-only evidence"),
@@ -411,7 +411,7 @@ test("free-text citations become log: ids and the packet still compiles", (t) =>
     runDir,
     "freeform-citation",
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({ id: "ev-freeform", kind: "observation", summary: "cites prose not a path", source_ids: ["manual inspection of the board"], observed_at: now() }),
       "```",
       "",
@@ -434,7 +434,7 @@ test("agent-declared source_refs are discarded and resynthesized (the field test
     runDir,
     "refs-discarded",
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({
         id: "ev-refs",
         kind: "observation",
@@ -465,7 +465,7 @@ test("unknown verifier status and stringly score are parked, not rejected", (t) 
     runDir,
     "weird-verifier",
     [
-      "```mythos-verifier-jsonl",
+      "```receipts-verifier-jsonl",
       JSON.stringify({ id: "vf-weird", summary: "status vocabulary drift", status: "verified", verifier_score: "1.0", source_ids: ["file:driver.mjs:1"], observed_at: now() }),
       "```",
       "",

@@ -5,7 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-const compilerDir = path.join(root, "mythos-compiler");
+const compilerDir = path.join(root, "receipts-compiler");
 
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
@@ -39,7 +39,7 @@ function safeRemove(target) {
   if (!fs.existsSync(target)) return;
   const resolved = path.resolve(target);
   if (!resolved.startsWith(root)) {
-    throw new Error(`Refusing to remove outside mythos root: ${resolved}`);
+    throw new Error(`Refusing to remove outside receipts root: ${resolved}`);
   }
   fs.rmSync(resolved, { recursive: true, force: true });
 }
@@ -163,11 +163,11 @@ function runExpectFail(command, args, options = {}) {
 }
 
 // The readiness fixture uses a single synthetic subagent, so the default
-// MYTHOS_MIN_AGENT_COVERAGE floor of 3 would fail. The floor is still exercised
+// RECEIPTS_MIN_AGENT_COVERAGE floor of 3 would fail. The floor is still exercised
 // in real runs; this override keeps the fixture's intent (gate mechanics only).
 function runStrictGate(runDir) {
   return run("node", ["scripts/strict-gate.mjs", "--run-dir", runDir], {
-    env: { MYTHOS_MIN_AGENT_COVERAGE: "1" },
+    env: { RECEIPTS_MIN_AGENT_COVERAGE: "1" },
   });
 }
 
@@ -184,21 +184,23 @@ function checkDriverIsCodexNative() {
   assert(!driver.includes('spawn("claude"'), "driver still spawns claude");
 }
 
-// Mythos ships two skill surfaces — Claude Code at skills/claude/SKILL.md and
-// Codex at skills/codex/SKILL.md. Readiness asserts the Mythos *contract* is
+// Receipts ships two skill surfaces — Claude Code at skills/claude/SKILL.md and
+// Codex at skills/codex/SKILL.md. Readiness asserts the Receipts *contract* is
 // present in each (subagent fanout, Prime consumption rule, strict gate,
 // machine-readable records). Model names, reasoning-effort policy, and other
-// environment-specific details live in mythos-agent-policy.json, not the
+// environment-specific details live in receipts-agent-policy.json, not the
 // contract itself.
-// Phrases that must appear in every Mythos skill contract, in either their
-// CLI form (`mythos-skill gate`) or the underlying script form
-// (`strict-gate.mjs`). A skill can use either spelling.
-const MYTHOS_CONTRACT_PATTERNS = [
-  { label: "machine-readable record contract", match: /mythos-evidence-jsonl/ },
-  { label: "ingest step", match: /mythos-skill ingest|ingest-subagent\.mjs|mythos-skill ingest\b/ },
-  { label: "gate step", match: /mythos-skill gate|strict-gate/ },
-  { label: "direct source_refs", match: /source_refs/ },
-  { label: "readiness step", match: /mythos-skill ready|npm run ready/ },
+// Phrases that must appear in every Receipts skill contract, in either their
+// CLI form (`receipts conclude`) or the underlying script form
+// (`strict-gate.mjs`). A skill can use either spelling. These are the
+// load-bearing doctrine lines - if a skill surface drifts and loses one,
+// readiness goes red.
+const RECEIPTS_CONTRACT_PATTERNS = [
+  { label: "zero-burden briefs", match: /task-only|zero[- ]burden/i },
+  { label: "absorb step", match: /receipts absorb|ingest-subagent\.mjs/ },
+  { label: "gate step", match: /receipts conclude|receipts gate|strict-gate/ },
+  { label: "receipt-minting doctrine", match: /receipts run/ },
+  { label: "readiness step", match: /receipts ready|npm run ready/ },
 ];
 
 function checkSkillRequiresSubagents() {
@@ -215,18 +217,20 @@ function checkSkillRequiresSubagents() {
   for (const skillPath of skillFiles) {
     const relName = path.relative(root, skillPath);
     const skill = fs.readFileSync(skillPath, "utf8");
-    // Substantive subagent fanout — keyword varies between skills ("Mandatory
-    // Subagent Lanes" vs "Subagent Lanes"), so match on the common stem.
+    // Substantive subagent fanout — the skill must teach per-lane work.
+    // Legacy surfaces used a "Subagent Lanes" heading; current ones teach
+    // the per-lane absorb motion directly.
     assert(
-      /Subagent Lanes/.test(skill),
-      `${relName} lacks a Subagent Lanes section`,
+      /Subagent Lanes|[Pp]er lane/.test(skill),
+      `${relName} lacks a subagent-lane fanout section`,
     );
     assert(
       skill.includes("Prime consumes recompiled packets, not raw subagent chat") ||
-        skill.includes("Prime consumes only the recompiled packet"),
+        skill.includes("Prime consumes only the recompiled packet") ||
+        skill.includes("never raw subagent chat as ground truth"),
       `${relName} does not block direct Prime consumption of subagent chat`,
     );
-    for (const pattern of MYTHOS_CONTRACT_PATTERNS) {
+    for (const pattern of RECEIPTS_CONTRACT_PATTERNS) {
       assert(
         pattern.match.test(skill),
         `${relName} does not reference the ${pattern.label} (expected ${pattern.match})`,
@@ -235,12 +239,12 @@ function checkSkillRequiresSubagents() {
   }
 }
 
-// Agent policy is optional — Mythos does not require any particular model
-// choice. When the file is present, enforce only the Mythos contract fields
+// Agent policy is optional — Receipts does not require any particular model
+// choice. When the file is present, enforce only the Receipts contract fields
 // (fanout shape + Prime consumption rule). Model names and reasoning-effort
 // are environment-specific and may vary by Prime surface.
 function checkAgentPolicy() {
-  const policyPath = path.join(root, "mythos-agent-policy.json");
+  const policyPath = path.join(root, "receipts-agent-policy.json");
   if (!fs.existsSync(policyPath)) return;
   const policy = JSON.parse(fs.readFileSync(policyPath, "utf8"));
   if (policy.fanout) {
@@ -270,7 +274,7 @@ function addSyntheticSubagentEvidence(runDir) {
   fs.writeFileSync(
     fixturePath,
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({
         id: "ev-root-cause-readiness",
         kind: "root-cause",
@@ -280,7 +284,7 @@ function addSyntheticSubagentEvidence(runDir) {
       }),
       "```",
       "",
-      "```mythos-verifier-jsonl",
+      "```receipts-verifier-jsonl",
       JSON.stringify({
         id: "vf-subagent-fanout-readiness",
         summary: "Readiness subagent fixture was ingested through quarantine parser.",
@@ -498,7 +502,7 @@ function main() {
     run("cargo", ["test", "--manifest-path", cargoTomlPath]);
   } else {
     process.stdout.write(
-      "readiness: skipping cargo fmt/test (source checkout not present; relying on the installed `mythos` binary).\n",
+      "readiness: skipping cargo fmt/test (source checkout not present; relying on the installed `receipts-core` binary).\n",
     );
   }
 
@@ -534,7 +538,7 @@ function main() {
   );
   safeRemove(generatedRunDir);
 
-  console.log("mythos readiness: passed");
+  console.log("receipts readiness: passed");
 }
 
 try {

@@ -1,6 +1,6 @@
 // Loop composites: `absorb` (ingest -> diff -> recompile, one motion per
 // lane) and `conclude` (record-synthesis -> gate -> report -> next, one
-// motion to end a pass). Dispatcher-level orchestration in bin/mythos-skill.mjs
+// motion to end a pass). Dispatcher-level orchestration in bin/receipts.mjs
 // — these tests exercise the composite CLI itself, not the underlying
 // scripts/binary in isolation (those already have their own suites).
 import { strict as assert } from "node:assert";
@@ -15,7 +15,7 @@ const repoRoot = path.dirname(path.dirname(thisFile));
 
 function freshRunDir(name) {
   const stamp = new Date().toISOString().replace(/[-:.]/g, "").replace(/\d{3}Z$/, "Z");
-  const runDir = path.join(repoRoot, ".codex", "mythos", `tmp-lc-${stamp}-${process.pid}-${name}`);
+  const runDir = path.join(repoRoot, ".codex", "receipts", `tmp-lc-${stamp}-${process.pid}-${name}`);
   fs.mkdirSync(path.join(runDir, "raw", "subagents"), { recursive: true });
   fs.mkdirSync(path.join(runDir, "worker-results"), { recursive: true });
   fs.mkdirSync(path.join(runDir, "verifier-results"), { recursive: true });
@@ -65,8 +65,8 @@ function freshRunDir(name) {
 
 function removeDir(dir) {
   if (!dir) return;
-  if (!dir.startsWith(path.join(repoRoot, ".codex", "mythos"))) {
-    throw new Error(`refusing to remove outside .codex/mythos: ${dir}`);
+  if (!dir.startsWith(path.join(repoRoot, ".codex", "receipts"))) {
+    throw new Error(`refusing to remove outside .codex/receipts: ${dir}`);
   }
   fs.rmSync(dir, { recursive: true, force: true });
 }
@@ -87,7 +87,7 @@ function readJsonl(file) {
 
 function absorb(runDir, lane, agentId, laneFile, extraArgs = []) {
   return runNode([
-    "bin/mythos-skill.mjs",
+    "bin/receipts.mjs",
     "absorb",
     "--run-dir",
     runDir,
@@ -102,7 +102,7 @@ function absorb(runDir, lane, agentId, laneFile, extraArgs = []) {
 }
 
 function conclude(runDir, synthesis, extraArgs = [], options = {}) {
-  return runNode(["bin/mythos-skill.mjs", "conclude", "--run-dir", runDir, "--synthesis", synthesis, ...extraArgs], options);
+  return runNode(["bin/receipts.mjs", "conclude", "--run-dir", runDir, "--synthesis", synthesis, ...extraArgs], options);
 }
 
 const now = () => new Date().toISOString();
@@ -121,7 +121,7 @@ test("absorb happy path: fenced lane record lands in evidence, mints a work:tree
   fs.writeFileSync(
     laneFile,
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({
         id: "ev-absorb-claim",
         kind: "observation",
@@ -180,7 +180,7 @@ test("conclude on a green-able run: exit 0, gate-report.json written ok:true, br
   fs.writeFileSync(
     laneFile,
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({
         id: "ev-green-claim",
         kind: "observation",
@@ -196,7 +196,7 @@ test("conclude on a green-able run: exit 0, gate-report.json written ok:true, br
   const setup = absorb(runDir, "green-lane", "green-agent", laneFile);
   assert.equal(setup.status, 0, `absorb setup must succeed: ${setup.stderr}`);
 
-  const env = { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "1" };
+  const env = { ...process.env, RECEIPTS_MIN_AGENT_COVERAGE: "1" };
   const result = conclude(runDir, "green pass synthesis", [], { env });
   assert.equal(result.status, 0, `conclude must exit 0 on a green run: stdout=${result.stdout}\nstderr=${result.stderr}`);
 
@@ -217,7 +217,7 @@ test("conclude on a run with an unresolved blocker: exit nonzero, gate-report.js
   const setup = absorb(runDir, "blocked-lane", "blocked-agent", laneFile);
   assert.equal(setup.status, 0, `absorb setup must succeed: ${setup.stderr}`);
 
-  const env = { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "1" };
+  const env = { ...process.env, RECEIPTS_MIN_AGENT_COVERAGE: "1" };
   const result = conclude(runDir, "red pass synthesis", [], { env });
   assert.notEqual(result.status, 0, "conclude must exit nonzero when the gate is red (unresolved blocker)");
 

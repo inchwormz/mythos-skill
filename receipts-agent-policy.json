@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "_note": "Optional environment-specific policy for Mythos subagent fanout. Mythos itself only requires the fanout + prime_consumption contract. Model names, reasoning-effort, and provider-specific fields belong in the host environment (Claude Code settings, Codex config, etc.), not in the Mythos contract.",
+  "_note": "Optional environment-specific policy for Receipts subagent fanout. Receipts itself only requires the fanout + prime_consumption contract. Model names, reasoning-effort, and provider-specific fields belong in the host environment (Claude Code settings, Codex config, etc.), not in the Receipts contract.",
   "fanout": {
     "micro_lanes": 5,
     "broad_lanes_max": 5

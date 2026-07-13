@@ -1,7 +1,7 @@
 use crate::compiler::evidence::{PacketValidationError, validate_packet_sources};
 use crate::schema::{
     CandidateAction, CompiledFact, Contradiction, EvidenceRecord, HaltSignal, Hypothesis,
-    MYTHOS_SCHEMA_VERSION, NextPassPacket, RecurringFailurePattern, SourceRef, VerifierFinding,
+    NextPassPacket, RECEIPTS_SCHEMA_VERSION, RecurringFailurePattern, SourceRef, VerifierFinding,
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -29,7 +29,7 @@ pub fn build_next_pass_packet(
     input: CompilerInputBundle,
 ) -> Result<NextPassPacket, PacketValidationError> {
     let packet = NextPassPacket {
-        schema_version: MYTHOS_SCHEMA_VERSION.to_string(),
+        schema_version: RECEIPTS_SCHEMA_VERSION.to_string(),
         objective_id: input.objective_id,
         run_id: input.run_id,
         branch_id: input.branch_id,

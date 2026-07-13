@@ -1,4 +1,4 @@
-//! F5 regression: `mythos init` must scaffold a run the rest of the pipeline
+//! F5 regression: `receipts init` must scaffold a run the rest of the pipeline
 //! can actually finish. The original Rust init seeded `vf-synthesis-pending`
 //! while the JS synthesis recorder only consumes `vf-codex-synthesis-pending`,
 //! so every Rust-scaffolded run was permanently gate-red. This test pins the
@@ -15,21 +15,21 @@ fn init_scaffolds_a_finishable_run() {
         .map(|duration| duration.as_nanos())
         .unwrap_or(0);
     let dir = std::env::temp_dir().join(format!(
-        "mythos-init-contract-{}-{nanos}",
+        "receipts-init-contract-{}-{nanos}",
         std::process::id()
     ));
     let _ = fs::remove_dir_all(&dir);
 
-    let repo_root = std::env::temp_dir().join(format!("mythos-init-root-{nanos}"));
+    let repo_root = std::env::temp_dir().join(format!("receipts-init-root-{nanos}"));
     fs::create_dir_all(&repo_root).expect("create fake repo root");
 
-    let output = Command::new(env!("CARGO_BIN_EXE_mythos"))
+    let output = Command::new(env!("CARGO_BIN_EXE_receipts-core"))
         .arg("init")
         .arg(&dir)
         .arg("--repo-root")
         .arg(&repo_root)
         .output()
-        .expect("run mythos init");
+        .expect("run receipts-core init");
     assert!(
         output.status.success(),
         "init failed: {}",

@@ -6,7 +6,7 @@
 //! a regression here means a non-deterministic code path slipped into
 //! promotion, source assembly, or serialisation.
 
-use mythos_skill::compiler::run_dir::compile_run_dir;
+use receipts_core::compiler::run_dir::compile_run_dir;
 use std::{env, fs, io, path::Path};
 
 #[test]
@@ -17,8 +17,8 @@ fn compile_run_dir_is_byte_deterministic_across_two_runs() {
         .duration_since(std::time::UNIX_EPOCH)
         .map(|duration| duration.as_nanos())
         .unwrap_or(0);
-    let tmp_a = env::temp_dir().join(format!("mythos-det-a-{pid}-{nanos}"));
-    let tmp_b = env::temp_dir().join(format!("mythos-det-b-{pid}-{nanos}"));
+    let tmp_a = env::temp_dir().join(format!("receipts-det-a-{pid}-{nanos}"));
+    let tmp_b = env::temp_dir().join(format!("receipts-det-b-{pid}-{nanos}"));
 
     let _ = fs::remove_dir_all(&tmp_a);
     let _ = fs::remove_dir_all(&tmp_b);

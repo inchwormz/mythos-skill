@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mythos.local/schemas/snapshot.schema.json",
+  "$id": "https://receipts.local/schemas/snapshot.schema.json",
   "title": "Snapshot",
   "type": "object",
   "required": [

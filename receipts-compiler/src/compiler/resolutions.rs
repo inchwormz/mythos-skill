@@ -3,7 +3,7 @@
 //! Blocking worklist items (contradictions to adjudicate, blocked lanes,
 //! failed findings) would otherwise be one-way ratchets over append-only
 //! inputs: recomputed every compile, impossible to clear without hand-editing
-//! quarantined evidence (adversarial-review finding 3). `mythos resolve`
+//! quarantined evidence (adversarial-review finding 3). `receipts resolve`
 //! appends a hash-chained resolution record to `decisions/resolutions.jsonl`;
 //! compile consumes it and marks the matching worklist item resolved. The
 //! journal is covered by the input fingerprint, so resolutions are custody-
@@ -153,7 +153,7 @@ mod tests {
             reason: "adjudicated by prime".to_string(),
             cite: None,
             resolved_at: "2026-07-13T00:00:00Z".to_string(),
-            writer: "mythos-test".to_string(),
+            writer: "receipts-test".to_string(),
             prev_record_hash: String::new(),
             record_hash: String::new(),
         }
@@ -164,7 +164,7 @@ mod tests {
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.as_nanos())
             .unwrap_or(0);
-        let dir = std::env::temp_dir().join(format!("mythos-res-{tag}-{nanos}"));
+        let dir = std::env::temp_dir().join(format!("receipts-res-{tag}-{nanos}"));
         fs::create_dir_all(&dir).expect("temp dir");
         dir
     }

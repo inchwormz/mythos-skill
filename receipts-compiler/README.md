@@ -1,10 +1,10 @@
-# mythos-skill
+# receipts-skill
 
 Deterministic packet compiler for AI agent runs.
 
 Takes raw subagent output (evidence JSONL, verifier findings, raw artifacts) and compiles a schema-validated, hash-provenanced `next_pass_packet.json` that the orchestrating model reads instead of raw subagent prose.
 
-Part of the [mythos-skill](https://github.com/inchwormz/mythos-skill) project — see the repo for the full JS runtime (ingest, strict gate, readiness) that drives this crate.
+Part of the [receipts-skill](https://github.com/inchwormz/receipts-skill) project — see the repo for the full JS runtime (ingest, strict gate, readiness) that drives this crate.
 
 ## What this crate does
 
@@ -17,13 +17,13 @@ Part of the [mythos-skill](https://github.com/inchwormz/mythos-skill) project �
 ## Install
 
 ```bash
-cargo install mythos-skill
+cargo install receipts-skill
 ```
 
 ## Run
 
 ```bash
-mythos compile --run-dir <run-dir>
+receipts compile --run-dir <run-dir>
 ```
 
 Expected run directory shape:
@@ -43,7 +43,7 @@ Outputs land in `state/` inside the run directory.
   "id": "ev-example",
   "kind": "code-change",
   "summary": "The timeout helper is now used by Firecrawl API calls.",
-  "agent_id": "mythos-evidence-worker",
+  "agent_id": "receipts-evidence-worker",
   "lane": "impl",
   "confidence": 0.9,
   "rationale": "Read at file:scripts/foo.js:42.",

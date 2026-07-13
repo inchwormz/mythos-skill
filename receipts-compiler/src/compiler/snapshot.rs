@@ -1,5 +1,5 @@
 use crate::compiler::artifacts::{ArtifactRef, artifact_registry};
-use crate::schema::{MYTHOS_SCHEMA_VERSION, Snapshot, SnapshotInput, StateDelta, WorkerResult};
+use crate::schema::{RECEIPTS_SCHEMA_VERSION, Snapshot, SnapshotInput, StateDelta, WorkerResult};
 use std::collections::HashSet;
 use std::fmt::{Display, Formatter};
 
@@ -38,7 +38,7 @@ pub fn build_snapshot(
     validate_snapshot_refs(&inputs, &worker_results, &registry)?;
 
     Ok(Snapshot {
-        schema_version: MYTHOS_SCHEMA_VERSION.to_string(),
+        schema_version: RECEIPTS_SCHEMA_VERSION.to_string(),
         run_id: run_id.into(),
         pass_id: pass_id.into(),
         branch_id: branch_id.into(),

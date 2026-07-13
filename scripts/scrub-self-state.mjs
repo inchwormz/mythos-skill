@@ -18,7 +18,7 @@ function parseArgs(argv) {
 
 function isSelfState(refOrId) {
   const str = String(refOrId ?? "").replace(/\\/g, "/");
-  return /\.codex\/mythos\/runs\/[^/]+\/state\//.test(str);
+  return /\.codex\/(?:mythos|receipts)\/runs\/[^/]+\/state\//.test(str);
 }
 
 function scrubFile(file, fallbackSourceId) {

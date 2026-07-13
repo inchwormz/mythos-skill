@@ -1,4 +1,4 @@
-//! Phase 3: `mythos next` - the compressed Prime brief.
+//! Phase 3: `receipts next` - the compressed Prime brief.
 //!
 //! The packet is the API; this is its ergonomic read. One screen answers:
 //! what blocks, what's refuted, what's proven, which lanes to read (with
@@ -67,7 +67,7 @@ pub fn generate_brief(run_dir: &Path, as_json: bool) -> Result<String, Box<dyn s
     out.push_str(&match gate.as_ref() {
         Some(g) if g.ok => "VERDICT: GATE PASSED\n".to_string(),
         Some(g) => format!("VERDICT: GATE FAILED ({} error(s))\n", g.errors.len()),
-        None => "VERDICT: gate not recorded - run mythos-skill gate\n".to_string(),
+        None => "VERDICT: gate not recorded - run receipts gate\n".to_string(),
     });
 
     let blocking: Vec<_> = packet
@@ -105,7 +105,7 @@ pub fn generate_brief(run_dir: &Path, as_json: bool) -> Result<String, Box<dyn s
         if item.blocking == Some(true) {
             if let Some(target) = item.decision_dependency_ids.first() {
                 out.push_str(&format!(
-                    "      clear: mythos resolve --run-dir <run-dir> --target {target} --reason \"...\"\n"
+                    "      clear: receipts resolve --run-dir <run-dir> --target {target} --reason \"...\"\n"
                 ));
             }
         } else if !item.suggested_argv.is_empty() {
@@ -180,7 +180,7 @@ pub fn generate_brief(run_dir: &Path, as_json: bool) -> Result<String, Box<dyn s
     }
 
     out.push_str(&match (gate.is_some(), drift_warnings.len()) {
-        (false, _) => "\nDRIFT: unknown - run mythos-skill gate\n".to_string(),
+        (false, _) => "\nDRIFT: unknown - run receipts gate\n".to_string(),
         (true, 0) => "\nDRIFT: none recorded\n".to_string(),
         (true, count) => format!(
             "\nDRIFT: {count} citation(s) drifted since review (post-review fixes are the usual cause)\n"

@@ -1,7 +1,7 @@
 // M1/M2 acceptance: execution receipts and the attestation ladder.
 //
 // The product promise under test: valuable receipts WITHOUT agent
-// cooperation. The orchestrator runs commands through `mythos run`; the
+// cooperation. The orchestrator runs commands through `receipts run`; the
 // journal is hash-chained; compile turns receipts into attested facts,
 // upgrades agent claims whose cited labels actually passed, and mechanically
 // REFUTES passed claims whose cited labels actually failed. Agents cannot
@@ -15,11 +15,11 @@ import { fileURLToPath } from "node:url";
 
 const thisFile = fileURLToPath(import.meta.url);
 const repoRoot = path.dirname(path.dirname(thisFile));
-const compilerDir = path.join(repoRoot, "mythos-compiler");
+const compilerDir = path.join(repoRoot, "receipts-compiler");
 
 function freshRunDir(name) {
   const stamp = new Date().toISOString().replace(/[-:.]/g, "").replace(/\d{3}Z$/, "Z");
-  const runDir = path.join(repoRoot, ".codex", "mythos", `tmp-rcpt-${stamp}-${process.pid}-${name}`);
+  const runDir = path.join(repoRoot, ".codex", "receipts", `tmp-rcpt-${stamp}-${process.pid}-${name}`);
   fs.mkdirSync(path.join(runDir, "raw", "subagents"), { recursive: true });
   fs.mkdirSync(path.join(runDir, "worker-results"), { recursive: true });
   fs.mkdirSync(path.join(runDir, "verifier-results"), { recursive: true });
@@ -69,8 +69,8 @@ function freshRunDir(name) {
 
 function removeDir(dir) {
   if (!dir) return;
-  if (!dir.startsWith(path.join(repoRoot, ".codex", "mythos"))) {
-    throw new Error(`refusing to remove outside .codex/mythos: ${dir}`);
+  if (!dir.startsWith(path.join(repoRoot, ".codex", "receipts"))) {
+    throw new Error(`refusing to remove outside .codex/receipts: ${dir}`);
   }
   fs.rmSync(dir, { recursive: true, force: true });
 }
@@ -85,14 +85,14 @@ function runNode(args, options = {}) {
 }
 
 // Invoke the dev binary the same way the driver does (source checkout).
-function mythosRun(runDir, label, exitCode) {
+function coreRun(runDir, label, exitCode) {
   return spawnSync(
     "cargo",
     [
       "run",
       "--quiet",
       "--bin",
-      "mythos",
+      "receipts-core",
       "--",
       "run",
       "--run-dir",
@@ -141,13 +141,13 @@ function ingestLane(runDir, lane, content) {
 
 const now = () => new Date().toISOString();
 
-test("mythos run mints chained receipts and propagates the child exit code", (t) => {
+test("receipts run mints chained receipts and propagates the child exit code", (t) => {
   const runDir = freshRunDir("mint");
   t.after(() => removeDir(runDir));
 
-  const pass = mythosRun(runDir, "test:demo-pass", 0);
+  const pass = coreRun(runDir, "test:demo-pass", 0);
   assert.equal(pass.status, 0, `passing child must yield exit 0: ${pass.stderr}`);
-  const fail = mythosRun(runDir, "test:demo-fail", 3);
+  const fail = coreRun(runDir, "test:demo-fail", 3);
   assert.equal(fail.status, 3, `child exit code must propagate; got ${fail.status}`);
 
   const journal = readJsonl(path.join(runDir, "receipts", "receipts.jsonl"));
@@ -165,7 +165,7 @@ test("receipts compile into attested facts with zero agent cooperation", (t) => 
   const runDir = freshRunDir("attested");
   t.after(() => removeDir(runDir));
 
-  mythosRun(runDir, "test:demo-pass", 0);
+  coreRun(runDir, "test:demo-pass", 0);
   const driver = runNode(["driver.mjs", "--run-dir", runDir]);
   assert.equal(driver.status, 0, `compile must succeed: ${driver.stderr}`);
   const packet = JSON.parse(fs.readFileSync(path.join(runDir, "state", "next_pass_packet.json"), "utf8"));
@@ -183,12 +183,12 @@ test("an agent claim citing a label whose receipt PASSED becomes an attested fac
   const runDir = freshRunDir("label-upgrade");
   t.after(() => removeDir(runDir));
 
-  mythosRun(runDir, "test:demo-pass", 0);
+  coreRun(runDir, "test:demo-pass", 0);
   const ingest = ingestLane(
     runDir,
     "claimer",
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({ id: "ev-claim-backed", kind: "observation", summary: "the demo check passes", source_ids: ["test:demo-pass"], observed_at: now() }),
       JSON.stringify({ id: "ev-claim-unbacked", kind: "observation", summary: "some other check passes", source_ids: ["test:never-ran"], observed_at: now() }),
       "```",
@@ -215,12 +215,12 @@ test("a passed claim whose label FAILED on execution is refuted and turns the ga
   const runDir = freshRunDir("refuted");
   t.after(() => removeDir(runDir));
 
-  mythosRun(runDir, "test:demo-fail", 3);
+  coreRun(runDir, "test:demo-fail", 3);
   const ingest = ingestLane(
     runDir,
     "liar",
     [
-      "```mythos-verifier-jsonl",
+      "```receipts-verifier-jsonl",
       JSON.stringify({ id: "vf-liar-suite", summary: "ran the demo-fail suite, everything green", status: "passed", verifier_score: 1.0, source_ids: ["test:demo-fail"], observed_at: now() }),
       "```",
       "",
@@ -236,7 +236,7 @@ test("a passed claim whose label FAILED on execution is refuted and turns the ga
   assert.equal(refutation.severity, "high");
 
   const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], {
-    env: { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "1" },
+    env: { ...process.env, RECEIPTS_MIN_AGENT_COVERAGE: "1" },
   });
   assert.notEqual(gate.status, 0, "gate must go red on a receipt refutation");
   assert.ok(
@@ -253,7 +253,7 @@ test("agents cannot impersonate receipts or cite unminted ones", (t) => {
     runDir,
     "faker",
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({ id: "ev-fake-receipt", kind: "receipt", summary: "totally ran this myself", source_ids: ["receipt:rcpt-9999"], observed_at: now() }),
       "```",
       "",
@@ -277,10 +277,10 @@ test("work receipts attest tree state but confer NOTHING on claims citing them",
   // Mint a work receipt via the real subcommand (repo_root is this repo).
   const diff = spawnSync(
     "cargo",
-    ["run", "--quiet", "--bin", "mythos", "--", "diff", "--run-dir", runDir, "--note", "phase-1-fixture"],
+    ["run", "--quiet", "--bin", "receipts-core", "--", "diff", "--run-dir", runDir, "--note", "phase-1-fixture"],
     { cwd: compilerDir, encoding: "utf8", shell: process.platform === "win32" },
   );
-  assert.equal(diff.status, 0, `mythos diff must succeed: ${diff.stderr}`);
+  assert.equal(diff.status, 0, `receipts diff must succeed: ${diff.stderr}`);
   const journal = readJsonl(path.join(runDir, "receipts", "receipts.jsonl"));
   assert.equal(journal[0].label, "work:tree", "work receipts carry the constant label");
 
@@ -289,7 +289,7 @@ test("work receipts attest tree state but confer NOTHING on claims citing them",
     runDir,
     "rider",
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({ id: "ev-rider", kind: "code-change", summary: "I did all of that tree work", source_ids: ["work:tree", "receipt:rcpt-0001"], observed_at: now() }),
       "```",
       "",
@@ -321,7 +321,7 @@ test("work receipts attest tree state but confer NOTHING on claims citing them",
 
   // Gate: the rider's citations are not content anchors either.
   const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], {
-    env: { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "1" },
+    env: { ...process.env, RECEIPTS_MIN_AGENT_COVERAGE: "1" },
   });
   assert.ok(
     gate.stdout.includes("summary-only evidence") && gate.stdout.includes("ev-rider"),
@@ -333,7 +333,7 @@ test("a tampered journal breaks the chain and fails compile", (t) => {
   const runDir = freshRunDir("tamper");
   t.after(() => removeDir(runDir));
 
-  mythosRun(runDir, "test:demo-pass", 0);
+  coreRun(runDir, "test:demo-pass", 0);
   const journalPath = path.join(runDir, "receipts", "receipts.jsonl");
   fs.writeFileSync(journalPath, fs.readFileSync(journalPath, "utf8").replace('"exit_code":0', '"exit_code":1'), "utf8");
 
@@ -349,12 +349,12 @@ test("a passing receipt upgrades a label-only finding past the summary-only chec
   const runDir = freshRunDir("label-finding");
   t.after(() => removeDir(runDir));
 
-  mythosRun(runDir, "test:demo-pass", 0);
+  coreRun(runDir, "test:demo-pass", 0);
   const ingest = ingestLane(
     runDir,
     "verifier",
     [
-      "```mythos-verifier-jsonl",
+      "```receipts-verifier-jsonl",
       JSON.stringify({ id: "vf-label-backed", summary: "demo-pass suite is green", status: "passed", verifier_score: 1.0, source_ids: ["test:demo-pass"], observed_at: now() }),
       "```",
       "",
@@ -363,7 +363,7 @@ test("a passing receipt upgrades a label-only finding past the summary-only chec
   assert.equal(ingest.status, 0, `ingest failed: ${ingest.stderr}`);
   runNode(["driver.mjs", "--run-dir", runDir]);
   const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], {
-    env: { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "1" },
+    env: { ...process.env, RECEIPTS_MIN_AGENT_COVERAGE: "1" },
   });
   // The gate may fail for other reasons (pending synthesis etc.) - what must
   // NOT appear is a summary-only complaint about the receipt-backed finding.

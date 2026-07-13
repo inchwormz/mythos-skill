@@ -366,7 +366,7 @@ mod tests {
             "ev-a",
             "observation",
             "the dispatcher lives here and handles absorb",
-            &["file:bin/mythos-skill.mjs:13"],
+            &["file:bin/receipts.mjs:13"],
             Some("a"),
             Some("lane-a"),
         );
@@ -375,7 +375,7 @@ mod tests {
             "ev-b",
             "observation",
             "totally different sentence about unrelated commands table",
-            &["file:bin/mythos-skill.mjs:13"],
+            &["file:bin/receipts.mjs:13"],
             Some("b"),
             Some("lane-b"),
         );

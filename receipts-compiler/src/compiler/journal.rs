@@ -38,7 +38,7 @@ mod tests {
 
     #[test]
     fn appends_jsonl_events() {
-        let path = std::env::temp_dir().join("mythos-compiler-journal.jsonl");
+        let path = std::env::temp_dir().join("receipts-compiler-journal.jsonl");
         let _ = fs::remove_file(&path);
         let event = JournalEvent {
             run_id: "run-1".to_string(),
@@ -59,7 +59,7 @@ mod tests {
 
     #[test]
     fn appends_raw_decision_log_records() {
-        let path = std::env::temp_dir().join("mythos-compiler-decisions.jsonl");
+        let path = std::env::temp_dir().join("receipts-compiler-decisions.jsonl");
         let _ = fs::remove_file(&path);
 
         let record = DecisionLogRecord {

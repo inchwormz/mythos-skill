@@ -1,4 +1,4 @@
-// Round-trip integrity tests for the Mythos packet shape.
+// Round-trip integrity tests for the Receipts packet shape.
 //
 // Covers:
 // - R1/R2/R3 — agent_id, lane, confidence, rationale, diff_ref survive ingest
@@ -8,7 +8,7 @@
 //   accepted by the ingester (exit 0) and produces a `kind:"blocker"` evidence
 //   record.
 //
-// Each test creates its own ephemeral run dir under .codex/mythos/tmp-test-*/
+// Each test creates its own ephemeral run dir under .codex/receipts/tmp-test-*/
 // and cleans up via t.after.
 import { strict as assert } from "node:assert";
 import { spawn, spawnSync } from "node:child_process";
@@ -26,7 +26,7 @@ function freshRunDir(name) {
   const runDir = path.join(
     repoRoot,
     ".codex",
-    "mythos",
+    "receipts-core",
     `tmp-test-${stamp}-${pid}-${name}`,
   );
   fs.mkdirSync(path.join(runDir, "raw", "subagents"), { recursive: true });
@@ -83,8 +83,8 @@ function freshRunDir(name) {
 
 function removeDir(dir) {
   if (!dir) return;
-  if (!dir.startsWith(path.join(repoRoot, ".codex", "mythos"))) {
-    throw new Error(`refusing to remove outside .codex/mythos: ${dir}`);
+  if (!dir.startsWith(path.join(repoRoot, ".codex", "receipts"))) {
+    throw new Error(`refusing to remove outside .codex/receipts: ${dir}`);
   }
   fs.rmSync(dir, { recursive: true, force: true });
 }
@@ -133,7 +133,7 @@ test("F4 ingest: caller attribution WINS; record-declared identity survives only
   fs.writeFileSync(
     subagentPath,
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify(evidenceRecord),
       "```",
       "",
@@ -192,7 +192,7 @@ test("F1+F4 driver: caller attribution reaches the packet; unverified evidence i
   fs.writeFileSync(
     subagentPath,
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify(evidenceRecord),
       "```",
       "",
@@ -292,7 +292,7 @@ test("H1 ingest: non-file source_refs with placeholder hash get fnv1a-hashed fro
   fs.writeFileSync(
     subagentPath,
     [
-      "```mythos-verifier-jsonl",
+      "```receipts-verifier-jsonl",
       JSON.stringify(verifierRecord),
       "```",
       "",
@@ -367,7 +367,7 @@ test("H2 ingest: file source_refs with out-of-range spans get clipped to actual 
   fs.writeFileSync(
     subagentPath,
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify(evidenceRecord),
       "```",
       "",
@@ -435,7 +435,7 @@ test("H3 ingest: direct file: source_id with no source_refs gets synthesized wit
   fs.writeFileSync(
     subagentPath,
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify(evidenceRecord),
       "```",
       "",
@@ -496,7 +496,7 @@ test("H4 ingest: evidence without raw:subagents/* source_id gets auto-stamped", 
   fs.writeFileSync(
     subagentPath,
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify(evidenceRecord),
       "```",
       "",
@@ -570,11 +570,11 @@ test("H6 ingest: verifier closure_reason survives ingest -> driver -> packet -> 
   fs.writeFileSync(
     subagentPath,
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify(evidenceRecord),
       "```",
       "",
-      "```mythos-verifier-jsonl",
+      "```receipts-verifier-jsonl",
       JSON.stringify(verifierRecord),
       "```",
       "",
@@ -711,7 +711,7 @@ test("G1+G10 ingest: absolute-inside-repo file: source_ids get rewritten to repo
   fs.writeFileSync(
     subagentA,
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({
         id: "ev-g1-abs",
         kind: "observation",
@@ -727,7 +727,7 @@ test("G1+G10 ingest: absolute-inside-repo file: source_ids get rewritten to repo
   fs.writeFileSync(
     subagentB,
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({
         id: "ev-g1-rel",
         kind: "observation",
@@ -863,7 +863,7 @@ test("G2 strict-gate: subagent-session records without agent_id/lane fail the ga
   runNode(["driver.mjs", "--run-dir", runDir]);
 
   const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], {
-    env: { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "1" },
+    env: { ...process.env, RECEIPTS_MIN_AGENT_COVERAGE: "1" },
   });
   assert.notEqual(
     gate.status,
@@ -1159,7 +1159,7 @@ test("G8 strict-gate: unknown evidence kinds produce a warning, not an error", (
   fs.writeFileSync(
     subagentPath,
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify(fixtureRec),
       JSON.stringify(unknownRec),
       "```",
@@ -1191,7 +1191,7 @@ test("G8 strict-gate: unknown evidence kinds produce a warning, not an error", (
   // the JSON report always includes the warnings array.
   runNode(["driver.mjs", "--run-dir", runDir]);
   const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], {
-    env: { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "1" },
+    env: { ...process.env, RECEIPTS_MIN_AGENT_COVERAGE: "1" },
   });
   // gate may or may not exit 0 depending on other preconditions — we only
   // care that the G8 warning shows up on the report.
@@ -1220,7 +1220,7 @@ test("G9 ingest: re-ingesting the same raw/subagents file fails with a duplicate
   fs.writeFileSync(
     subagentPath,
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({
         id: "ev-g9-anchor",
         kind: "observation",
@@ -1290,7 +1290,7 @@ test("G10 ingest: absolute source_ref.path on file kinds gets rewritten to repo-
   fs.writeFileSync(
     subagentPath,
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({
         id: "ev-g10-ref",
         kind: "observation",
@@ -1382,7 +1382,7 @@ test("G3 ingest: two concurrent ingests against the same run dir produce a clean
     };
     fs.writeFileSync(
       subagentPath,
-      ["```mythos-evidence-jsonl", JSON.stringify(record), "```", ""].join("\n"),
+      ["```receipts-evidence-jsonl", JSON.stringify(record), "```", ""].join("\n"),
       "utf8",
     );
     return subagentPath;

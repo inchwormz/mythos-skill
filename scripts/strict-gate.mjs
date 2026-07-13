@@ -10,7 +10,7 @@ function usage() {
     "Usage:",
     "  node scripts/strict-gate.mjs --run-dir <path>",
     "",
-    "Fails unless a substantive Mythos run has completed the explicit-state",
+    "Fails unless a substantive Receipts run has completed the explicit-state",
     "subagent -> evidence/findings/raw -> recompile -> recorded synthesis loop.",
   ].join("\n");
 }
@@ -528,7 +528,7 @@ function statusSummary(records) {
   }));
 }
 
-// G8: Known evidence kinds pulled from prior Mythos runs plus the obvious
+// G8: Known evidence kinds pulled from prior Receipts runs plus the obvious
 // standard kinds. Records whose `kind` is outside this set get a soft warning
 // so typos or one-off improvisations (e.g. "fictional-kind") are surfaced
 // without failing the gate. Adding a new kind is as simple as appending to
@@ -631,11 +631,11 @@ function checkDirectSourceRefRatio(evidence, errors) {
 
 // R7: Count distinct agent_id values across evidence (excluding the seed
 // objective record and auto ev-subagent-session-* records). Require at least
-// MYTHOS_MIN_AGENT_COVERAGE distinct non-empty agent_ids. Skip for the
+// RECEIPTS_MIN_AGENT_COVERAGE distinct non-empty agent_ids. Skip for the
 // readiness-fixture packet (pass-0001 with only the pending synthesis
 // finding) so bootstrap scenarios still pass.
 function checkAgentCoverage(evidence, findings, manifest, packet, errors) {
-  const env = process.env.MYTHOS_MIN_AGENT_COVERAGE;
+  const env = process.env.RECEIPTS_MIN_AGENT_COVERAGE;
   const parsed = env !== undefined && env !== "" ? Number(env) : NaN;
   const minCoverage = Number.isFinite(parsed) && parsed > 0 ? parsed : 3;
 
@@ -662,7 +662,7 @@ function checkAgentCoverage(evidence, findings, manifest, packet, errors) {
   }
   if (distinct.size < minCoverage) {
     errors.push(
-      `agent-id coverage floor not met: saw ${distinct.size} distinct agent_id(s) across evidence, need at least ${minCoverage} (set MYTHOS_MIN_AGENT_COVERAGE to override)`,
+      `agent-id coverage floor not met: saw ${distinct.size} distinct agent_id(s) across evidence, need at least ${minCoverage} (set RECEIPTS_MIN_AGENT_COVERAGE to override)`,
     );
   }
 }
@@ -703,7 +703,7 @@ function main() {
   const staleness = stalePacket(runDir);
   if (staleness === "missing") {
     errors.push(
-      "state/input_fingerprint.json is missing; recompile with the mythos compiler (fail-closed: no fingerprint, no gate)",
+      "state/input_fingerprint.json is missing; recompile with the receipts-core compiler (fail-closed: no fingerprint, no gate)",
     );
   } else if (staleness === "stale") {
     errors.push("next_pass_packet.json is stale; re-run driver.mjs --run-dir before proceeding");
@@ -854,7 +854,7 @@ function main() {
     for (const item of actions) {
       if (item.blocking === true && item.resolved !== true) {
         errors.push(
-          `unresolved blocking worklist item [${item.category ?? "?"}] ${item.id}: ${String(item.title ?? "").slice(0, 120)} (clear with: mythos resolve --run-dir <run-dir> --target ${item.decision_dependency_ids?.[0] ?? "<target>"} --reason "...")`,
+          `unresolved blocking worklist item [${item.category ?? "?"}] ${item.id}: ${String(item.title ?? "").slice(0, 120)} (clear with: receipts resolve --run-dir <run-dir> --target ${item.decision_dependency_ids?.[0] ?? "<target>"} --reason "...")`,
         );
       }
     }

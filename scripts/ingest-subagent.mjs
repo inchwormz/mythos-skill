@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// Mythos subagent ingest.
+// Receipts subagent ingest.
 //
 // Input contract (two shapes):
 // 1. Fenced records. The subagent markdown contains one or both of:
-//      ```mythos-evidence-jsonl  ... ```
-//      ```mythos-verifier-jsonl  ... ```
+//      ```receipts-evidence-jsonl  ... ```
+//      ```receipts-verifier-jsonl  ... ```
 //    Each fenced block is parsed one JSON record per line and appended to the
 //    run-dir's worker-results/verifier-results files.
 //
@@ -32,7 +32,7 @@ function usage() {
     "  node scripts/ingest-subagent.mjs --run-dir <path> --lane <name> --agent-id <id> --from <file>",
     "",
     "Quarantines exact subagent output as raw state, then extracts only fenced",
-    "mythos-evidence-jsonl and mythos-verifier-jsonl records into run files.",
+    "receipts-evidence-jsonl and receipts-verifier-jsonl (legacy mythos-* labels accepted) records into run files.",
     "If the input contains a `BLOCKED <reason>` sentinel and no fenced records,",
     "a synthetic blocker evidence record is emitted instead.",
   ].join("\n");
@@ -156,7 +156,7 @@ function appendJsonl(file, records) {
 }
 
 // ---------------------------------------------------------------------------
-// FORGIVING PARSER (post-mortem 2026-07-12, run mythos-zero-visual-44).
+// FORGIVING PARSER (post-mortem 2026-07-12, run mythos-zero-visual-44 (historical)).
 //
 // Live NTM agents do real work and then transcribe it imperfectly: bare ```
 // fences, pretty-printed JSON, arrays, single quotes, trailing commas, field
@@ -171,7 +171,7 @@ function appendJsonl(file, records) {
 // ---------------------------------------------------------------------------
 
 // Fence scanner: ``` or ~~~, up to 3 leading spaces, any (or no) label.
-// Classification is per-BLOCK by label when the label names mythos/evidence/
+// Classification is per-BLOCK by label when the label names receipts|mythos/evidence/
 // verifier, otherwise by sniffing whether the content parses into records.
 // Routing is then per-RECORD by shape (status/verifier_score => verifier), so
 // an agent that dumps both kinds into one block still ingests correctly.
@@ -225,11 +225,11 @@ function parseBlocks(text) {
   }
 
   // Second-chance label scan (field-observed variant: agents wrap the label
-  // in SINGLE backticks - `mythos-verifier-jsonl - so no real fence exists).
-  // Wherever a mythos evidence/verifier label appears OUTSIDE a captured
+  // in SINGLE backticks - `receipts-verifier-jsonl - so no real fence exists).
+  // Wherever a receipts (or legacy mythos) evidence/verifier label appears OUTSIDE a captured
   // fence, collect the record-shaped lines that follow it. Delimiters are
   // ignored entirely; content decides.
-  const labelScan = /`{0,2}mythos[-_ ](evidence|verifier)[-_ ]?jsonl`{0,2}/gi;
+  const labelScan = /`{0,2}(?:mythos|receipts)[-_ ](evidence|verifier)[-_ ]?jsonl`{0,2}/gi;
   const lines = text.split(/\r?\n/);
   // Precompute line start offsets to map matches to line numbers.
   const lineStarts = [];
@@ -508,7 +508,7 @@ const OBSERVED_ALIASES = ["observed_at", "observedAt", "timestamp", "time", "whe
 const KIND_ALIASES = ["kind", "type", "category"];
 const KNOWN_ID_PREFIXES = /^(file|command|test|log|raw|packet|verifier|evidence|objective|receipt):/;
 
-// M1 trust boundary: only `mythos run` mints receipts. Agent-authored records
+// M1 trust boundary: only `receipts run` mints receipts. Agent-authored records
 // claiming to BE receipts are downgraded to observations; agent citations of
 // receipt ids are kept only when the id exists in the verified journal.
 function loadReceiptIds(runDir) {
@@ -673,10 +673,10 @@ function normalizeRecordShape(record, { blockType, laneSlug, index, observedAt, 
     return downgraded;
   });
 
-  // Receipt impersonation: only `mythos run` writes kind:"receipt".
+  // Receipt impersonation: only `receipts run` writes kind:"receipt".
   if (blockType !== "verifier" && String(next.kind ?? "").toLowerCase() === "receipt") {
     next.kind = "observation";
-    warnings.push("receipt-impersonation: only mythos run mints receipt records; demoted to observation");
+    warnings.push("receipt-impersonation: only receipts run mints receipt records; demoted to observation");
   }
 
   // Timestamps: invalid or missing -> ingest time plus a note, never a

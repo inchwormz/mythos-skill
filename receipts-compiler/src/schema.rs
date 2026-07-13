@@ -1,25 +1,25 @@
 use serde::{Deserialize, Serialize};
 
-/// Current Mythos packet schema version. Bump when the `NextPassPacket` or
+/// Current Receipts packet schema version. Bump when the `NextPassPacket` or
 /// `Snapshot` shape changes in a way downstream consumers must react to.
 /// 1.2.0 (2026-07-13): worklist fields on candidate actions, lane_digests,
 /// work receipts. Consumers accept {1.1.0 legacy-read, 1.2.0 current}.
-pub const MYTHOS_SCHEMA_VERSION: &str = "1.2.0";
+pub const RECEIPTS_SCHEMA_VERSION: &str = "1.2.0";
 
 /// Versions consumers must accept when reading packets.
-pub const MYTHOS_KNOWN_SCHEMA_VERSIONS: &[&str] = &["1.1.0", "1.2.0"];
+pub const RECEIPTS_KNOWN_SCHEMA_VERSIONS: &[&str] = &["1.1.0", "1.2.0"];
 
 /// Canonical hash algorithm label emitted for every `SourceRef.hash` value.
 /// The strict gate and ingester must reject source refs whose `hash_alg` does
 /// not match, so bumping this is a breaking change for evidence in flight.
-pub const MYTHOS_HASH_ALG: &str = "fnv1a-64";
+pub const RECEIPTS_HASH_ALG: &str = "fnv1a-64";
 
 fn default_hash_alg() -> String {
-    MYTHOS_HASH_ALG.to_string()
+    RECEIPTS_HASH_ALG.to_string()
 }
 
 fn default_schema_version() -> String {
-    MYTHOS_SCHEMA_VERSION.to_string()
+    RECEIPTS_SCHEMA_VERSION.to_string()
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -133,7 +133,7 @@ pub struct CandidateAction {
     pub source_ids: Vec<String>,
     /// Worklist fields (schema 1.2.0). category: adjudicate | unblock |
     /// resolve-finding | verify-claim | re-task-or-accept. The COMPILER is
-    /// the single author of `blocking`; the gate and `mythos next` only
+    /// the single author of `blocking`; the gate and `receipts next` only
     /// consume it. `suggested_argv` is built exclusively from
     /// engine-validated tokens (never agent free text).
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -277,7 +277,7 @@ pub struct Snapshot {
     pub artifact_refs: Vec<SourceRef>,
 }
 
-/// M1: a runtime-minted execution receipt. Written ONLY by `mythos run` -
+/// M1: a runtime-minted execution receipt. Written ONLY by `receipts run` -
 /// agents cannot author these (ingest downgrades impersonations). The journal
 /// is hash-chained: `record_hash` = fnv1a of the record serialized WITHOUT
 /// `record_hash`, and `prev_record_hash` links to the previous entry (or

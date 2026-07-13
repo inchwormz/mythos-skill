@@ -1,9 +1,9 @@
-use mythos_skill::compiler::receipts::{
+use receipts_core::compiler::receipts::{
     WORK_LABEL, append_receipt, git_tree_state, store_artifact,
 };
-use mythos_skill::compiler::report::generate_report;
-use mythos_skill::compiler::run_dir::compile_run_dir;
-use mythos_skill::schema::ReceiptRecord;
+use receipts_core::compiler::report::generate_report;
+use receipts_core::compiler::run_dir::compile_run_dir;
+use receipts_core::schema::ReceiptRecord;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -11,7 +11,7 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() {
     if let Err(error) = run() {
-        eprintln!("mythos: {error}");
+        eprintln!("receipts-core: {error}");
         std::process::exit(1);
     }
 }
@@ -32,7 +32,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             Ok(())
         }
         "--version" | "-V" | "version" => {
-            println!("mythos {VERSION}");
+            println!("receipts-core {VERSION}");
             Ok(())
         }
         "init" => {
@@ -84,20 +84,20 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             preflight_run_dir(&run_dir)?;
             print!(
                 "{}",
-                mythos_skill::compiler::brief::generate_brief(&run_dir, as_json)?
+                receipts_core::compiler::brief::generate_brief(&run_dir, as_json)?
             );
             Ok(())
         }
-        other => Err(format!("unknown command `{other}` — try `mythos --help`").into()),
+        other => Err(format!("unknown command `{other}` — try `receipts-core --help`").into()),
     }
 }
 
 fn print_help() {
     println!(
-        "mythos {VERSION} — deterministic packet compiler for AI agent runs
+        "receipts-core {VERSION} — deterministic packet compiler for AI agent runs
 
 USAGE:
-    mythos <COMMAND> [ARGS]
+    receipts-core <COMMAND> [ARGS]
 
 COMMANDS:
     init <dir> [--repo-root <path>]   Scaffold a run directory (repo_root defaults to cwd)
@@ -144,7 +144,7 @@ fn parse_run_dir(args: Vec<String>) -> Result<PathBuf, Box<dyn std::error::Error
                 .ok_or_else(|| "`--run-dir` requires a path".into());
         }
     }
-    Err("missing required `--run-dir <path>` — run `mythos --help` for usage".into())
+    Err("missing required `--run-dir <path>` — run `receipts-core --help` for usage".into())
 }
 
 fn parse_path_arg(args: Vec<String>, cmd: &str) -> Result<PathBuf, Box<dyn std::error::Error>> {
@@ -160,7 +160,7 @@ fn parse_path_arg(args: Vec<String>, cmd: &str) -> Result<PathBuf, Box<dyn std::
         }
         return Ok(PathBuf::from(arg));
     }
-    Err(format!("`{cmd}` requires a directory path — try `mythos {cmd} my-run`").into())
+    Err(format!("`{cmd}` requires a directory path — try `receipts-core {cmd} my-run`").into())
 }
 
 fn parse_flag_value(args: &[String], flag: &str) -> Option<String> {
@@ -201,15 +201,15 @@ fn resolve_worklist_item(args: Vec<String>) -> Result<(), Box<dyn std::error::Er
         }
     }
 
-    let record = mythos_skill::compiler::resolutions::append_resolution(
+    let record = receipts_core::compiler::resolutions::append_resolution(
         &run_dir,
-        mythos_skill::compiler::resolutions::ResolutionRecord {
+        receipts_core::compiler::resolutions::ResolutionRecord {
             id: String::new(),
             target_id: target,
             reason,
             cite,
             resolved_at: iso_now(),
-            writer: format!("mythos/{VERSION}"),
+            writer: format!("receipts-core/{VERSION}"),
             prev_record_hash: String::new(),
             record_hash: String::new(),
         },
@@ -221,7 +221,7 @@ fn resolve_worklist_item(args: Vec<String>) -> Result<(), Box<dyn std::error::Er
             "resolution": record.id,
             "target": record.target_id,
             "record_hash": record.record_hash,
-            "next": "recompile the run (mythos-skill compile --run-dir <dir>) to apply",
+            "next": "recompile the run (receipts compile --run-dir <dir>) to apply",
         })
     );
     Ok(())
@@ -234,7 +234,7 @@ fn run_with_receipt(args: Vec<String>) -> Result<(), Box<dyn std::error::Error>>
     let separator = args
         .iter()
         .position(|arg| arg == "--")
-        .ok_or("`run` usage: mythos run --run-dir <dir> [--lane L] [--agent-id A] [--label test:name] -- <command...>")?;
+        .ok_or("`run` usage: receipts run --run-dir <dir> [--lane L] [--agent-id A] [--label test:name] -- <command...>")?;
     let (flags, command_line) = args.split_at(separator);
     let command_line = &command_line[1..];
     if command_line.is_empty() {
@@ -258,7 +258,7 @@ fn run_with_receipt(args: Vec<String>) -> Result<(), Box<dyn std::error::Error>>
         }
         if value == WORK_LABEL {
             return Err(format!(
-                "--label `{WORK_LABEL}` is reserved for `mythos diff` work receipts"
+                "--label `{WORK_LABEL}` is reserved for `receipts diff` work receipts"
             )
             .into());
         }
@@ -279,7 +279,7 @@ fn run_with_receipt(args: Vec<String>) -> Result<(), Box<dyn std::error::Error>>
         .output()
         .map_err(|err| {
             format!(
-                "failed to launch `{}`: {err}. Note: shell builtins and .cmd scripts need an explicit shell, e.g. mythos run ... -- bash -lc \"<line>\"",
+                "failed to launch `{}`: {err}. Note: shell builtins and .cmd scripts need an explicit shell, e.g. receipts run ... -- bash -lc \"<line>\"",
                 command_line[0]
             )
         })?;
@@ -316,7 +316,7 @@ fn run_with_receipt(args: Vec<String>) -> Result<(), Box<dyn std::error::Error>>
             tree_after,
             lane,
             agent_id,
-            writer: format!("mythos/{VERSION}"),
+            writer: format!("receipts-core/{VERSION}"),
             prev_record_hash: String::new(),
             record_hash: String::new(),
         },
@@ -362,15 +362,18 @@ fn diff_with_receipt(args: Vec<String>) -> Result<(), Box<dyn std::error::Error>
         .to_string();
 
     // Pathspec-exclude the run-dir tree so the engine's own journal churn
-    // never shows up as "work". `.mythos` covers the default location; the
+    // never shows up as "work". `.receipts` (and legacy `.mythos`) cover default locations; the
     // actual run dir is excluded too when it lives under repo_root elsewhere.
-    let mut excludes: Vec<String> = vec![":(exclude,top).mythos".to_string()];
+    let mut excludes: Vec<String> = vec![
+        ":(exclude,top).receipts".to_string(),
+        ":(exclude,top).mythos".to_string(),
+    ];
     if let (Ok(run_abs), Ok(root_abs)) =
         (run_dir.canonicalize(), Path::new(&repo_root).canonicalize())
     {
         if let Ok(rel) = run_abs.strip_prefix(&root_abs) {
             let rel = rel.to_string_lossy().replace('\\', "/");
-            if !rel.is_empty() && !rel.starts_with(".mythos") {
+            if !rel.is_empty() && !rel.starts_with(".receipts") && !rel.starts_with(".mythos") {
                 excludes.push(format!(":(exclude,top){rel}"));
             }
         }
@@ -507,7 +510,7 @@ fn diff_with_receipt(args: Vec<String>) -> Result<(), Box<dyn std::error::Error>
             tree_after: tree,
             lane,
             agent_id,
-            writer: format!("mythos/{VERSION}"),
+            writer: format!("receipts-core/{VERSION}"),
             prev_record_hash: String::new(),
             record_hash: String::new(),
         },
@@ -530,7 +533,7 @@ fn diff_with_receipt(args: Vec<String>) -> Result<(), Box<dyn std::error::Error>
 fn preflight_run_dir(run_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
     if !run_dir.exists() {
         return Err(format!(
-            "run directory `{}` does not exist — scaffold one with `mythos init {}`",
+            "run directory `{}` does not exist — scaffold one with `receipts init {}`",
             run_dir.display(),
             run_dir.display()
         )
@@ -539,7 +542,7 @@ fn preflight_run_dir(run_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
     let manifest = run_dir.join("manifest.json");
     if !manifest.exists() {
         return Err(format!(
-            "`{}` is missing manifest.json — scaffold a valid run dir with `mythos init {}`",
+            "`{}` is missing manifest.json — scaffold a valid run dir with `receipts init {}`",
             run_dir.display(),
             run_dir.display()
         )
@@ -585,7 +588,7 @@ fn init_run_dir(dir: &Path, repo_root: &Path) -> Result<(), Box<dyn std::error::
     fs::write(dir.join("task.md"), task)?;
 
     let objective_md = format!(
-        "# Objective\n\n{}\n\n# Note\n\nThis run was scaffolded by `mythos init`. Ingest subagent output with `mythos-skill ingest` or append evidence directly to worker-results/evidence.jsonl.\n",
+        "# Objective\n\n{}\n\n# Note\n\nThis run was scaffolded by `receipts init`. Ingest subagent output with `receipts ingest` or append evidence directly to worker-results/evidence.jsonl.\n",
         objective
     );
     fs::write(dir.join("raw/objective.md"), objective_md)?;
@@ -609,7 +612,7 @@ fn init_run_dir(dir: &Path, repo_root: &Path) -> Result<(), Box<dyn std::error::
          next steps:\n\
            1. append evidence records to {}/worker-results/evidence.jsonl\n\
            2. append verifier records to {}/verifier-results/findings.jsonl\n\
-           3. run `mythos compile --run-dir {}`\n\
+           3. run `receipts compile --run-dir {}`\n\
          \n\
          for the full subagent ingest + strict gate flow, install the JS runtime:\n\
            git clone https://github.com/inchwormz/mythos-skill && cd mythos-skill && npm run ready",

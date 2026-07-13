@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// Mythos Codex driver.
+// Receipts Codex driver.
 //
 // Codex is the vessel/main brain. This local driver only creates explicit run
-// state, invokes mythos-compiler, and prints the packet Codex should consume.
+// state, invokes receipts-compiler, and prints the packet Codex should consume.
 
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
@@ -10,7 +10,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const compilerDir = path.join(here, "mythos-compiler");
+const compilerDir = path.join(here, "receipts-compiler");
 
 function usage() {
   return [
@@ -19,7 +19,7 @@ function usage() {
     "  node driver.mjs --run-dir <path>",
     '  node driver.mjs --run-dir <path> --record-synthesis "<summary>"',
     "",
-    "Creates or compiles a Mythos run directory, then prints the source-backed",
+    "Creates or compiles a Receipts run directory, then prints the source-backed",
     "next-pass packet for Codex to synthesize from.",
   ].join("\n");
 }
@@ -254,7 +254,7 @@ function createRunDir(objective) {
   const runId = `run-${stamp}`;
   // F10: runs live under the PROJECT being worked on (cwd), never inside the
   // installed package directory.
-  const runDir = path.join(process.cwd(), ".mythos", "runs", `${stamp}-${slugify(objective)}`);
+  const runDir = path.join(process.cwd(), ".receipts", "runs", `${stamp}-${slugify(objective)}`);
 
   mkdirp(path.join(runDir, "raw"));
   mkdirp(path.join(runDir, "worker-results"));
@@ -307,9 +307,9 @@ function createRunDir(objective) {
 }
 
 function compileRunDir(runDir) {
-  // Prefer the installed `mythos` binary from PATH (installed via
-  // `cargo install mythos-skill`). Fall back to `cargo run` only when we're
-  // inside a source checkout that still has mythos-compiler/Cargo.toml —
+  // Prefer the installed `receipts-core` binary from PATH (installed via
+  // `cargo install receipts-skill`). Fall back to `cargo run` only when we're
+  // inside a source checkout that still has receipts-compiler/Cargo.toml —
   // the npm-distributed package ships schemas + fixtures only, so cargo
   // won't work there even if it's installed.
   const compilerCargoToml = path.join(compilerDir, "Cargo.toml");
@@ -319,7 +319,7 @@ function compileRunDir(runDir) {
   if (sourceCheckout) {
     result = spawnSync(
       "cargo",
-      ["run", "--quiet", "--bin", "mythos", "--", "compile", "--run-dir", runDir],
+      ["run", "--quiet", "--bin", "receipts-core", "--", "compile", "--run-dir", runDir],
       {
         cwd: compilerDir,
         encoding: "utf8",
@@ -327,7 +327,7 @@ function compileRunDir(runDir) {
       },
     );
   } else {
-    result = spawnSync("mythos", ["compile", "--run-dir", runDir], {
+    result = spawnSync("receipts-core", ["compile", "--run-dir", runDir], {
       encoding: "utf8",
       shell: process.platform === "win32",
     });
@@ -336,18 +336,18 @@ function compileRunDir(runDir) {
   if (result.error) {
     if (!sourceCheckout && result.error.code === "ENOENT") {
       fail(
-        "mythos binary not found on PATH. Install it with `cargo install mythos-skill` " +
-          "(or run from a source checkout that has mythos-compiler/Cargo.toml).",
+        "receipts-core binary not found on PATH. Install it with `cargo install --path receipts-compiler` " +
+          "(or run from a source checkout that has receipts-compiler/Cargo.toml).",
       );
     }
-    fail(`mythos-compiler spawn failed: ${result.error.message}`);
+    fail(`receipts-compiler spawn failed: ${result.error.message}`);
   }
   const stdout = typeof result.stdout === "string" ? result.stdout.trim() : "";
   const stderr = typeof result.stderr === "string" ? result.stderr.trim() : "";
   if (result.status !== 0) {
     fail(
       [
-        `mythos-compiler failed with exit code ${result.status}`,
+        `receipts-compiler failed with exit code ${result.status}`,
         stdout,
         stderr,
       ]
@@ -371,7 +371,7 @@ function writeCodexPrompt(runDir, packetPath) {
   fs.writeFileSync(
     promptPath,
     [
-      "# Mythos Next Pass",
+      "# Receipts Next Pass",
       "",
       "Read the compiled packet below and act as the main synthesis brain.",
       "",

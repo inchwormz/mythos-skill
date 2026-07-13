@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mythos.local/schemas/next_pass_packet.schema.json",
+  "$id": "https://receipts.local/schemas/next_pass_packet.schema.json",
   "title": "NextPassPacket",
   "type": "object",
   "required": [

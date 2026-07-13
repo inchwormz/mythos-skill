@@ -31,7 +31,7 @@ function fnv1aHashBytes(buffer) {
 
 function freshRunDir(name) {
   const stamp = new Date().toISOString().replace(/[-:.]/g, "").replace(/\d{3}Z$/, "Z");
-  const runDir = path.join(repoRoot, ".codex", "mythos", `tmp-m0-${stamp}-${process.pid}-${name}`);
+  const runDir = path.join(repoRoot, ".codex", "receipts", `tmp-m0-${stamp}-${process.pid}-${name}`);
   fs.mkdirSync(path.join(runDir, "raw", "subagents"), { recursive: true });
   fs.mkdirSync(path.join(runDir, "worker-results"), { recursive: true });
   fs.mkdirSync(path.join(runDir, "verifier-results"), { recursive: true });
@@ -65,7 +65,7 @@ function freshRunDir(name) {
     "utf8",
   );
   // Real runs always carry the seed synthesis finding (driver createRunDir and
-  // `mythos init` both write it); an empty findings file is not a real state.
+  // `receipts-core init` both write it); an empty findings file is not a real state.
   fs.writeFileSync(
     path.join(runDir, "verifier-results", "findings.jsonl"),
     JSON.stringify({
@@ -83,8 +83,8 @@ function freshRunDir(name) {
 
 function removeDir(dir) {
   if (!dir) return;
-  if (!dir.startsWith(path.join(repoRoot, ".codex", "mythos"))) {
-    throw new Error(`refusing to remove outside .codex/mythos: ${dir}`);
+  if (!dir.startsWith(path.join(repoRoot, ".codex", "receipts"))) {
+    throw new Error(`refusing to remove outside .codex/receipts: ${dir}`);
   }
   fs.rmSync(dir, { recursive: true, force: true });
 }
@@ -116,12 +116,12 @@ function writeFenced(runDir, name, evidenceRecords, verifierRecords = []) {
   const file = path.join(runDir, "raw", "subagents", `${name}.md`);
   const lines = [];
   if (evidenceRecords.length > 0) {
-    lines.push("```mythos-evidence-jsonl");
+    lines.push("```receipts-evidence-jsonl");
     for (const record of evidenceRecords) lines.push(JSON.stringify(record));
     lines.push("```", "");
   }
   if (verifierRecords.length > 0) {
-    lines.push("```mythos-verifier-jsonl");
+    lines.push("```receipts-verifier-jsonl");
     for (const record of verifierRecords) lines.push(JSON.stringify(record));
     lines.push("```", "");
   }
@@ -177,7 +177,7 @@ test("F4: one lane forging three agent identities cannot beat the coverage floor
 
   runNode(["driver.mjs", "--run-dir", runDir]);
   const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], {
-    env: { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "3" },
+    env: { ...process.env, RECEIPTS_MIN_AGENT_COVERAGE: "3" },
   });
   assert.notEqual(gate.status, 0, "gate must fail when real coverage is one agent");
   assert.ok(
@@ -293,7 +293,7 @@ test("F6: naming a finding 'subagent' no longer waives the direct-provenance req
 
   runNode(["driver.mjs", "--run-dir", runDir]);
   const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], {
-    env: { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "1" },
+    env: { ...process.env, RECEIPTS_MIN_AGENT_COVERAGE: "1" },
   });
   assert.notEqual(gate.status, 0, "gate must fail on the vocabulary-gamed finding");
   assert.ok(
@@ -314,7 +314,7 @@ test("F12: gate refuses to run without a content fingerprint", (t) => {
   fs.rmSync(fingerprint);
 
   const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], {
-    env: { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "1" },
+    env: { ...process.env, RECEIPTS_MIN_AGENT_COVERAGE: "1" },
   });
   assert.notEqual(gate.status, 0, "gate must fail without a fingerprint");
   assert.ok(

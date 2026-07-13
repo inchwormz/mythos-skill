@@ -1,6 +1,6 @@
 //! M1: the execution-receipt journal.
 //!
-//! `mythos run -- <cmd>` executes a command and appends a runtime-minted
+//! `receipts run -- <cmd>` executes a command and appends a runtime-minted
 //! `ReceiptRecord` to `<run-dir>/receipts/receipts.jsonl`. The journal is
 //! hash-chained: each record's `record_hash` covers its own content (record
 //! serialized without the `record_hash` field) and `prev_record_hash` links
@@ -20,7 +20,7 @@ use std::path::{Path, PathBuf};
 
 pub const GENESIS: &str = "GENESIS";
 
-/// The one label work receipts (`mythos diff`) carry. This label is
+/// The one label work receipts (`receipts diff`) carry. This label is
 /// deliberately INVISIBLE to claim attestation: work receipts attest tree
 /// state, never claims. Both the Rust compiler and the JS gate must exclude
 /// it from passing-label logic and from citable receipt ids.
@@ -220,7 +220,7 @@ mod tests {
             tree_after: None,
             lane: Some("orchestrator".to_string()),
             agent_id: Some("prime".to_string()),
-            writer: "mythos-test".to_string(),
+            writer: "receipts-test".to_string(),
             prev_record_hash: String::new(),
             record_hash: String::new(),
         }
@@ -231,7 +231,7 @@ mod tests {
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.as_nanos())
             .unwrap_or(0);
-        let dir = std::env::temp_dir().join(format!("mythos-rcpt-{tag}-{nanos}"));
+        let dir = std::env::temp_dir().join(format!("receipts-rcpt-{tag}-{nanos}"));
         fs::create_dir_all(&dir).expect("temp run dir");
         dir
     }
@@ -275,7 +275,7 @@ mod tests {
         record.prev_record_hash = "GENESIS".to_string();
         record.record_hash = String::new();
         let serialized = serde_json::to_string(&record).expect("serialize");
-        let expected = "{\"id\":\"rcpt-0001\",\"label\":\"test:demo\",\"cmd\":[\"echo\",\"hi\"],\"cwd\":\".\",\"exit_code\":0,\"duration_ms\":5,\"started_at\":\"2026-07-12T00:00:00Z\",\"ended_at\":\"2026-07-12T00:00:01Z\",\"stdout_hash\":\"0000000000000000\",\"stderr_hash\":\"0000000000000000\",\"stdout_tail\":\"hi\",\"stderr_tail\":\"\",\"lane\":\"orchestrator\",\"agent_id\":\"prime\",\"writer\":\"mythos-test\",\"prev_record_hash\":\"GENESIS\",\"record_hash\":\"\"}";
+        let expected = "{\"id\":\"rcpt-0001\",\"label\":\"test:demo\",\"cmd\":[\"echo\",\"hi\"],\"cwd\":\".\",\"exit_code\":0,\"duration_ms\":5,\"started_at\":\"2026-07-12T00:00:00Z\",\"ended_at\":\"2026-07-12T00:00:01Z\",\"stdout_hash\":\"0000000000000000\",\"stderr_hash\":\"0000000000000000\",\"stdout_tail\":\"hi\",\"stderr_tail\":\"\",\"lane\":\"orchestrator\",\"agent_id\":\"prime\",\"writer\":\"receipts-test\",\"prev_record_hash\":\"GENESIS\",\"record_hash\":\"\"}";
         assert_eq!(
             serialized, expected,
             "ReceiptRecord serialization changed - the record is FROZEN (see receipt_record_is_frozen_canary comment)"

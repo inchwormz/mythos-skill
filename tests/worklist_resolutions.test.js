@@ -3,7 +3,7 @@
 // The adversarial design review's finding 3: blocking categories without a
 // clearing mechanism deadlock the gate by construction (contradictions and
 // blockers are recomputed from append-only inputs forever). These tests prove
-// the full circuit: blocking item -> gate red -> `mythos resolve` -> recompile
+// the full circuit: blocking item -> gate red -> `receipts-core resolve` -> recompile
 // -> gate green; and that advisory items never red the gate.
 import { strict as assert } from "node:assert";
 import { spawnSync } from "node:child_process";
@@ -14,11 +14,11 @@ import { fileURLToPath } from "node:url";
 
 const thisFile = fileURLToPath(import.meta.url);
 const repoRoot = path.dirname(path.dirname(thisFile));
-const compilerDir = path.join(repoRoot, "mythos-compiler");
+const compilerDir = path.join(repoRoot, "receipts-compiler");
 
 function freshRunDir(name) {
   const stamp = new Date().toISOString().replace(/[-:.]/g, "").replace(/\d{3}Z$/, "Z");
-  const runDir = path.join(repoRoot, ".codex", "mythos", `tmp-wl-${stamp}-${process.pid}-${name}`);
+  const runDir = path.join(repoRoot, ".codex", "receipts", `tmp-wl-${stamp}-${process.pid}-${name}`);
   fs.mkdirSync(path.join(runDir, "raw", "subagents"), { recursive: true });
   fs.mkdirSync(path.join(runDir, "worker-results"), { recursive: true });
   fs.mkdirSync(path.join(runDir, "verifier-results"), { recursive: true });
@@ -68,8 +68,8 @@ function freshRunDir(name) {
 
 function removeDir(dir) {
   if (!dir) return;
-  if (!dir.startsWith(path.join(repoRoot, ".codex", "mythos"))) {
-    throw new Error(`refusing to remove outside .codex/mythos: ${dir}`);
+  if (!dir.startsWith(path.join(repoRoot, ".codex", "receipts"))) {
+    throw new Error(`refusing to remove outside .codex/receipts: ${dir}`);
   }
   fs.rmSync(dir, { recursive: true, force: true });
 }
@@ -83,8 +83,8 @@ function runNode(args, options = {}) {
   });
 }
 
-function mythosBin(args) {
-  return spawnSync("cargo", ["run", "--quiet", "--bin", "mythos", "--", ...args], {
+function coreBin(args) {
+  return spawnSync("cargo", ["run", "--quiet", "--bin", "receipts-core", "--", ...args], {
     cwd: compilerDir,
     encoding: "utf8",
     shell: process.platform === "win32",
@@ -119,13 +119,13 @@ function readJsonl(file) {
 
 function gate(runDir) {
   return runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], {
-    env: { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "1" },
+    env: { ...process.env, RECEIPTS_MIN_AGENT_COVERAGE: "1" },
   });
 }
 
 const now = () => new Date().toISOString();
 
-test("blocked lane -> gate red -> mythos resolve -> gate green (no deadlock)", (t) => {
+test("blocked lane -> gate red -> receipts resolve -> gate green (no deadlock)", (t) => {
   const runDir = freshRunDir("unblock-circuit");
   t.after(() => removeDir(runDir));
 
@@ -149,10 +149,10 @@ test("blocked lane -> gate red -> mythos resolve -> gate green (no deadlock)", (
     red.stdout.includes("unresolved blocking worklist item [unblock]"),
     `gate must name the unblock item with guidance; got ${red.stdout}`,
   );
-  assert.ok(red.stdout.includes("mythos resolve"), "gate error must teach the clearing command");
+  assert.ok(red.stdout.includes("receipts resolve"), "gate error must teach the clearing command");
 
   // Prime adjudicates, recompiles - green.
-  const resolve = mythosBin(["resolve", "--run-dir", runDir, "--target", blocker.id, "--reason", "lane-restarted-with-credentials"]);
+  const resolve = coreBin(["resolve", "--run-dir", runDir, "--target", blocker.id, "--reason", "lane-restarted-with-credentials"]);
   assert.equal(resolve.status, 0, `resolve must succeed: ${resolve.stderr}`);
   assert.equal(runNode(["driver.mjs", "--run-dir", runDir]).status, 0);
   const green = gate(runDir);
@@ -176,7 +176,7 @@ test("high-severity contradiction blocks until adjudicated; advisory verify-clai
     runDir,
     "lane-a",
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({ id: "ev-a-change", kind: "code-change", summary: "Rewrote the dispatcher header to add strict mode enforcement", source_ids: ["file:driver.mjs:1"], source_refs: [refA], observed_at: now() }),
       JSON.stringify({ id: "ev-a-solo", kind: "code-change", summary: "Standalone change nobody contests", source_ids: ["file:package.json:1", "test:never-verified"], observed_at: now() }),
       "```",
@@ -188,7 +188,7 @@ test("high-severity contradiction blocks until adjudicated; advisory verify-clai
     runDir,
     "lane-b",
     [
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({ id: "ev-b-change", kind: "code-change", summary: "Reverted every dispatcher edit; the header is untouched original", source_ids: ["file:driver.mjs:1"], source_refs: [refA], observed_at: now() }),
       "```",
       "",
@@ -213,7 +213,7 @@ test("high-severity contradiction blocks until adjudicated; advisory verify-clai
   assert.ok(withArgv, "label-citing claim must get a suggested argv");
   assert.deepEqual(
     withArgv.suggested_argv,
-    ["mythos", "run", "--run-dir", "<run-dir>", "--label", "test:never-verified", "--"],
+    ["receipts", "run", "--run-dir", "<run-dir>", "--label", "test:never-verified", "--"],
     "argv must be engine tokens with a placeholder run dir",
   );
 
@@ -226,7 +226,7 @@ test("high-severity contradiction blocks until adjudicated; advisory verify-clai
   );
 
   const target = adjudicate.decision_dependency_ids[0];
-  const resolve = mythosBin(["resolve", "--run-dir", runDir, "--target", target, "--reason", "lane-b-is-correct-verified-by-prime", "--cite", "file:driver.mjs:1"]);
+  const resolve = coreBin(["resolve", "--run-dir", runDir, "--target", target, "--reason", "lane-b-is-correct-verified-by-prime", "--cite", "file:driver.mjs:1"]);
   assert.equal(resolve.status, 0, resolve.stderr);
   assert.equal(runNode(["driver.mjs", "--run-dir", runDir]).status, 0);
   const green = gate(runDir);
@@ -240,7 +240,7 @@ test("a tampered resolutions journal fails compile (adjudications are custody-tr
   const ingest = ingestLane(runDir, "stuck", "BLOCKED cannot-proceed\n");
   assert.equal(ingest.status, 0);
   const blocker = readJsonl(path.join(runDir, "worker-results", "evidence.jsonl")).find((r) => r.kind === "blocker");
-  assert.equal(mythosBin(["resolve", "--run-dir", runDir, "--target", blocker.id, "--reason", "fine-actually"]).status, 0);
+  assert.equal(coreBin(["resolve", "--run-dir", runDir, "--target", blocker.id, "--reason", "fine-actually"]).status, 0);
 
   const journal = path.join(runDir, "decisions", "resolutions.jsonl");
   fs.writeFileSync(journal, fs.readFileSync(journal, "utf8").replace("fine-actually", "totally-different-reason"), "utf8");

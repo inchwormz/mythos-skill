@@ -9,7 +9,7 @@ use crate::compiler::signals::detect_recurring_failure_patterns;
 use crate::compiler::snapshot::build_snapshot;
 use crate::schema::{
     CandidateAction, CompiledFact, Contradiction, DecisionLogRecord, EvidenceRecord, HaltSignal,
-    Hypothesis, MYTHOS_HASH_ALG, ReceiptRecord, SnapshotInput, SourceRef, StateDelta,
+    Hypothesis, RECEIPTS_HASH_ALG, ReceiptRecord, SnapshotInput, SourceRef, StateDelta,
     VerifierFinding, WorkerResult,
 };
 use serde::{Deserialize, Serialize};
@@ -370,7 +370,7 @@ fn collect_raw_sources(
                 path: format!("raw/{source_path}"),
                 kind: "raw".to_string(),
                 hash: fnv1a_hash(&bytes),
-                hash_alg: MYTHOS_HASH_ALG.to_string(),
+                hash_alg: RECEIPTS_HASH_ALG.to_string(),
                 hash_basis: Some("content".to_string()),
                 span: None,
                 observed_at: observed_at.to_string(),
@@ -388,7 +388,7 @@ fn evidence_sources(evidence: &[EvidenceRecord]) -> Vec<SourceRef> {
             path: "worker-results/evidence.jsonl".to_string(),
             kind: item.kind.clone(),
             hash: fnv1a_hash(item.summary.as_bytes()),
-            hash_alg: MYTHOS_HASH_ALG.to_string(),
+            hash_alg: RECEIPTS_HASH_ALG.to_string(),
             hash_basis: None,
             span: Some(item.id.clone()),
             observed_at: item.observed_at.clone(),
@@ -411,7 +411,7 @@ fn verifier_sources(findings: &[VerifierFinding], observed_at: &str) -> Vec<Sour
             path: "verifier-results/findings.jsonl".to_string(),
             kind: "verifier".to_string(),
             hash: fnv1a_hash(finding.summary.as_bytes()),
-            hash_alg: MYTHOS_HASH_ALG.to_string(),
+            hash_alg: RECEIPTS_HASH_ALG.to_string(),
             hash_basis: None,
             span: Some(finding.id.clone()),
             observed_at: observed_at.to_string(),
@@ -486,9 +486,9 @@ fn verify_record_file_refs(
     refs: &[SourceRef],
 ) -> Result<(), Box<dyn std::error::Error>> {
     for source in refs {
-        if source.hash_alg != MYTHOS_HASH_ALG {
+        if source.hash_alg != RECEIPTS_HASH_ALG {
             return Err(format!(
-                "{label} `{id}` source_ref `{}` uses unsupported hash_alg `{}` (expected `{MYTHOS_HASH_ALG}`)",
+                "{label} `{id}` source_ref `{}` uses unsupported hash_alg `{}` (expected `{RECEIPTS_HASH_ALG}`)",
                 source.source_id, source.hash_alg
             )
             .into());
@@ -610,7 +610,7 @@ fn receipt_source_ref(receipt: &ReceiptRecord) -> SourceRef {
         path: "receipts/receipts.jsonl".to_string(),
         kind: "receipt".to_string(),
         hash: receipt.record_hash.clone(),
-        hash_alg: MYTHOS_HASH_ALG.to_string(),
+        hash_alg: RECEIPTS_HASH_ALG.to_string(),
         hash_basis: Some("content".to_string()),
         span: Some(receipt.id.clone()),
         observed_at: receipt.ended_at.clone(),
@@ -630,7 +630,7 @@ fn receipt_evidence_record(receipt: &ReceiptRecord) -> EvidenceRecord {
         id: format!("ev-{}", receipt.id),
         kind: "receipt".to_string(),
         summary: format!(
-            "mythos run: `{}` exited {} in {}ms{}",
+            "receipts run: `{}` exited {} in {}ms{}",
             receipt.cmd.join(" "),
             receipt.exit_code,
             receipt.duration_ms,
@@ -1101,7 +1101,7 @@ fn derive_worklist(
         let suggested = cited_label
             .map(|label| {
                 vec![
-                    "mythos".to_string(),
+                    "receipts".to_string(),
                     "run".to_string(),
                     "--run-dir".to_string(),
                     "<run-dir>".to_string(),
@@ -1282,7 +1282,7 @@ fn fnv1a_hash(bytes: &[u8]) -> String {
 #[cfg(test)]
 mod tests {
     use super::compile_run_dir;
-    use crate::schema::{MYTHOS_HASH_ALG, MYTHOS_SCHEMA_VERSION, NextPassPacket};
+    use crate::schema::{NextPassPacket, RECEIPTS_HASH_ALG, RECEIPTS_SCHEMA_VERSION};
     use std::fs;
 
     #[test]
@@ -1306,7 +1306,7 @@ mod tests {
 
         let packet: NextPassPacket =
             serde_json::from_str(&packet_json).expect("packet is valid NextPassPacket");
-        assert_eq!(packet.schema_version, MYTHOS_SCHEMA_VERSION);
+        assert_eq!(packet.schema_version, RECEIPTS_SCHEMA_VERSION);
         assert!(!packet.sources.is_empty(), "packet must include sources");
 
         // F1: the fixture's vf-1 (passed) cites evidence:ev-2, so ev-2 — and
@@ -1331,7 +1331,7 @@ mod tests {
         );
 
         for source in &packet.sources {
-            assert_eq!(source.hash_alg, MYTHOS_HASH_ALG);
+            assert_eq!(source.hash_alg, RECEIPTS_HASH_ALG);
             assert_eq!(
                 source.hash.len(),
                 16,
@@ -1369,7 +1369,7 @@ mod tests {
 
     #[test]
     fn compile_detects_tampered_declared_file_ref() {
-        let tmp = std::env::temp_dir().join("mythos-compile-tamper");
+        let tmp = std::env::temp_dir().join("receipts-compile-tamper");
         let _ = fs::remove_dir_all(&tmp);
         fs::create_dir_all(tmp.join("raw")).unwrap();
         fs::create_dir_all(tmp.join("worker-results")).unwrap();

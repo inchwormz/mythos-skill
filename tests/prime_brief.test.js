@@ -1,4 +1,4 @@
-// Phase 3: drill-down spans, lane digests, and the `mythos next` brief.
+// Phase 3: drill-down spans, lane digests, and the `receipts-core next` brief.
 import { strict as assert } from "node:assert";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
@@ -8,11 +8,11 @@ import { fileURLToPath } from "node:url";
 
 const thisFile = fileURLToPath(import.meta.url);
 const repoRoot = path.dirname(path.dirname(thisFile));
-const compilerDir = path.join(repoRoot, "mythos-compiler");
+const compilerDir = path.join(repoRoot, "receipts-compiler");
 
 function freshRunDir(name) {
   const stamp = new Date().toISOString().replace(/[-:.]/g, "").replace(/\d{3}Z$/, "Z");
-  const runDir = path.join(repoRoot, ".codex", "mythos", `tmp-brief-${stamp}-${process.pid}-${name}`);
+  const runDir = path.join(repoRoot, ".codex", "receipts", `tmp-brief-${stamp}-${process.pid}-${name}`);
   fs.mkdirSync(path.join(runDir, "raw", "subagents"), { recursive: true });
   fs.mkdirSync(path.join(runDir, "worker-results"), { recursive: true });
   fs.mkdirSync(path.join(runDir, "verifier-results"), { recursive: true });
@@ -45,8 +45,8 @@ function freshRunDir(name) {
 
 function removeDir(dir) {
   if (!dir) return;
-  if (!dir.startsWith(path.join(repoRoot, ".codex", "mythos"))) {
-    throw new Error(`refusing to remove outside .codex/mythos: ${dir}`);
+  if (!dir.startsWith(path.join(repoRoot, ".codex", "receipts"))) {
+    throw new Error(`refusing to remove outside .codex/receipts: ${dir}`);
   }
   fs.rmSync(dir, { recursive: true, force: true });
 }
@@ -55,8 +55,8 @@ function runNode(args, options = {}) {
   return spawnSync("node", args, { cwd: repoRoot, encoding: "utf8", shell: process.platform === "win32", ...options });
 }
 
-function mythosBin(args) {
-  return spawnSync("cargo", ["run", "--quiet", "--bin", "mythos", "--", ...args], {
+function coreBin(args) {
+  return spawnSync("cargo", ["run", "--quiet", "--bin", "receipts-core", "--", ...args], {
     cwd: compilerDir,
     encoding: "utf8",
     shell: process.platform === "win32",
@@ -83,7 +83,7 @@ test("drill-down: records carry span-suffixed raw citations computed from the FI
     [
       "Report prose before the block.",
       "",
-      "```mythos-evidence-jsonl",
+      "```receipts-evidence-jsonl",
       JSON.stringify({ id: "ev-span-probe", kind: "observation", summary: "span probe claim", source_ids: ["file:driver.mjs:1"], observed_at: now() }),
       "```",
       "",
@@ -111,7 +111,7 @@ test("drill-down: records carry span-suffixed raw citations computed from the FI
 
   // Compile + gate: spans validate clean.
   assert.equal(runNode(["driver.mjs", "--run-dir", runDir]).status, 0);
-  const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], { env: { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "1" } });
+  const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], { env: { ...process.env, RECEIPTS_MIN_AGENT_COVERAGE: "1" } });
   assert.ok(!gate.stdout.includes("outside file line range"), `raw spans must validate; got ${gate.stdout}`);
 });
 
@@ -140,24 +140,24 @@ test("gate rejects raw spans pointing outside the quarantined file", (t) => {
     "utf8",
   );
   runNode(["driver.mjs", "--run-dir", runDir]);
-  const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], { env: { ...process.env, MYTHOS_MIN_AGENT_COVERAGE: "1" } });
+  const gate = runNode(["scripts/strict-gate.mjs", "--run-dir", runDir], { env: { ...process.env, RECEIPTS_MIN_AGENT_COVERAGE: "1" } });
   assert.notEqual(gate.status, 0);
   assert.ok(gate.stdout.includes("outside file line range"), `bad raw span must be rejected; got ${gate.stdout}`);
 });
 
-test("lane digests are conservative and mythos next renders the brief", (t) => {
+test("lane digests are conservative and receipts next renders the brief", (t) => {
   const runDir = freshRunDir("digests-next");
   t.after(() => removeDir(runDir));
 
   // Passing receipt for a label, then a lane that rides the LABEL (never the
   // receipt id) - its attestation is label-backed, so the digest must floor
   // at read-unverified, never skip-verified.
-  const mint = mythosBin(["run", "--run-dir", runDir, "--lane", "orchestrator", "--agent-id", "prime", "--label", "test:demo", "--", "node", "-e", "process.exit(0)"]);
+  const mint = coreBin(["run", "--run-dir", runDir, "--lane", "orchestrator", "--agent-id", "prime", "--label", "test:demo", "--", "node", "-e", "process.exit(0)"]);
   assert.equal(mint.status, 0, mint.stderr);
   const laneFile = path.join(runDir, "raw", "subagents", "rider.md");
   fs.writeFileSync(
     laneFile,
-    ["```mythos-evidence-jsonl", JSON.stringify({ id: "ev-label-rider", kind: "observation", summary: "the demo check passes for my change", source_ids: ["test:demo"], observed_at: now() }), "```", ""].join("\n"),
+    ["```receipts-evidence-jsonl", JSON.stringify({ id: "ev-label-rider", kind: "observation", summary: "the demo check passes for my change", source_ids: ["test:demo"], observed_at: now() }), "```", ""].join("\n"),
     "utf8",
   );
   assert.equal(
@@ -180,15 +180,15 @@ test("lane digests are conservative and mythos next renders the brief", (t) => {
   assert.equal(orchestratorDigest.read_recommendation, "skip-verified", "infra-only receipt lane is skippable");
 
   // The brief.
-  const brief = mythosBin(["next", "--run-dir", runDir]);
+  const brief = coreBin(["next", "--run-dir", runDir]);
   assert.equal(brief.status, 0, brief.stderr);
   assert.ok(brief.stdout.includes("RECEIPTS BRIEF"), brief.stdout);
   assert.ok(brief.stdout.includes("WORKLIST"), "brief must lead with the worklist");
   assert.ok(brief.stdout.includes("rider [read-unverified]"), `brief must render digests; got ${brief.stdout}`);
   assert.ok(brief.stdout.includes("drill: raw:subagents/rider.md:"), "brief must expose drill handles");
-  assert.ok(brief.stdout.includes("DRIFT: unknown - run mythos-skill gate"), "drift placeholder without a gate report");
+  assert.ok(brief.stdout.includes("DRIFT: unknown - run receipts gate"), "drift placeholder without a gate report");
 
-  const briefJson = mythosBin(["next", "--run-dir", runDir, "--json"]);
+  const briefJson = coreBin(["next", "--run-dir", runDir, "--json"]);
   assert.equal(briefJson.status, 0, briefJson.stderr);
   const parsed = JSON.parse(briefJson.stdout);
   assert.ok(Array.isArray(parsed.lane_digests) && parsed.lane_digests.length >= 2);
