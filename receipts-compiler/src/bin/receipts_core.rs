@@ -334,7 +334,23 @@ fn run_with_receipt(args: Vec<String>) -> Result<(), Box<dyn std::error::Error>>
 fn parse_run_invocation(
     args: Vec<String>,
 ) -> Result<(Vec<String>, Vec<String>), Box<dyn std::error::Error>> {
-    if let Some(separator) = args.iter().position(|arg| arg == "--") {
+    let mut scan = 0;
+    let mut separator = None;
+    while scan < args.len() {
+        if args[scan] == "--" {
+            separator = Some(scan);
+            break;
+        }
+        if matches!(
+            args[scan].as_str(),
+            "--run-dir" | "--lane" | "--agent-id" | "--label" | "--exe" | "--arg"
+        ) {
+            scan += 2;
+        } else {
+            scan += 1;
+        }
+    }
+    if let Some(separator) = separator {
         let flags = args[..separator].to_vec();
         if flags.iter().any(|arg| arg == "--exe" || arg == "--arg") {
             return Err("`run` cannot combine `--` with `--exe`/`--arg`".into());
