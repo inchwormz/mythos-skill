@@ -782,9 +782,21 @@ function harvestProseClaims(text) {
 // and tolerates leading/trailing whitespace, so subagents can put it on the
 // last line of an otherwise-prose response or inline in a report section.
 function findBlockedSentinel(text) {
-  const match = text.match(/^[ \t]*BLOCKED[ \t]+(.+?)[ \t]*$/m);
+  let inFence = false;
+  const unfencedText = text
+    .split(/\r?\n/)
+    .map((line) => {
+      if (/^[ \t]*(```|~~~)/.test(line)) {
+        inFence = !inFence;
+        return "";
+      }
+      return inFence ? "" : line;
+    })
+    .join("\n");
+  const match = unfencedText.match(/^[ \t]*BLOCKED(?::|[ \t]+)[ \t]*(.+?)[ \t]*$/m);
   if (!match) return null;
   const reason = match[1].trim();
+  if (/^\d+\s*->\s*\d+$/.test(reason)) return null;
   return reason.length > 0 ? reason : null;
 }
 

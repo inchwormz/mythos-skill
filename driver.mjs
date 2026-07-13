@@ -148,6 +148,10 @@ function parseArgs(argv) {
   if (argv.length === 0) {
     fail(usage(), 2);
   }
+  if (argv.length === 1 && ["--help", "-h", "help"].includes(argv[0])) {
+    process.stdout.write(`${usage()}\n`);
+    process.exit(0);
+  }
 
   const runDirFlag = argv.indexOf("--run-dir");
   const recordSynthesisFlag = argv.indexOf("--record-synthesis");
