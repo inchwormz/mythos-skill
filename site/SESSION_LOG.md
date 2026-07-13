@@ -97,3 +97,19 @@ Re-serve attempt:
 
 - Local server receipt — PASS: `http://127.0.0.1:4175/` returns 200 and contains the rich terminal surface plus Claude, Codex, Grok, and Gemini labels.
 - Third private deployment retry: `appgdep_6a54364613bc8191b1cf9dfeecdaa8d`; after a fresh queue wait it remains `pending`, with no provider deployment ID and no hosted content change.
+
+## Terminal copy and visual direction correction
+
+Date: 2026-07-13
+
+Simplified the terminal copy and shifted the visual language toward the original compiler-emitted dark surface: short labels, compact file/state values, denser layout, and warm monochrome/amber accents. Removed terminal green/blue state classes, round status/window markers, and the source grid-dot orb visuals. The heading rule now applies Geist to every heading in `main` while the existing header remains Inter.
+
+Fresh verification:
+
+- TDD red receipt — the new smoke guard failed on the previous long terminal sentence before the implementation change.
+- `node site/smoke.test.mjs` — PASS, 3 tests, 0 failures.
+- `node site/build-worker.mjs` — PASS, generated Worker with 38 assets.
+- Browser desktop — PASS; warm terminal palette, compact copy, no orb markers, and computed Geist H1/H2/H3 with Inter header.
+- Browser mobile at `390x844` — PASS; document/body width remain 390px and console errors/warnings are 0.
+
+Private republish remains blocked by the existing Sites deployment queue; the saved hosted version still does not contain this correction.

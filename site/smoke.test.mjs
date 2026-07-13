@@ -17,7 +17,7 @@ test("the blueprint-stripped Receipts shell explains the product", async () => {
     "next_pass_packet.json",
     "Prime handoff",
     "Run provenance",
-    "Packet awaiting next agent",
+    "PACKET READY",
     "Claude",
     "Codex",
     "Grok",
@@ -66,9 +66,9 @@ test("the Receipts workbench keeps local actions and responsive guardrails", asy
     "receipts-terminal-packet-rail",
     "receipts-terminal-code-line",
     "receipts-terminal-statusbar",
-    "subagent / verifier",
-    "prime agent / cli",
-    "SUMMARY READY",
+    "subagent",
+    "prime / cli",
+    "READY",
     "PACKET READY",
     "run_id",
     "receipt_id",
@@ -87,6 +87,13 @@ test("the Receipts workbench keeps local actions and responsive guardrails", asy
   assert.ok((html.match(/data-receipts-terminal="prime"/g) ?? []).length >= 2, "Prime terminal panes are missing")
   assert.ok((html.match(/receipts-terminal-code-line/g) ?? []).length >= 26, "line-numbered packet output is too shallow")
   assert.doesNotMatch(html, /JgFxua_wrapper|_8fVXdW_codeSectionDesktop/, "borrowed HTML or code-diff mockup remains")
+  assert.doesNotMatch(
+    html,
+    /Capture the command output before handing the result to Prime\.|Evidence chain is intact\. Prime can continue without guessing\.|The command completed cleanly; the evidence needed for the next pass is attached\./,
+    "terminal UI still contains sales-copy paragraphs",
+  )
+  assert.doesNotMatch(html, /receipts-terminal-(?:window-dot|status-led|rail-pulse)/, "terminal still uses orb markers")
+  assert.doesNotMatch(html, /receipts-terminal-(?:blue|green)/, "terminal still uses AI color classes")
 
   for (const selector of [
     'data-receipts-action="run"',
@@ -102,9 +109,11 @@ test("the Receipts workbench keeps local actions and responsive guardrails", asy
   assert.match(css, /receipts-terminal-workbench/)
   assert.match(css, /grid-template-columns:\s*minmax\(0, \.92fr\)/)
   assert.match(css, /font-family:\s*"GeistSans"/)
-  assert.match(css, /body h1/)
+  assert.match(css, /main\s+:where\(h1, h2, h3, h4, h5, h6\)/, "all main headings need the Geist rule")
   assert.match(css, /\.TZTsQG_header, \.TZTsQG_header \*/)
   assert.match(css, /var\(--font-monospace\)/)
+  assert.match(css, /\.ss-circle,\s*\[class\*="grid-dot-"\]/, "orb visuals need a kill switch")
+  assert.match(css, /--receipts-terminal-accent:\s*#/, "terminal palette needs a warm neutral accent")
   assert.match(css, /:focus-visible/)
 })
 

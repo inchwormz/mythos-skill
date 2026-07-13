@@ -20278,3 +20278,145 @@ body h1, body h1 * { font-family: var(--receipts-heading-font) !important; }
   .receipts-terminal-statusbar { gap: 8px; overflow: hidden; padding-inline: 9px; }
   .receipts-terminal-statusbar span:nth-child(2) { display: none; }
 }
+
+/* Receipts terminal direction: warm monochrome, compact labels, no orb treatment. */
+:root {
+  --receipts-terminal-accent: #d8ad6c;
+  --receipts-terminal-accent-soft: rgba(216, 173, 108, .14);
+  --receipts-terminal-ink: #eadfcb;
+}
+
+main :where(h1, h2, h3, h4, h5, h6),
+main :where(h1, h2, h3, h4, h5, h6) * {
+  font-family: var(--receipts-heading-font) !important;
+}
+
+.TZTsQG_header,
+.TZTsQG_header * {
+  font-family: var(--font-regular) !important;
+}
+
+.ss-circle,
+[class*="grid-dot-"] {
+  display: none !important;
+}
+
+.receipts-terminal-window-controls,
+.receipts-terminal-window-dot,
+.receipts-terminal-status-led,
+.receipts-terminal-file-dot {
+  display: none !important;
+}
+
+.receipts-terminal-window-glyph {
+  color: rgba(255, 255, 255, .22);
+  font: 12px/1 var(--font-monospace);
+}
+
+.receipts-terminal-pane {
+  border-color: rgba(216, 173, 108, .2);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, .34), inset 0 1px 0 rgba(255, 255, 255, .05), 0 0 0 1px rgba(0, 0, 0, .45);
+}
+
+.receipts-terminal-agent-mark,
+.receipts-terminal-agent-mark-prime {
+  background: var(--receipts-terminal-accent-soft);
+  border-color: rgba(216, 173, 108, .32);
+  border-radius: 3px;
+  color: var(--receipts-terminal-accent);
+}
+
+.receipts-terminal-prompt,
+.receipts-terminal-command-caret,
+.receipts-terminal-command-status {
+  color: var(--receipts-terminal-accent) !important;
+}
+
+.receipts-terminal-state,
+.receipts-terminal-window-state {
+  background: var(--receipts-terminal-accent-soft);
+  border-color: rgba(216, 173, 108, .32);
+  border-radius: 2px;
+  color: var(--receipts-terminal-accent);
+}
+
+.receipts-terminal-tab-active::after,
+.receipts-terminal-rail-item-active,
+.receipts-terminal-next-row,
+.receipts-terminal-code-line-focus,
+.receipts-terminal-packet-file-active {
+  border-color: var(--receipts-terminal-accent);
+  box-shadow: inset 2px 0 var(--receipts-terminal-accent);
+}
+
+.receipts-terminal-tab-active::after {
+  background: var(--receipts-terminal-accent);
+  box-shadow: none;
+}
+
+.receipts-terminal-rail-item-active,
+.receipts-terminal-code-line-focus,
+.receipts-terminal-packet-file-active {
+  background: var(--receipts-terminal-accent-soft);
+  color: var(--receipts-terminal-ink);
+}
+
+.receipts-terminal-rail-icon,
+.receipts-terminal-success,
+.receipts-terminal-next-glyph,
+.receipts-terminal-next-row strong,
+.receipts-terminal-code-key,
+.receipts-terminal-code-string,
+.receipts-terminal-code-number,
+.receipts-terminal-code-array,
+.receipts-terminal-code-line em,
+.receipts-terminal-output-callout,
+.receipts-terminal-verify-block strong,
+.receipts-terminal-packet-count,
+.receipts-terminal-packet-file i,
+.receipts-terminal-hash strong {
+  color: var(--receipts-terminal-accent) !important;
+}
+
+.receipts-terminal-avatar,
+.receipts-terminal-thread-tag {
+  border-radius: 2px;
+}
+
+.receipts-terminal-avatar-subagent,
+.receipts-terminal-avatar-compiler,
+.receipts-terminal-avatar-verifier {
+  background: var(--receipts-terminal-accent-soft);
+  color: var(--receipts-terminal-accent);
+}
+
+.receipts-terminal-thread-card-verifier {
+  border-color: rgba(216, 173, 108, .24);
+}
+
+.receipts-terminal-summary-card {
+  background: linear-gradient(135deg, rgba(216, 173, 108, .1), rgba(255, 255, 255, .035));
+  border-color: rgba(216, 173, 108, .28);
+}
+
+.receipts-terminal-output-callout {
+  background: rgba(216, 173, 108, .08);
+  border-top-color: rgba(216, 173, 108, .26);
+}
+
+.receipts-terminal-verify-block {
+  border-left-color: rgba(216, 173, 108, .72);
+}
+
+.receipts-terminal-rail-mark {
+  background: var(--receipts-terminal-accent);
+  display: inline-block;
+  height: 2px;
+  width: 8px;
+}
+
+#receipts-status[data-state="captured"],
+#receipts-status[data-state="packet"] {
+  border-color: rgba(216, 173, 108, .46) !important;
+  color: #e4cfac !important;
+}

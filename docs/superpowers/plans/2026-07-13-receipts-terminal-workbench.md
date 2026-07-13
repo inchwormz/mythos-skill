@@ -51,3 +51,14 @@
 - [x] Use the embedded SiteSorted GeistSans font for core UI and all H1 elements, while preserving the existing header and Berkeley Mono/sub-font treatment.
 - [x] Re-run static, browser, Worker, and compiler checks before republishing.
 - [ ] Complete hosted verification after the private Sites deployment leaves `pending` and serves version 4.
+
+### Task 5: Simplify copy and remove AI-color/orb treatment
+
+**Files:** `site/index.html`, `site/styles.css`, `site/smoke.test.mjs`
+
+- [x] Replace explanatory terminal paragraphs with compact labels and state values.
+- [x] Use warm monochrome/amber terminal accents with no green or blue AI palette.
+- [x] Remove terminal orb markers and hide the harvested grid-dot orb visuals.
+- [x] Apply Geist to all main-content headings while preserving the header font.
+- [x] Re-run static, Worker, and desktop/mobile browser checks.
+- [ ] Republish and verify the hosted correction after the Sites queue clears.
