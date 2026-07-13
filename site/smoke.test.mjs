@@ -200,8 +200,29 @@ test("the visible shell is fully Receipts-owned with no Linear brand residue", a
     readFile(new URL("assets/receipts/receipts-card-trust.png", import.meta.url)),
     readFile(new URL("assets/receipts/receipts-card-handoff.png", import.meta.url)),
   ])
-  assert.equal(createHash("sha256").update(trustCard).digest("hex"), "52772a430dc72ca175a74e2568ed7e31b43d4bb3ddafbb88ea278ede2c458f2b", "the first requested flow-field asset must back the trust card")
-  assert.equal(createHash("sha256").update(handoffCard).digest("hex"), "ab64328800bc7ca8f11af00261db881f0429308ddcdf11c32d856c48bec17918", "the second requested flow-field asset must back the handoff card")
+  assert.equal(createHash("sha256").update(trustCard).digest("hex"), "073ea7daf35afbb5275f2caebc1f897cea182a8dadf38fe2fc09d0b84ac23c1a", "the first requested flow-field asset must back the trust card")
+  assert.equal(createHash("sha256").update(handoffCard).digest("hex"), "11b3fd3894767b42de711027235f9d17776a6df2a82d0f7e41c340e701986d69", "the second requested flow-field asset must back the handoff card")
+})
+
+test("the one-page story removes false product sections and resolves its navigation", async () => {
+  const [html, css] = await Promise.all([readSiteFile("index.html"), readSiteFile("styles.css")])
+
+  assert.match(html, /data-receipts-one-page/, "the one-page cleanup is not installed")
+  for (const selector of ["#docs", '[data-source-node-id="web-node-02502"]', ".Jmh1Wq_footer"]) {
+    assert.ok(html.includes(selector), `the one-page cleanup does not remove ${selector}`)
+  }
+
+  for (const copy of ["Rust compiler", "ingests agent sessions", "proven data", "receipts absorb", "receipts conclude", "receipts next"]) {
+    assert.ok(html.includes(copy), `the compiler explanation is missing: ${copy}`)
+  }
+
+  for (const id of ["runs", "evidence", "packets", "gates"]) {
+    assert.match(html, new RegExp(`id=["']${id}["']`), `header target #${id} is missing`)
+  }
+
+  assert.match(html, /https:\/\/github\.com\/inchwormz\/agent-receipts/)
+  assert.match(html, /View Receipts on GitHub/)
+  assert.match(css, /\.Jmh1Wq_footer[\s\S]{0,100}display:\s*none/, "the footer can flash before the cleanup runs")
 })
 
 test("the stripped shell keeps its materialized assets local", async () => {

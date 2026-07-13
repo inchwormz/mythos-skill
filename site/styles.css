@@ -2597,6 +2597,32 @@ img, picture, video, canvas, svg { max-width: 100%; }
   animation-play-state: running !important;
 }
 
+/* One-page launch shell: prevent removed clone sections from flashing before cleanup. */
+#docs,
+[data-source-node-id="web-node-02502"],
+[data-source-node-id="web-node-00194"],
+[data-source-node-id="web-node-00202"],
+[data-source-node-id="web-node-00216"],
+[data-source-node-id="web-node-03098"],
+.Jmh1Wq_footer,
+.TZTsQG_viewportPosition {
+  display: none !important;
+}
+
+#runs,
+#evidence,
+#packets,
+#gates {
+  scroll-margin-top: calc(var(--header-height) + 36px);
+}
+
+.receipts-compiler-tools {
+  color: rgba(255, 255, 255, .48);
+  font: 12px/1.7 var(--font-monospace);
+  letter-spacing: -.01em;
+  margin-top: 18px;
+}
+
 /* Receipts-owned identity and proof imagery. */
 .receipts-wordmark {
   color: rgba(255, 255, 255, .92);
@@ -2657,11 +2683,11 @@ img, picture, video, canvas, svg { max-width: 100%; }
 }
 
 .receipts-proof-card--trust {
-  background-image: url("assets/receipts/receipts-card-trust.png?v=52772a43") !important;
+  background-image: url("assets/receipts/receipts-card-trust.png?v=073ea7da") !important;
 }
 
 .receipts-proof-card--handoff {
-  background-image: url("assets/receipts/receipts-card-handoff.png?v=ab643288") !important;
+  background-image: url("assets/receipts/receipts-card-handoff.png?v=11b3fd38") !important;
 }
 
 .receipts-proof-card .Dc5tqa_customerQuote,

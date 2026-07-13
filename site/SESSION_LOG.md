@@ -233,8 +233,30 @@ Fresh verification after the last production change:
 
 Final card-art override:
 
-- Trust card asset SHA-256: `52772a430dc72ca175a74e2568ed7e31b43d4bb3ddafbb88ea278ede2c458f2b`.
-- Handoff card asset SHA-256: `ab64328800bc7ca8f11af00261db881f0429308ddcdf11c32d856c48bec17918`.
+- Trust card optimized asset SHA-256: `073ea7daf35afbb5275f2caebc1f897cea182a8dadf38fe2fc09d0b84ac23c1a`.
+- Handoff card optimized asset SHA-256: `11b3fd3894767b42de711027235f9d17776a6df2a82d0f7e41c340e701986d69`.
+- Hosting-size correction — the original PNG encodings exceeded the 10 MiB Worker limit. Palette-safe PNG optimization reduced the pair from 3.95 MB to 0.74 MB at 45+ dB PSNR while preserving the selected compositions.
 - Browser card captures — PASS; both cards show the requested white flow fields on black, the copy remains legible, and the legacy customer marks remain absent.
 
 Exact next step: commit and publish this verified artifact to the existing owner-only Sites project, then confirm the hosted HTML, CSS, wordmarks, proof figures, hour labels, and card images.
+
+## One-page launch story
+
+Date: 2026-07-14
+
+Removed the “Review receipts and agent output” and “Understand packet state at scale” sections from the rendered DOM, removed the six-column footer, and collapsed the closing actions to one GitHub CTA. The “Compile the next pass” section now explains the real mechanism in plain English: a Rust compiler ingests agent sessions and emits useful, proven data, with `receipts run`, `receipts absorb`, `receipts conclude`, and `receipts next` shown as the working CLI surface.
+
+The desktop header now contains only `Runs`, `Evidence`, `Packets`, and `Gates`, plus `View source`. Each internal link resolves to an existing section ID, and every visible GitHub action points to `https://github.com/inchwormz/agent-receipts`.
+
+Fresh verification after the final URL correction:
+
+- TDD red receipt — the one-page smoke test failed on the missing cleanup marker before implementation.
+- `node site/smoke.test.mjs` — PASS, 6 tests, 0 failures.
+- `node site/build-worker.mjs` — PASS, generated Worker with 45 assets.
+- Desktop browser at `1440x1000` — PASS; both unwanted headings and the footer are absent, no deletion gaps remain, and the Rust compiler copy plus CLI command row render in the compile section.
+- Header navigation clicks — PASS; `Evidence`, `Packets`, `Gates`, and `Runs` produced `#evidence`, `#packets`, `#gates`, and `#runs` respectively.
+- Mobile browser at `390x844` — PASS; document width equals viewport width, the removed sections/footer remain absent, and the final GitHub CTA is visible.
+- Browser console — PASS; 0 errors, 0 warnings.
+- Local URL checked: `http://127.0.0.1:4175/`.
+
+Exact next step: commit this verified one-page artifact, publish it to the existing private Sites project, and verify the hosted URL serves the same header targets and `agent-receipts` CTA.
