@@ -62,7 +62,7 @@
 - [x] Remove terminal orb markers and hide the harvested grid-dot orb visuals.
 - [x] Apply Fraunces to all main-content headings while preserving the header font.
 - [x] Re-run static, Worker, and desktop/mobile browser checks.
-- [ ] Republish and verify the hosted correction after the Sites queue clears.
+- [ ] Republish and verify the hosted correction after the Sites queue clears; version 5 is saved but deployment `appgdep_6a543e0949348191a50903f9226a5a92` is still pending.
 
 ### Task 6: Terminal-only landing surface
 
@@ -72,4 +72,4 @@
 - [x] Remove page-level pitch copy, feature sections, model strip, footer, and header actions from the visible surface.
 - [x] Flatten the visible panes toward a simple Hyper-style window with the receipt conversation and CLI output as the product story.
 - [x] Verify two visible panes at desktop and mobile widths with no horizontal overflow.
-- [ ] Republish and verify the hosted correction after the Sites queue clears.
+- [ ] Republish and verify the hosted correction after the Sites queue clears; version 5 is saved but deployment `appgdep_6a543e0949348191a50903f9226a5a92` is still pending.

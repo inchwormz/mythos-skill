@@ -144,3 +144,10 @@ Fresh verification:
 - Browser mobile at `390px` — PASS; 2 visible panes, body width 390px, terminal surface width 358px, no visible main headings, and 0 console errors.
 
 Hosted republish remains pending until this final terminal-only revision is pushed and accepted by the Sites deployment queue.
+
+Deployment receipt for the terminal-only revision:
+
+- Pushed source commit: `94175ff99c085d908a4895ae371e2335404a4e01`.
+- Saved Sites version: `5` (`appgprj_6a54232a80208191a151c49baf473e7e~appgver_77524856d2c88191b8274ffca5dbecc9`).
+- Private deployment: `appgdep_6a543e0949348191a50903f9226a5a92` remains `pending` with no provider deployment ID after two valid polls.
+- Hosted endpoint check — not passed for version 5: the live URL still returns the older site and the Fraunces asset is not found. Local source and Worker are the verified current surface.
