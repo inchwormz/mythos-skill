@@ -56,6 +56,29 @@ test("the blueprint-stripped Receipts shell explains the product", async () => {
 test("the Receipts workbench keeps local actions and responsive guardrails", async () => {
   const [html, css] = await Promise.all([readSiteFile("index.html"), readSiteFile("styles.css")])
 
+  for (const marker of [
+    "receipts-terminal-workbench",
+    "subagent / verifier",
+    "prime agent / cli",
+    "SUMMARY READY",
+    "PACKET READY",
+    "run_id",
+    "receipt_id",
+    "exit_code",
+    "content_hash",
+    "source_refs",
+    "artifacts",
+    "gate",
+    "next_action",
+    "next_pass_packet.json",
+  ]) {
+    assert.ok(html.includes(marker), `missing terminal workbench marker: ${marker}`)
+  }
+
+  assert.ok((html.match(/data-receipts-terminal="subagent"/g) ?? []).length >= 2, "subagent terminal panes are missing")
+  assert.ok((html.match(/data-receipts-terminal="prime"/g) ?? []).length >= 2, "Prime terminal panes are missing")
+  assert.doesNotMatch(html, /JgFxua_wrapper|_8fVXdW_codeSectionDesktop/, "borrowed HTML or code-diff mockup remains")
+
   for (const selector of [
     'data-receipts-action="run"',
     "data-receipts-status",
@@ -67,6 +90,8 @@ test("the Receipts workbench keeps local actions and responsive guardrails", asy
   assert.match(html, /addEventListener\(["']click["']/)
   assert.match(css, /@media/)
   assert.match(css, /overflow-x:\s*hidden/)
+  assert.match(css, /receipts-terminal-workbench/)
+  assert.match(css, /grid-template-columns:\s*minmax\(0, \.92fr\)/)
   assert.match(css, /:focus-visible/)
 })
 

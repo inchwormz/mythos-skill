@@ -46,3 +46,20 @@ The original SiteSorted checkout and compiler source were read-only inputs. The 
 - Hosted endpoint check — PASS with owner authorization: `/` 200 HTML, `/styles.css` 200 CSS, `/assets/files/asset-0024.avif` 200 AVIF.
 
 Unrelated working-tree edits remain untouched and unstaged.
+
+## Terminal workbench update
+
+Date: 2026-07-13
+
+Replaced the hero application mockup and the illustration under “Review receipts and agent output” with the same Receipts-specific two-terminal workbench. The left terminal is a subagent/verifier conversation with a summary; the right terminal is a Prime CLI handoff showing `next_pass_packet.json`, run and receipt identifiers, exit status, content hash, source references, artifacts, gate, and next action.
+
+Local verification after the replacement:
+
+- `node site/smoke.test.mjs` — PASS, 3 tests, 0 failures.
+- `node site/build-worker.mjs` — PASS, generated Worker with 37 assets.
+- Worker fetch check — PASS: `/` 200 HTML, `/styles.css` 200 CSS, representative AVIF and PNG assets 200, favicon 200, unknown route 404.
+- Browser desktop check — PASS: 2 workbenches, 2 subagent panes, 2 Prime panes, old hero/diff nodes absent, zero console errors or warnings.
+- Browser mobile check at `390x844` — PASS: terminal grid stacks to one column, document width remains 390px, zero console errors or warnings.
+- `cargo test --manifest-path mythos-compiler/Cargo.toml` — PASS; 43 unit tests, 1 determinism test, and 1 init contract test, 0 failures.
+
+Private Sites republish is the remaining step for this update.

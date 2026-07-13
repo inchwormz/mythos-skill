@@ -19753,3 +19753,258 @@ label.bBfjom { user-select: none; }
     overflow-x: auto;
   }
 }
+
+
+/* Receipts product surface: subagent summary -> Prime CLI handoff. */
+.receipts-terminal-workbench {
+  align-items: stretch;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+  margin: 0 auto;
+  max-width: 1436px;
+  padding: 0 24px;
+  width: 100%;
+}
+
+.receipts-terminal-workbench-review {
+  padding-bottom: 8px;
+}
+
+.receipts-terminal-pane {
+  background: #111214;
+  border: 1px solid rgba(255, 255, 255, .13);
+  border-radius: 14px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .04);
+  color: #e9eaec;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.receipts-terminal-topbar {
+  align-items: center;
+  background: rgba(255, 255, 255, .035);
+  border-bottom: 1px solid rgba(255, 255, 255, .09);
+  display: flex;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 16px;
+}
+
+.receipts-terminal-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.receipts-terminal-dot {
+  border-radius: 50%;
+  display: block;
+  height: 7px;
+  width: 7px;
+}
+
+.receipts-terminal-dot-red { background: #ff6d6d; }
+.receipts-terminal-dot-yellow { background: #f5c66e; }
+.receipts-terminal-dot-green { background: #65d69a; }
+
+.receipts-terminal-pane-title,
+.receipts-terminal-kicker,
+.receipts-terminal-command,
+.receipts-terminal-log,
+.receipts-terminal-summary-list,
+.receipts-terminal-next,
+.receipts-terminal-cli {
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+}
+
+.receipts-terminal-pane-title {
+  color: rgba(255, 255, 255, .77);
+  font-size: 11px;
+  letter-spacing: .01em;
+}
+
+.receipts-terminal-state {
+  background: rgba(101, 214, 154, .12);
+  border: 1px solid rgba(101, 214, 154, .27);
+  border-radius: 999px;
+  color: #8ee4b3;
+  font: 600 9px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  letter-spacing: .08em;
+  margin-left: auto;
+  padding: 6px 8px;
+}
+
+.receipts-terminal-state-blue {
+  background: rgba(111, 166, 255, .13);
+  border-color: rgba(111, 166, 255, .3);
+  color: #b7d3ff;
+}
+
+.receipts-terminal-body {
+  min-height: 356px;
+  padding: 22px 22px 24px;
+}
+
+.receipts-terminal-prime-body {
+  padding-bottom: 20px;
+}
+
+.receipts-terminal-kicker {
+  color: rgba(255, 255, 255, .42);
+  font-size: 10px;
+  letter-spacing: .12em;
+  margin-bottom: 18px;
+  text-transform: uppercase;
+}
+
+.receipts-terminal-command,
+.receipts-terminal-log {
+  color: rgba(255, 255, 255, .72);
+  font-size: 12px;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.receipts-terminal-prompt {
+  color: #83c8ff;
+}
+
+.receipts-terminal-success {
+  color: #82dfad;
+}
+
+.receipts-terminal-summary {
+  background: rgba(255, 255, 255, .045);
+  border: 1px solid rgba(255, 255, 255, .11);
+  border-radius: 10px;
+  margin-top: 20px;
+  padding: 16px;
+}
+
+.receipts-terminal-summary-heading {
+  align-items: center;
+  color: rgba(255, 255, 255, .9);
+  display: flex;
+  font: 600 12px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.receipts-terminal-file {
+  color: rgba(255, 255, 255, .38);
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.receipts-terminal-summary p {
+  color: rgba(255, 255, 255, .62);
+  font-size: 13px;
+  line-height: 1.55;
+  margin: 12px 0 14px;
+}
+
+.receipts-terminal-summary-list {
+  color: rgba(255, 255, 255, .6);
+  font-size: 11px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.receipts-terminal-summary-list > div {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 110px minmax(0, 1fr);
+}
+
+.receipts-terminal-summary-list dt {
+  color: rgba(255, 255, 255, .38);
+}
+
+.receipts-terminal-summary-list dd {
+  color: rgba(255, 255, 255, .76);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.receipts-terminal-next {
+  border-left: 2px solid #83c8ff;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 18px;
+  padding-left: 12px;
+}
+
+.receipts-terminal-next span {
+  color: rgba(255, 255, 255, .38);
+  font-size: 9px;
+  letter-spacing: .12em;
+}
+
+.receipts-terminal-next strong {
+  color: #b7d3ff;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.receipts-terminal-cli {
+  color: rgba(255, 255, 255, .68);
+  font-size: 11px;
+  line-height: 1.62;
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.receipts-terminal-json {
+  color: rgba(255, 255, 255, .76);
+}
+
+@media (max-width: 800px) {
+  .receipts-terminal-workbench {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0 18px;
+  }
+
+  .receipts-terminal-body {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .receipts-terminal-workbench {
+    gap: 12px;
+    padding: 0 16px;
+  }
+
+  .receipts-terminal-topbar {
+    min-height: 42px;
+    padding: 0 12px;
+  }
+
+  .receipts-terminal-pane-title {
+    font-size: 10px;
+  }
+
+  .receipts-terminal-state {
+    font-size: 8px;
+    padding: 5px 6px;
+  }
+
+  .receipts-terminal-body {
+    padding: 18px 16px 20px;
+  }
+
+  .receipts-terminal-summary-list > div {
+    grid-template-columns: 96px minmax(0, 1fr);
+  }
+
+  .receipts-terminal-command,
+  .receipts-terminal-log {
+    font-size: 11px;
+  }
+
+  .receipts-terminal-cli {
+    font-size: 10px;
+  }
+}
