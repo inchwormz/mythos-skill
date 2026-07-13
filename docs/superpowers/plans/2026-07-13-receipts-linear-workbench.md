@@ -36,6 +36,6 @@ Use the SiteSorted blueprint compiler as the source-of-truth shell pipeline:
 - [x] Verify `http://127.0.0.1:4175/` in a real browser at desktop and 390px mobile widths.
 - [x] Verify no console errors or warnings, no horizontal overflow at mobile width, and the model labels render with spacing.
 - [x] Run the site smoke test, Worker route check, generated bundle build, and `git diff --check` after the final source change.
-- [ ] Run the existing Mythos compiler test suite without modifying its unrelated working-tree changes.
-- [ ] Commit only the product-site files and push the exact commit to the existing Sites source repository.
-- [ ] Package, save one new private Sites version, deploy it, poll to success, and record the hosted URL in `site/SESSION_LOG.md`.
+- [x] Run the existing Mythos compiler test suite without modifying its unrelated working-tree changes.
+- [x] Commit only the product-site files and push the exact site-bearing commit to the existing Sites source repository.
+- [x] Package, save Sites version 2, deploy it privately, poll to success, and record the hosted URL in `site/SESSION_LOG.md`.

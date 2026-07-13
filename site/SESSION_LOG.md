@@ -36,7 +36,13 @@ The original SiteSorted checkout and compiler source were read-only inputs. The 
 - Local URL: `http://127.0.0.1:4175/`.
 - Desktop browser proof — PASS; Receipts header icon, workbench hero, feature sections, CTA, and footer render with zero console errors or warnings.
 - Mobile browser proof at `390x844` — PASS; responsive navigation collapses, Receipts content remains reachable, and console errors/warnings are 0.
+- Mythos compiler suite — PASS; 43 unit tests, 1 determinism test, and 1 init contract test, 0 failures.
 
-## Remaining step
+## Hosted receipt
 
-Save a new private version to the existing Sites project, deploy it, poll until successful, and record the hosted URL here. Do not alter unrelated dirty compiler files.
+- Sites version: `2`
+- Deployment: succeeded; owner-only private access preserved.
+- Hosted URL: `https://receipts-for-agents.johnrichardmckeown.chatgpt.site`
+- Hosted endpoint check — PASS with owner authorization: `/` 200 HTML, `/styles.css` 200 CSS, `/assets/files/asset-0024.avif` 200 AVIF.
+
+Unrelated working-tree edits remain untouched and unstaged.
