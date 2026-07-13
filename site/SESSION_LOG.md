@@ -64,6 +64,22 @@ Local verification after the replacement:
 
 Private Sites republish completed successfully.
 
+## Terminal depth and Geist refinement
+
+Date: 2026-07-13
+
+Rebuilt both terminal surfaces to restore the information density of the removed compiler-emitted mockups. Each pane now has window chrome, toolbars, tabs, lane/context rails, timestamped conversation cards, summary metrics, artifact chips, line-numbered and syntax-colored packet output, a packet manifest, verification output, and a persistent status bar.
+
+Typography now uses the local SiteSorted GeistSans asset for the core page font and every H1. The existing Inter Variable header font remains explicitly preserved, and terminal/code/sub-fonts continue to use the original Berkeley Mono variable.
+
+Fresh local/browser verification:
+
+- `node site/smoke.test.mjs` — PASS, 3 tests, 0 failures; depth markers, font rules, and local Geist asset are guarded.
+- Browser desktop — PASS; terminal panes render at 818px height with both detailed surfaces present, old mockup markers absent, and computed fonts confirm GeistSans body/H1, Inter Variable header, and Berkeley Mono code.
+- Browser mobile at `390x844` — PASS; document width remains 390px, internal terminal rails and packet output stay within the viewport, and console errors/warnings are 0.
+
+Private Sites republish is pending for this refinement.
+
 Hosted receipt for the terminal workbench:
 
 - Site version: `3` (`appgprj_6a54232a80208191a151c49baf473e7e~appgver_9a9c50141de881918a84f8fa40a86934`).

@@ -38,3 +38,15 @@
 - [x] Run the smoke test, rebuild the Worker, run the Worker route check, and inspect the real browser at desktop and 390px mobile widths.
 - [x] Run the Mythos compiler tests without touching unrelated working-tree edits.
 - [x] Commit the site change, save a new private Sites version, deploy it, and verify the hosted HTML/CSS/asset routes.
+
+### Task 4: Restore the removed surface depth and typography
+
+**Files:**
+- Modify: `site/index.html`
+- Modify: `site/styles.css`
+- Modify: `site/smoke.test.mjs`
+- Add: `site/assets/files/geist.woff2`
+
+- [ ] Rebuild each terminal with layered chrome, tabs, conversation/activity rows, evidence metadata, line-numbered output, and status bars at the density of the removed compiler-emitted surfaces.
+- [ ] Use the embedded SiteSorted GeistSans font for core UI and all H1 elements, while preserving the existing header and Berkeley Mono/sub-font treatment.
+- [ ] Re-run static, browser, Worker, compiler, and hosted checks before republishing.

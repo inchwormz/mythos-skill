@@ -58,6 +58,14 @@ test("the Receipts workbench keeps local actions and responsive guardrails", asy
 
   for (const marker of [
     "receipts-terminal-workbench",
+    "receipts-terminal-windowbar",
+    "receipts-terminal-pane-grid",
+    "receipts-terminal-thread",
+    "receipts-terminal-summary-metrics",
+    "receipts-terminal-output-window",
+    "receipts-terminal-packet-rail",
+    "receipts-terminal-code-line",
+    "receipts-terminal-statusbar",
     "subagent / verifier",
     "prime agent / cli",
     "SUMMARY READY",
@@ -77,6 +85,7 @@ test("the Receipts workbench keeps local actions and responsive guardrails", asy
 
   assert.ok((html.match(/data-receipts-terminal="subagent"/g) ?? []).length >= 2, "subagent terminal panes are missing")
   assert.ok((html.match(/data-receipts-terminal="prime"/g) ?? []).length >= 2, "Prime terminal panes are missing")
+  assert.ok((html.match(/receipts-terminal-code-line/g) ?? []).length >= 26, "line-numbered packet output is too shallow")
   assert.doesNotMatch(html, /JgFxua_wrapper|_8fVXdW_codeSectionDesktop/, "borrowed HTML or code-diff mockup remains")
 
   for (const selector of [
@@ -92,6 +101,10 @@ test("the Receipts workbench keeps local actions and responsive guardrails", asy
   assert.match(css, /overflow-x:\s*hidden/)
   assert.match(css, /receipts-terminal-workbench/)
   assert.match(css, /grid-template-columns:\s*minmax\(0, \.92fr\)/)
+  assert.match(css, /font-family:\s*"GeistSans"/)
+  assert.match(css, /body h1/)
+  assert.match(css, /\.TZTsQG_header, \.TZTsQG_header \*/)
+  assert.match(css, /var\(--font-monospace\)/)
   assert.match(css, /:focus-visible/)
 })
 
@@ -107,5 +120,6 @@ test("the stripped shell keeps its materialized assets local", async () => {
 
   const assets = await readdir(new URL("./assets/files/", import.meta.url))
   assert.ok(assets.length >= 20, `expected compiler-materialized assets, found ${assets.length}`)
+  assert.ok(assets.includes("geist.woff2"), "SiteSorted Geist font asset is missing")
   assert.ok(siteRoot.endsWith("site\\") || siteRoot.endsWith("site/"))
 })
