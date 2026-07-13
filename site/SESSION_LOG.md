@@ -167,3 +167,26 @@ Fresh verification:
 - Browser mobile at `390px` — PASS; 2 visible panes, body width 390px, terminal surface width 358px, 0 visible headings, and 0 console errors/warnings.
 
 Hosted verification is not complete for this correction.
+
+## Launch imagery: terminal-only product scenes
+
+Date: 2026-07-14
+
+Rejected the previous 20-image batch after a side-by-side review against the real Linear capture. The four large images invented generic dashboard interfaces, while the smaller batch used unrelated gold line art and a literal paper receipt. None met the launch bar.
+
+Replaced the four product-image slots with black terminal/Codex scenes derived from Linear's real dark code-surface asset. Every scene uses a supported Receipts command from the current CLI: `receipts run`, `receipts absorb`, `receipts conclude`, and `receipts next`. The 16 decorative avatar/icon images were removed from the site and archived outside the checkout; their visible placements now use small deterministic `>_` terminal marks.
+
+The first browser pass caught the new images blending underneath the cloned Linear demo DOM. Root cause: `.SPbJba_grain` applied `opacity: .9` and `mix-blend-mode: overlay`, and the original sibling UI remained painted above the snapshot. The final CSS removes those siblings and renders each terminal image at its intrinsic aspect ratio.
+
+Fresh verification after the last change:
+
+- TDD red receipt: the new rejected-batch test failed on `receipts-01.png` before replacement; the compositor guard then failed before the CSS correction.
+- `node site/smoke.test.mjs` — PASS, 4 tests, 0 failures.
+- `node site/build-worker.mjs` — PASS, generated Worker with 43 assets.
+- Rejected asset package check — PASS; no `receipts-05.png` through `receipts-20.png` in the Worker.
+- Desktop browser — PASS; all four terminal images are visible at full aspect ratio with no cloned UI underneath.
+- Mobile browser at `390x844` — PASS; 2 visible hero terminals, document width 375px inside the 390px viewport, no horizontal overflow.
+- Browser console — PASS; 0 errors, 0 warnings.
+- Local URL checked: `http://127.0.0.1:4175/`.
+
+Exact next step: publish this verified source to the existing owner-only Sites project and confirm the production URL serves the new terminal assets.

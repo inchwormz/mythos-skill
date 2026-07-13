@@ -2438,6 +2438,376 @@ img, picture, video, canvas, svg { max-width: 100%; }
 @media (max-width: 640px) {
   .bpRfIm { font-size: var(--title-5-size); line-height: var(--title-5-line-height); letter-spacing: var(--title-5-letter-spacing); }
 }
+
+/* Receipts hero: the restrained two-column grammar of Linear's code review panel. */
+.receipts-terminal-workbench-legacy {
+  display: none !important;
+}
+
+.receipts-linear-terminal-frame {
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 22px;
+  margin: 0 auto;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%);
+  max-width: 1180px;
+  padding: 8px 8px 72px;
+  position: relative;
+  width: calc(100% - 48px);
+}
+
+.receipts-linear-terminal-panel {
+  background: #0b0c0d;
+  border-radius: 12px 12px 0 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1), 0 26px 80px rgba(0, 0, 0, .3);
+  overflow: hidden;
+  position: relative;
+}
+
+.receipts-linear-terminal-glow {
+  background: radial-gradient(circle, rgba(255, 246, 226, .12) 0%, rgba(255, 246, 226, .035) 24%, transparent 68%);
+  height: 420px;
+  left: -190px;
+  mix-blend-mode: lighten;
+  pointer-events: none;
+  position: absolute;
+  top: -240px;
+  width: 420px;
+}
+
+.receipts-linear-terminal-header {
+  align-items: center;
+  color: rgba(239, 236, 229, .38);
+  display: flex;
+  font: 11px/1 var(--font-monospace);
+  gap: 15px;
+  justify-content: space-between;
+  min-height: 64px;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.receipts-linear-terminal-file::before {
+  border: 1px solid rgba(239, 236, 229, .3);
+  border-radius: 2px;
+  content: "";
+  display: inline-block;
+  height: 12px;
+  margin-right: 10px;
+  vertical-align: -3px;
+  width: 9px;
+}
+
+.receipts-linear-terminal-mode {
+  border: 1px solid rgba(255, 255, 255, .09);
+  border-radius: 5px;
+  padding: 6px 9px;
+}
+
+.receipts-linear-terminal-columns {
+  border-top: 1px solid rgba(255, 255, 255, .09);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.receipts-linear-terminal-column {
+  min-width: 0;
+  padding: 30px 0 56px;
+}
+
+.receipts-linear-terminal-column + .receipts-linear-terminal-column {
+  box-shadow: inset 1px 0 rgba(255, 255, 255, .09);
+}
+
+.receipts-linear-terminal-label {
+  color: rgba(239, 236, 229, .26);
+  font: 10px/24px var(--font-monospace);
+  letter-spacing: .04em;
+  padding: 0 24px 12px 58px;
+  text-transform: lowercase;
+}
+
+.receipts-linear-terminal-code {
+  background: none;
+  border: 0;
+  color: rgba(239, 236, 229, .66);
+  counter-reset: receipt-line;
+  font: 13px/24px var(--font-monospace);
+  margin: 0;
+  overflow-x: auto;
+  padding: 0;
+}
+
+.receipts-linear-terminal-code code {
+  display: flex;
+  flex-direction: column;
+  min-width: max-content;
+}
+
+.receipts-linear-terminal-line {
+  border-left: 1px solid transparent;
+  counter-increment: receipt-line;
+  display: block;
+  min-height: 24px;
+  padding: 0 24px 0 58px;
+  position: relative;
+  white-space: pre;
+}
+
+.receipts-linear-terminal-line::before {
+  color: rgba(239, 236, 229, .17);
+  content: counter(receipt-line);
+  left: 0;
+  padding-right: 16px;
+  position: absolute;
+  text-align: right;
+  width: 42px;
+}
+
+.receipts-linear-terminal-line-focus {
+  background: rgba(216, 173, 108, .055);
+  border-left-color: rgba(216, 173, 108, .62);
+  color: rgba(255, 235, 203, .82);
+}
+
+.receipts-linear-terminal-prompt {
+  color: #d8ad6c;
+}
+
+@media (max-width: 760px) {
+  .receipts-linear-terminal-frame {
+    padding-bottom: 44px;
+    width: calc(100% - 32px);
+  }
+
+  .receipts-linear-terminal-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .receipts-linear-terminal-column + .receipts-linear-terminal-column {
+    border-top: 1px solid rgba(255, 255, 255, .09);
+    box-shadow: none;
+  }
+}
+
+/* The captured clone freezes all animation globally; this product component is intentionally live. */
+.receipts-cli-body,
+.receipts-cli-line,
+.receipts-cli-cursor {
+  animation-play-state: running !important;
+}
+
+/* Tiny participant marks are terminal prompts, not generated character art. */
+.receipts-agent-glyph {
+  align-items: center;
+  background: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 3px;
+  color: rgba(239, 236, 229, .62);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font: 500 7px/1 var(--font-monospace);
+  justify-content: center;
+  letter-spacing: -.08em;
+}
+
+.receipts-agent-glyph--sm {
+  height: 16px;
+  width: 16px;
+}
+
+.receipts-agent-glyph--md {
+  height: 24px;
+  width: 24px;
+}
+
+.receipts-agent-glyph--lg {
+  height: 36px;
+  width: 36px;
+}
+
+/* Generated terminal scenes replace, rather than texture, the cloned demo panels. */
+:has(> [data-ss-static-paint-snapshot][src^="assets/receipts/"])
+  > :not([data-ss-static-paint-snapshot]) {
+  display: none !important;
+}
+
+[data-ss-static-paint-snapshot][src^="assets/receipts/"] {
+  display: block;
+  height: auto;
+  inset: auto;
+  mix-blend-mode: normal;
+  opacity: 1;
+  position: relative;
+  width: 100%;
+}
+
+/* Measured from Resend's live CLI component: 24rem shell, 24px radius/padding, centered header, bottom fade. */
+.receipts-cli-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.receipts-cli-terminal {
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 24px;
+  color: rgba(255, 255, 255, .94);
+  display: grid;
+  font-size: 14px;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 24rem;
+  line-height: 1.375rem;
+  overflow: hidden;
+  padding: 24px;
+  position: relative;
+}
+
+.receipts-cli-surface {
+  background: linear-gradient(to bottom, #111, rgba(0, 0, 0, .5));
+  inset: 0;
+  mask-image: linear-gradient(#000 60%, transparent 100%);
+  opacity: .3;
+  pointer-events: none;
+  position: absolute;
+}
+
+.receipts-cli-header {
+  align-items: center;
+  color: rgba(255, 255, 255, .3);
+  display: grid;
+  font: 12px/1.375rem var(--font-regular);
+  grid-template-columns: 1fr auto 1fr;
+  position: relative;
+  z-index: 1;
+}
+
+.receipts-cli-header p {
+  margin: 0;
+}
+
+.receipts-cli-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.receipts-cli-controls i {
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 50%;
+  display: block;
+  height: 8px;
+  width: 8px;
+}
+
+.receipts-cli-body {
+  animation: receipts-cli-reveal .55s cubic-bezier(.22, 1, .36, 1) both;
+  animation-delay: .18s;
+  font: 14px/1.375rem var(--font-monospace);
+  min-width: 0;
+  padding-top: 48px;
+  position: relative;
+  z-index: 1;
+}
+
+.receipts-cli-command {
+  color: #fff;
+  font-weight: 600;
+  margin: 0;
+  min-height: 1.375rem;
+  overflow-wrap: anywhere;
+}
+
+.receipts-cli-lines {
+  display: grid;
+  gap: 4px;
+  margin-top: 24px;
+  min-width: 0;
+}
+
+.receipts-cli-conversation {
+  gap: 20px;
+}
+
+.receipts-cli-line {
+  animation: receipts-cli-line-in .42s cubic-bezier(.22, 1, .36, 1) both;
+  color: rgba(255, 255, 255, .9);
+  margin: 0;
+  min-height: 1.375rem;
+  overflow-wrap: anywhere;
+}
+
+.receipts-cli-line:nth-child(1) { animation-delay: .55s; }
+.receipts-cli-line:nth-child(2) { animation-delay: .72s; }
+.receipts-cli-line:nth-child(3) { animation-delay: .89s; }
+.receipts-cli-line:nth-child(4) { animation-delay: 1.06s; }
+.receipts-cli-line:nth-child(5) { animation-delay: 1.23s; }
+.receipts-cli-line:nth-child(6) { animation-delay: 1.4s; }
+
+.receipts-cli-detail {
+  color: rgba(255, 255, 255, .38);
+  margin-top: -18px;
+  padding-left: 38px;
+}
+
+.receipts-cli-detail strong {
+  color: inherit;
+  font-weight: 400;
+}
+
+.receipts-cli-output {
+  padding-left: 24px;
+}
+
+.receipts-cli-cursor {
+  animation: receipts-cli-cursor .85s steps(1, end) infinite;
+  background: #fff;
+  display: inline-block;
+  height: 14px;
+  margin-left: 2px;
+  transform: translateY(2px);
+  width: 1px;
+}
+
+.receipts-cli-fade {
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .8), #000);
+  bottom: 0;
+  height: 50%;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  width: calc(100% + 16px);
+  z-index: 2;
+}
+
+@keyframes receipts-cli-reveal {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes receipts-cli-line-in {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes receipts-cli-cursor {
+  0%, 48% { opacity: 1; }
+  49%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .receipts-cli-body,
+  .receipts-cli-line,
+  .receipts-cli-cursor {
+    animation: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .receipts-cli-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 u.bpRfIm { text-decoration-line: underline; text-decoration-style: solid; text-decoration-thickness: 1.5px; text-decoration-color: var(--color-text-quaternary); text-underline-offset: 2.5px; }
 sup.bpRfIm { position: relative; vertical-align: initial; top: -0.5em; font-size: 0.6em; }
 code.bpRfIm { font-family: var(--font-monospace); font-size: 0.9em; background: none; padding: 0px; }
@@ -20429,13 +20799,6 @@ main :where(h1, h2, h3, h4, h5, h6) * {
   color: #e4cfac !important;
 }
 
-/* Terminal-only landing surface: two Hyper-like panes, no surrounding pitch. */
-main ._7bwwmq_homepage > .ss-node-00226 > *:not(.receipts-terminal-workbench-hero),
-.ss-site-footer,
-.TZTsQG_rightSideWrapper {
-  display: none !important;
-}
-
 .receipts-terminal-workbench-review {
   display: none !important;
 }
@@ -20765,4 +21128,131 @@ main ._7bwwmq_homepage > .ss-node-00226 > *:not(.receipts-terminal-workbench-her
     gap: 10px;
     grid-template-columns: 54px minmax(0, 1fr);
   }
+}
+
+/* The legacy hero selector also existed on the cloned shell; keep its old viewport sizing out of this frame. */
+.receipts-linear-terminal-frame.receipts-terminal-workbench-hero {
+  display: block;
+  min-height: 0;
+  max-width: 1180px;
+  padding: 8px 8px 72px;
+}
+
+#receipts-status {
+  display: none !important;
+}
+
+/* Exact visual grammar of Linear's agent transcript panel. */
+.receipts-linear-terminal-frame.receipts-terminal-workbench-hero {
+  border: 0;
+  mask-image: none;
+  padding: 16px 24px 64px;
+  width: 100%;
+}
+
+.receipts-linear-agent-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.receipts-linear-agent-terminal {
+  background: linear-gradient(180deg, #101112 0%, #0d0e0f 72%, rgba(13, 14, 15, .45) 100%);
+  border: 1px solid rgba(255, 255, 255, .11);
+  border-radius: 12px;
+  box-shadow: 0 16px 60px rgba(0, 0, 0, .22), inset 0 1px rgba(255, 255, 255, .018);
+  min-height: 430px;
+  overflow: hidden;
+}
+
+.receipts-linear-agent-header {
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+  color: rgba(244, 244, 245, .82);
+  display: flex;
+  font: 13px/1 var(--font-regular);
+  gap: 10px;
+  min-height: 60px;
+  padding: 0 24px;
+}
+
+.receipts-linear-agent-header strong {
+  font-weight: 520;
+}
+
+.receipts-linear-agent-icon {
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, .42);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, .76);
+  display: inline-flex;
+  font: 9px/1 var(--font-monospace);
+  height: 19px;
+  justify-content: center;
+  width: 19px;
+}
+
+.receipts-linear-agent-more {
+  color: rgba(255, 255, 255, .28);
+  font: 10px/1 var(--font-monospace);
+  letter-spacing: 2px;
+  margin-left: auto;
+}
+
+.receipts-linear-agent-body {
+  color: rgba(232, 232, 235, .58);
+  font: 14px/1.55 var(--font-regular);
+  padding: 25px 30px 80px;
+}
+
+.receipts-linear-agent-line {
+  margin: 0 0 18px;
+}
+
+.receipts-linear-agent-line code {
+  background: transparent;
+  color: rgba(232, 232, 235, .38);
+  font: 13px/1.65 var(--font-monospace);
+  padding: 0;
+}
+
+.receipts-linear-agent-cli .receipts-linear-agent-line {
+  margin-bottom: 10px;
+}
+
+.receipts-linear-agent-cli .receipts-linear-agent-line:first-child {
+  margin-bottom: 22px;
+}
+
+.receipts-linear-agent-cli .receipts-linear-agent-line:first-child code {
+  color: rgba(232, 232, 235, .62);
+}
+
+.receipts-linear-agent-muted {
+  color: rgba(232, 232, 235, .3);
+}
+
+@media (max-width: 760px) {
+  .receipts-linear-agent-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .receipts-linear-agent-terminal {
+    min-height: 360px;
+  }
+
+  .receipts-linear-terminal-frame.receipts-terminal-workbench-hero {
+    padding-inline: 16px;
+  }
+}
+
+.receipts-terminal-workbench-legacy,
+.receipts-terminal-workbench-review {
+  display: none !important;
+}
+
+.receipts-cli-body,
+.receipts-cli-line,
+.receipts-cli-cursor {
+  animation-play-state: running !important;
 }
