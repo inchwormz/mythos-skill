@@ -86,7 +86,7 @@ fn arg_values_that_equal_parser_tokens_reach_the_child_unchanged() {
     let script_path = dir.join("assert-argv.cjs");
     fs::write(
         &script_path,
-        "const got=process.argv.slice(2);const want=['--arg','--exe','--long-option'];process.exit(JSON.stringify(got)===JSON.stringify(want)?0:9);",
+        "const got=process.argv.slice(2);const want=['--arg','--exe','--long-option','--'];process.exit(JSON.stringify(got)===JSON.stringify(want)?0:9);",
     )
     .expect("write child script");
     let script = script_path.to_string_lossy().to_string();
@@ -103,6 +103,8 @@ fn arg_values_that_equal_parser_tokens_reach_the_child_unchanged() {
             "--exe",
             "--arg",
             "--long-option",
+            "--arg",
+            "--",
         ],
     );
     assert!(
@@ -118,6 +120,7 @@ fn arg_values_that_equal_parser_tokens_reach_the_child_unchanged() {
             "--arg".to_string(),
             "--exe".to_string(),
             "--long-option".to_string(),
+            "--".to_string(),
         ]
     );
     fs::remove_dir_all(dir).expect("cleanup");
