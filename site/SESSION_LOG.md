@@ -128,3 +128,19 @@ Fresh verification:
 - Browser desktop at `1280px` — PASS; computed `main h1` and `main h2` are `Fraunces`, the header remains `Inter Variable`, both Fraunces and GeistSans report loaded, and document/body width remain 1280px.
 
 Hosted republish is still pending until the Sites deployment queue accepts the new source version.
+
+## Terminal-only landing surface
+
+Date: 2026-07-13
+
+Changed the visible landing surface to two terminal panes only: the subagent receipt conversation on the left and the prime CLI output on the right. The duplicate review workbench, hero copy, model strip, feature sections, footer, and header actions are hidden so the terminal output carries the product story. The panes keep a small window bar and use the existing warm monochrome treatment.
+
+Fresh verification:
+
+- TDD red receipt — the new smoke guard failed before the terminal-only CSS selectors were added.
+- `node site/smoke.test.mjs` — PASS, 3 tests, 0 failures.
+- `node site/build-worker.mjs` — PASS, generated Worker with 39 assets.
+- Browser desktop at `1280px` — PASS; 2 visible panes, 1 visible workbench, no visible main headings, footer/header actions hidden, body width 1280px, and 0 console errors.
+- Browser mobile at `390px` — PASS; 2 visible panes, body width 390px, terminal surface width 358px, no visible main headings, and 0 console errors.
+
+Hosted republish remains pending until this final terminal-only revision is pushed and accepted by the Sites deployment queue.

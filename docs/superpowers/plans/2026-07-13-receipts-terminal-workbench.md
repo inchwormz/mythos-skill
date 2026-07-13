@@ -63,3 +63,13 @@
 - [x] Apply Fraunces to all main-content headings while preserving the header font.
 - [x] Re-run static, Worker, and desktop/mobile browser checks.
 - [ ] Republish and verify the hosted correction after the Sites queue clears.
+
+### Task 6: Terminal-only landing surface
+
+**Files:** `site/styles.css`, `site/smoke.test.mjs`
+
+- [x] Show only the hero subagent and prime terminal panes; hide the duplicate review terminal.
+- [x] Remove page-level pitch copy, feature sections, model strip, footer, and header actions from the visible surface.
+- [x] Flatten the visible panes toward a simple Hyper-style window with the receipt conversation and CLI output as the product story.
+- [x] Verify two visible panes at desktop and mobile widths with no horizontal overflow.
+- [ ] Republish and verify the hosted correction after the Sites queue clears.

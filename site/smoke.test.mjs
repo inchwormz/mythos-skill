@@ -116,6 +116,10 @@ test("the Receipts workbench keeps local actions and responsive guardrails", asy
   assert.match(css, /var\(--font-monospace\)/)
   assert.match(css, /\.ss-circle,\s*\[class\*="grid-dot-"\]/, "orb visuals need a kill switch")
   assert.match(css, /--receipts-terminal-accent:\s*#/, "terminal palette needs a warm neutral accent")
+  assert.match(css, /receipts-terminal-workbench-review\s*\{\s*display:\s*none/, "the duplicate review terminal must stay hidden")
+  assert.match(css, /:not\(\.receipts-terminal-workbench-hero\)/, "marketing sections must stay hidden around the terminal pair")
+  assert.match(css, /\.TZTsQG_rightSideWrapper\s*\{\s*display:\s*none/, "header copy must not compete with the terminal pair")
+  assert.match(css, /receipts-terminal-toolbar,\s*\.receipts-terminal-tabs,\s*\.receipts-terminal-rail/, "terminal chrome should stay Hyper-simple")
   assert.match(css, /:focus-visible/)
 })
 
